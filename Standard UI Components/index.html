@@ -1,0 +1,260 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SM Components</title>
+    <link rel="stylesheet" href="css/main.css">
+</head>
+
+<body>
+    <sm-notifications id="notify"></sm-notifications>
+    <section>
+        <div class="background-box"></div>
+        <h1>SM Web Components</h1>
+        <h4>UI components based on custom elements API.</h4>
+        <div>
+            <sm-button id="get_started_btn" variant="primary">Get started</sm-button>
+        </div>
+    </section>
+    <main>
+        <div id="menu" class="left">
+            <h3>Getting Started</h3>
+            <ul class="list">
+                <li id="overview_entry" class="item active" data-target="overview_page">Overview</li>
+                <li id="download_entry" class="item" data-target="download_page">Quick start</li>
+            </ul>
+            <h3>Components</h3>
+            <ul class="list">
+                <li id="button_entry" class="item" data-target="button_page">button</li>
+                <li class="item" data-target="carousel_page">carousel</li>
+                <li class="item" data-target="checkbox_page">checkbox</li>
+                <li class="item" data-target="input_page">input</li>
+                <li class="item" data-target="notification_page">notifications</li>
+                <li class="item" data-target="popup_page">popup</li>
+                <li class="item" data-target="switch_page">switch</li>
+                <li class="item" data-target="select_page">select</li>
+                <li class="item" data-target="strip_select_page">strip-select</li>
+                <li class="item" data-target="tabs_page">tabs</li>
+            </ul>
+        </div>
+        <div class="right language-html">
+            <div id="overview_page" class="page">
+                <h1 class="headline">Overview</h1>
+                <p class="description">
+                    These components are based on HTML5 custom elements API.<br> It uses 'sm' namespace for all components.
+                    So every component tag starts with '<strong>sm-</strong>'.
+                </p>
+                <p>
+                    They can replace some older UI elements like <code>&lt;select&gt;</code> <code>&lt;input&gt;</code> <code>&lt;checkbox&gt;</code> <code>&lt;button&gt;</code>
+                    But also more modern additions like <strong>popups(modals), tabs and many more.</strong> 
+                </p>
+                <p>
+                    Some of the components have some cool tricks under their sleeves like <strong>custom events and variantions</strong>.
+                    They allow developers to access more information about component or simply react to whatever state change happen to them.
+                    We will go more in-depth about all the variantions and customs events related to each event as we go further.
+                </p>
+            </div>
+
+            <div id="download_page" class="page hide-completely">
+                <h1 class="headline">Quick Start</h1>
+                <p class="description">
+                    To start using SM Components
+                </p>
+                <ol type="1">
+                    <li>Download <a href="https://github.com/sairaj-mote/components"> components.js from Github.</a></li>
+                    <li>Add file to bottom of your HTML file just before closing <code>&lt;/body&gt;</code> tag with <code>&lt;script&gt;</code>tag.</li>
+                </ol>
+                <p>Now you are ready to use them in your HTML markup as any other standard HMTL tags 😄.</p>
+            </div>
+
+            <div id="button_page" class="page hide-completely">
+                <h1 class="headline">Buttons</h1>
+                <p class="description">
+                    Buttons are used in various basic UI interactions to perform an action.  
+                </p>
+                <sm-button variant="primary">primary</sm-button>
+                <sm-button>default</sm-button>
+                <sm-button variant="outlined">outlined</sm-button>
+                <sm-button variant="no-outline">no-outline</sm-button>
+                <sm-button variant="primary" disabled="true">disabled</sm-button>
+                <pre><code class="extend">
+&lt;sm-button variant="primary"&gt;primary&lt;/sm-button&gt;
+&lt;sm-button&gt;default&lt;/sm-button&gt;
+&lt;sm-button variant="outlined"&gt;outlined&lt;/sm-button&gt;
+&lt;sm-button variant="no-outline"&gt;no-outline&lt;/sm-button&gt;
+&lt;sm-button variant="primary" disabled="true"&gt;disabled&lt;/sm-button&gt;
+                </code></pre>
+            </div>
+
+            <div id="carousel_page" class="page hide-completely">
+                <h1 class="headline">Carousel</h1>
+                <p class="description">
+                    To start using SM Components
+                </p>
+                <sm-carousel>
+                    <img src="resources/background2.jpg" alt="" class="card">
+                    <img src="resources/background3.jpg" alt="" class="card">
+                    <img src="resources/background4.jpg" alt="" class="card">
+                </sm-carousel>
+            </div>
+
+            <div id="checkbox_page" class="page hide-completely">
+                <h1 class="headline">Checkbox</h1>
+                <p class="description">
+                    To start using SM Components
+                </p>
+                <label>
+                <sm-checkbox id="checkbox">Default</sm-checkbox>
+                <sm-checkbox id="checkbox" checked="true">Checked</sm-checkbox>
+                <sm-checkbox id="checkbox" disabled="true">Disabled</sm-checkbox>
+                <sm-checkbox id="checkbox" checked="true" disabled="true">Checked Disabled</sm-checkbox>
+            </label>
+            </div>
+
+            <div id="input_page" class="page hide-completely">
+                <h1 class="headline">Input</h1>
+                <p class="description">
+                    To start using SM Components
+                </p>
+                <sm-input placeholder="something" type="email" helper-text="please enter correct email" animate></sm-input>
+            </div>
+
+            <div id="notification_page" class="page hide-completely">
+                <h1 class="headline">Notifications</h1>
+                <p class="description">
+                    To start using SM Components
+                </p>
+                <h4>Example</h4>
+                
+                <sm-button
+                    onclick="document.getElementById('notify').push('heading', 'Lorem ipsum dolor, sit amet consectetur adipisicing elit.Lorem ipsum dolor, sit amet consectetur adipisicing elit.', 'success')">
+                    push success notification</sm-button>
+                <sm-button onclick="document.getElementById('notify').push('heading', 'Lorem ipsum dolor, sit amet.', 'error', true)">
+                    push error notification</sm-button>
+                <sm-button
+                    onclick="document.getElementById('notify').push('heading', 'Lorem ipsum dolor, sit amet consectetur adipisicing elit.', '', true)">
+                    push notification</sm-button>
+            </div>
+
+            <div id="popup_page" class="page hide-completely">
+                <h1 class="headline">Popup(Modal)</h1>
+                <p class="description">
+                    Popups are used to show addition UI elements that you may want to hide at first and reveal them when needed.
+                </p>
+                <sm-popup id="popup" heading="something">
+                    idhfioushdfiuh<br>
+                    idhfioushdfiuh<br>
+                    idhfioushdfiuh<br>
+                    idhfioushdfiuh<br>
+                    idhfioushdfiuh<br>
+                    idhfioushdfiuh<br>
+                    idhfioushdfiuh<br>
+                    idhfioushdfiuh<br>
+                    idhfioushdfiuh<br>
+                </sm-popup>
+                
+                <sm-button variant="primary" onclick="document.getElementById('popup').show()">show popup</sm-button>
+            </div>
+
+            <div id="switch_page" class="page hide-completely">
+                <h1 class="headline">Switch</h1>
+                <p class="description">
+                    To start using SM Components
+                </p>
+                <sm-switch id="switch"></sm-switch>
+                <sm-switch id="switch" checked="true"></sm-switch>
+                <sm-switch id="switch" disabled="true"></sm-switch>
+                <sm-switch id="switch"checked="true" disabled="true"></sm-switch>
+            </div>
+
+            <div id="select_page" class="page hide-completely">
+                <h1 class="headline">Select</h1>
+                <p>
+                    <code>&lt;sm-select&gt;</code> is very similar to starndatd HTML5 select and it's markup stucture is also identical.</p>
+                <sm-select>
+                    <sm-option value="1">option1</sm-option>
+                    <sm-option value="2">option2 something</sm-option>
+                    <sm-option value="3">option3</sm-option>
+                </sm-select>
+            </div>
+
+            <div id="strip_select_page" class="page hide-completely">
+                <h1 class="headline">Strip-select</h1>
+                <p class="description">
+                    To start using SM Components
+                </p>
+                <sm-strip-select>
+                    <sm-strip-option value="something">option1</sm-strip-option>
+                    <sm-strip-option>option1</sm-strip-option>
+                    <sm-strip-option>option1</sm-strip-option>
+                    <sm-strip-option>option1</sm-strip-option>
+                    <sm-strip-option>option1</sm-strip-option>
+                    <sm-strip-option>option1</sm-strip-option>
+                    <sm-strip-option>option1</sm-strip-option>
+                </sm-strip-select>
+            </div>
+
+            <div id="tabs_page" class="page hide-completely">
+                <h1 class="headline">Tabs</h1>
+                <p class="description">
+                    To start using SM Components
+                </p>
+                <sm-tabs>
+                    <sm-tab slot="tab">inbox</sm-tab>
+                    <sm-panel slot="panel">
+                        gjdhnsrfijbgn<br>bdfjnbj
+                    </sm-panel>
+                    <sm-tab slot="tab">sent</sm-tab>
+                    <sm-panel slot="panel">
+                        jadifjoaijdiajdo
+                        dosfighjoi<br>
+                        flkmgklfmzkl<br>
+                        hbdsfhb
+                    </sm-panel>
+                    <sm-tab slot="tab">draft</sm-tab>
+                    <sm-panel slot="panel">
+                        Lorem ipsum dolor, sit amet consectetur adipisicing elit. Facere neque incidunt aut laudantium, quam
+                        id,
+                        molestiae vero blanditiis nisi alias in magnam autem quasi cumque eveniet qui cupiditate nam
+                        corrupti?
+                    </sm-panel>
+                    <sm-tab slot="tab">spam</sm-tab>
+                    <sm-panel slot="panel">
+                        Lorem ipsum dolor sit amet, consectetur adipisicing elit. Blanditiis fuga ipsam, explicabo, eius
+                        accusamus
+                        consectetur ex sunt soluta voluptatem iure totam nulla expedita suscipit minus molestiae similique
+                        odio optio
+                        quibusdam.
+                    </sm-panel>
+                </sm-tabs>
+            </div>            
+        </div>
+    </main>
+    <script src="components.js"></script>
+    <script>
+        let currentPage = document.getElementById('overview_page'),
+            selectedItem = document.getElementById('overview_entry'),
+            main = document.querySelector('main');
+        function showPage(item, targetPage){
+            let page = document.getElementById(targetPage)
+            currentPage.classList.add('hide-completely')
+            selectedItem.classList.remove('active')
+            page.classList.remove('hide-completely')
+            item.classList.add('active')
+            currentPage = page
+            selectedItem = item
+        }
+        document.getElementById('menu').addEventListener('click', e => {
+            if(e.target.closest('.item'))
+                showPage(e.target.closest('.item'), e.target.closest('.item').dataset.target)
+        })
+        showPage(selectedItem, 'overview_page')
+        document.getElementById('get_started_btn').addEventListener('click', e => {
+            main.scrollIntoView()
+        })
+    </script>
+</body>
+
+</html>

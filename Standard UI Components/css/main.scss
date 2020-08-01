@@ -1,0 +1,196 @@
+@import url('https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700;900&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap');
+*{
+    box-sizing: border-box;
+    padding: 0;
+    margin: 0;
+    font-family: 'Roboto', sans-serif;
+}
+html{
+    scroll-behavior: smooth;
+}
+body{
+    --accent-color: rgb(9, 155, 82);
+    --light-accent-shade: rgb(223, 255, 239);
+    --text: 17, 17, 17;
+    --foreground: 255, 255, 255;
+    --font-family: 'Roboto', sans-serif;
+    --error-color: red;
+}
+.hide-completely{
+    display: none;
+}
+h1,h2,h3,h4.h5{
+    font-family: 'Poppins', sans-serif;
+    font-weight: 500;
+}
+a:any-link{
+    text-decoration: none;
+    color: var(--accent-color)
+}
+h2{
+  margin: 3rem 0 1rem 0;
+  text-transform: capitalize;
+  &:first-of-type{
+      margin-top: 1rem;
+  }  
+}
+h1.headline{
+    color: rgba(var(--text), 1);
+}
+section{
+    height: 100vh;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    background-size: cover;
+    text-align: center;
+    color: rgba(var(--text), 1);
+    padding: 2rem;
+    border-bottom: 1px solid rgba(var(--text), .2);
+    h1{
+        font-weight: 600;
+        font-size: 2.5rem;
+        line-height: 1.2em;
+        z-index: 1;
+        text-transform: uppercase;
+        letter-spacing: 0.2rem;
+    }
+    h4{
+        z-index: 1;
+        font-weight: 400;
+        margin-top: 1.2rem;
+    }
+    .background-box{
+        display: flex;
+        align-self: center;
+        position: absolute;
+        border: solid 1px rgba(var(--text), 0.3);
+        width: 60vw;
+        height: 40%;
+        transform: skewX(-10deg);
+        background: rgba(var(--foreground), 1);
+        z-index: -1;
+    }
+    a{
+        margin-top: 2rem;
+        font-weight: 500;
+    }
+    sm-button{
+        margin-top: 4rem;
+    }
+    sm-button:first-of-type{
+        margin-right: 1rem;
+    }
+}
+pre{
+    display: inline-flex;
+        max-width: 100%;
+}
+code{
+    display: inline-flex;
+    color: #311B92;
+    background: rgba(var(--text), .1);
+    padding: 0.2rem 0.4rem;
+    border-radius: 0.2rem;
+    margin: 0.2rem 0;
+}
+code.extend{
+    padding: 0 1.5rem;
+    line-height: 1.6;
+    margin: 1rem 0;
+    overflow-x: auto;
+    max-width: 100%;
+}
+main{
+    height: 100vh;
+}
+p{
+    margin: 1rem 0 1.5rem 0;
+    line-height: 1.6em;
+    color: rgba(var(--text), .8);
+    font-size: 1rem;
+    &::first-letter{
+        text-transform: capitalize;
+    }
+}
+ol{
+    padding: 0.6rem 1rem;
+    li{
+        margin-bottom: 1rem;
+        &:last-of-type{
+            margin-bottom: 0;
+        }
+        &::first-letter{
+            text-transform: capitalize;
+        }
+    }
+}
+.left{
+    max-height: 100%;
+    overflow-y: auto;
+    h3{
+        padding: 1.5rem;
+    }
+}
+.right{
+    padding: 1.5rem;
+    h1{
+        margin-bottom: 1.5rem;
+    }
+}
+.list{
+    list-style: none;
+    display: flex;
+    flex-direction: column;
+    margin-bottom: 0.5rem;
+    .item{
+        padding: 0.6rem 1.5rem;
+        text-transform: capitalize;
+    }
+    .active{
+        color: var(--accent-color);
+        background: rgba(var(--text), .06);
+    }
+}
+.card{
+    height: 24rem;
+    margin-right: 1rem;
+    border-radius: 0.4rem;
+    width: 100%;
+    object-fit: cover;
+}
+sm-carousel{
+    margin-bottom: 1rem;
+}
+@media screen and (min-width: 640px){
+    main{
+        display: grid;
+        grid-template-columns: 14rem minmax(0, 1fr);
+        gap: 1.5rem;    
+    }
+    p{
+        max-width: 46vw;
+    }
+    .background-box{
+        width: 24rem !important;
+        height: 50% !important;
+    }
+}
+@media screen and (max-width: 640px){
+    .left{
+        position: fixed;
+        z-index: 2;
+        background: rgba(var(--foreground), 1);
+        box-shadow: 0.5rem 0 2rem rgba(0,0,0, 0.1);
+        height: 100vh;
+        transform: translateX(-100%);
+    }
+}
+@media (any-hover: hover){
+    .item:hover{
+        background: rgba(var(--text), .1);
+        cursor: pointer;
+    }
+}
