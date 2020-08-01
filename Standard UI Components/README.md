@@ -38,8 +38,6 @@ Every component responds to some css variable that needs to be set in order to s
 ***!!! It's important to set only comma separated rgb values with `--text-color` and `--foreground-color` css variables.*** 
 
 Now you are ready to use them in your HTML markup as any other standard HMTL tags 😄.
-
-## Components
  
 |  Table of components | 
 | --- |
@@ -120,6 +118,24 @@ This component supports keyboard interactivity like ***Enter*** or ***Spacebar**
 ```
 
 `<sm-carousel` allows you easily add carousel to your website with everything already ready to go. Just add elements you want show inside opening `<sn-carousel>` and closing `<sn-carousel>` brackets.
+
+#### Custom Attribute
+
+1. align-items
+This attribute sets alignment of items inside carousel to value from three options ***start***, ***center***, ***end***.
+`align-items="center"` is default value. Carousel childrens are set to center align.
+
+##### align start
+This will align elements such that element will align from left edge to the carousel container
+```html
+<!--To set alignment of elements to start -->
+<sm-carousel align-items="start"></sm-carousel>
+```
+This will align elements such that element will align from left edge to the carousel container
+```html
+<!--To set alignment of elements to end -->
+<sm-carousel align-items="end"></sm-carousel>
+```
 
 #### Interactions
 
