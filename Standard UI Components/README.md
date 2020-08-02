@@ -141,6 +141,8 @@ This will align elements such that element will align from left edge to the caro
 
 Once focused elements inside carousel can be scrolled using ***Arrow Keys***.
 
+When `sm-carousel` encounters an environment where only touch is supported it switches to touch based navigation like swipe scrolling and tapping. But when pointer like mouse is suppoted it switches to arrow button based navigation. 
+
 #### Is it ***Responsive***?
 
 Yes, it will adjust according to screen size and input interrfaces like mouse, touch or keyboard.
@@ -164,7 +166,7 @@ This has two custom attributes `checked` and `disabled`.
 ```
 2. disabled
 ```html
-<!-- Outlined button with accent colored outline -->
+<!-- To set disabled -->
 <sm-checkbox disabled="true"></sm-checkbox>
 ```
 
@@ -194,14 +196,23 @@ This component supports keyboard interactivity like ***Enter*** or ***Spacebar**
 ``` html
 <sm-checkbox id="my_checkbox"></sm-checkbox>
 ```
+```js
+let myCheckbox = document.getElementById('my_checkbox');
+```
 ##### To set checked 
 ```js
-let checkbox = document.getElementById('my_checkbox');
 checkbox.checked="true"
 //or
-checkbox.setAttribute('checked', 'true')
+myCheckbox.setAttribute('checked', 'true')
 ```
 Replace `"true"` with `"false"` to un-tick checkbox
+
+##### To set disabled
+```js
+myCheckbox.disabled="true"
+//or
+myCheckbox.setAttribute('disabled', 'true')
+```
 
 ### Input
 [See Demo](https://sairaj-mote.github.io/components/)
@@ -213,28 +224,15 @@ Replace `"true"` with `"false"` to un-tick checkbox
 This is a replacement for `<input/>`.
 
 #### Custom Attributes
-This has two custom attributes `checked` and `disabled`.
 
-1. placeholder
-```html
-<!-- Displayes placeholder text inside -->
-<sm-input placeholder="placeholder"></sm-input>
-```
-2. value
-```html
-<!-- Sets input value from markup -->
-<sm-input value="abc123"></sm-input>
-```
-3. helper-text
-```html
-<!-- Sets helper text that will be shown when validation fails for input -->
-<sm-input helper-text="Enter correct password"></sm-input>
-```
-4. animate
-```html
-<!-- Add to enable animated placeholder -->
-<sm-input placeholder="placeholder" animate></sm-input>
-```
+Attribute | Description
+--- | ---
+placeholder (string) | Displayes placeholder text inside
+type (string) | Specify type of input to enable validation. Valid values - `email`, `number`, `text`, `password`.
+value (string) | Sets input value from markup 
+helper-text (string) | Sets helper text that will be shown when validation fails for input.
+animate | Add to enable animated placeholder
+
 By default placeholder will disappear when input field has some value.
 
 #### Supported Events
@@ -273,3 +271,319 @@ console.log(myInput.value)
 ```js
 console.log(myInput.isValid)
 ```
+
+### Notifications
+[See Demo](https://sairaj-mote.github.io/components/)
+
+```html
+<sm-notifications></sm-notifications>
+```
+
+`<sm-notifications>` allows showing push notifications easily and supports multiple notifications at same time.
+
+#### Setup
+
+Add `<sm-notifications></sm-notifications>` to top of your markup just below starting `<body>` tag.
+
+``` html
+<body>
+<sm-notifications id="my_notifications"></sm-notifications>
+```
+```js
+let myNotifications = document.getElementById('my_notifications');
+```
+
+#### Manipulation via Javascript
+This component has a method called `push()`. Which can be used to display notifications to user. It accepts three parameters `notificationHeading`, `notificationBody` and `options`.
+
+Parameter | Description
+--- | ---
+notificationHeading (string) | Heading displayed at the top of a notification. This should be short and describe main purpose of that notification.
+notificationBody (string) | This consists of most of the descriptive part of a notification. This will elaborate more on notification heading.
+options (object) | Used to configure more options about individual notification. This is optional.
+
+Options | Description
+--- | ---
+`type` (string) | This property can have two valid inputs `success` and `error`. Specifiying this will add an icon before heading to indicate success or failure of an operation.
+`pinned` (boolean) | IF set `true`notification won't dismiss automatically after set time interval. User has to intentionally dismiss it.
+
+##### To push a notification 
+```js
+myNotifications.push(notificationHeading, notificationBody)
+```
+##### To specify notification type
+Set `"success"` or `"error"` to display intended notification style.  
+```js
+let options = {
+ type: 'error'
+}
+myNotifications.push(notificationHeading, notificationBody, options)
+```
+##### To push a pinned notification 
+```js
+let options = {
+ pinned: true
+}
+myNotifications.push(notificationHeading, notificationBody, options)
+```
+
+#### Is it ***Responsive***?
+
+Yes, it will adjust according to screen size and input interrfaces like mouse, touch or keyboard. This supports touch gestures like swipe to dismiss.
+
+
+### Popup
+[See Demo](https://sairaj-mote.github.io/components/)
+
+```html
+<sm-popup>
+//
+ Elements you want to add to popup.
+ //
+</sm-popup>
+```
+
+`<sm-popup>` allows creating modal that can replace HTML5 `<dialog>` element.
+
+#### Custom Attributes
+This has one custom attribute `heading` that is used to set header of popup.
+
+1. heading
+```html
+<!-- set heading of popup -->
+<sm-popup="heading"></sm-popup>
+```
+
+#### Setup
+
+``` html
+<body>
+<sm-popup id="my_popup"></sm-popup>
+```
+```js
+let myPopup = document.getElementById('my_popup');
+```
+
+#### Manipulation via Javascript
+This component has two methods, `show()` and `hide()`.
+
+Method | Description
+--- | ---
+`show()` | Shows popup when called on respective popup.
+`hide()` | Hides popup when called on respective popup.
+
+##### To show popup 
+Scrolling in the background will be disabled when popup is open. It will be restored when popup is closed. 
+```js
+myPopup.show()
+```
+##### To hide popup 
+```js
+myPopup.hide()
+```
+
+#### Is it ***Responsive***?
+
+Yes, it will adjust according to screen size and input interrfaces like mouse, touch or keyboard. This supports touch gestures like drag to close.
+
+### Switch
+[See Demo](https://sairaj-mote.github.io/components/)
+
+```html
+<sm-switch></sm-switch>
+```
+
+#### Custom Attributes
+This has two custom attributes `checked` and `disabled`.
+
+1. Checked
+```html
+<!--To set switch as checked or on -->
+<sm-switch checked="true"></sm-switch>
+```
+2. disabled
+```html
+<!--To set switch as disabled  -->
+<sm-switch disabled="true"></sm-switch>
+```
+
+#### Disabled State
+
+This component can disabled adding `disabled="true` attribute.
+
+You can also have option to use both of these attributes at the same time.
+```html
+<!-- Setting switch checked true while it's disabled -->
+<sm-checkbox disabled="true" checked="true"></sm-checkbox>
+```
+
+#### Supported Events
+
+This supports `change` event. Fires when component state changes.
+
+#### Is it ***Responsive***?
+
+No, As by default this is an inline element.
+
+#### Accessibility
+
+This component supports keyboard interactivity like ***Enter*** or ***Spacebar*** to click on it.
+
+#### Manipulation via Javascript
+``` html
+<sm-switch id="my_switch"></sm-switch>
+```
+```js
+let mySwitch = document.getElementById('mySwitch');
+```
+##### To set checked 
+```js
+mySwitch.checked="true"
+//or
+mySwitch.setAttribute('checked', 'true')
+```
+Replace `"true"` with `"false"` to turn switch off.
+
+##### To set disabled
+```js
+mySwitch.disabled="true"
+//or
+mySwitch.setAttribute('disabled', 'true')
+```
+Replace `"true"` with `"false"` to enable switch.
+
+### Select
+[See Demo](https://sairaj-mote.github.io/components/)
+
+```html
+<sm-select></sm-select>
+```
+
+`<sm-select>` is very similar to standard HTML `<select>` in terms of general markup and options. If you want to add an option then you have to use `<sm-option></sm-option>` instead of `<option>`. 
+
+#### Syntax 
+```html
+<sm-select>
+    <sm-option value="value1">option1</sm-option>
+    <sm-option value="value2">option2</sm-option>
+    <sm-option value="value3">option3</sm-option>
+</sm-select>
+```
+You can specify `sm-option` value using `value=""` attribute in option markup.
+
+#### Events
+
+This supports `change` event that fires when new value is selected from dropdown.
+
+#### Is it ***Responsive***?
+
+No, As by default this is an inline element that means it won't strech accross whole horizontal space. But this behaviour can be changed that by following css.
+```css
+sm-select{
+  width: 100%;
+}
+```
+
+#### Accessibility
+
+This component supports keyboard interactivity like ***Enter*** or ***Spacebar*** to expand/collapse options. ***Arrow keys*** can be used to navigate between options.
+Also can be accessed using ***Tab***. 
+
+### Strip Select
+[See Demo](https://sairaj-mote.github.io/components/)
+
+```html
+<sm-strip-select></sm-strip-select>
+```
+
+`<sm-strip-select>` is very similar to standard HTML `<select>` in terms of general markup and options. If you want to add an option then you have to use `<sm-strip-option></sm-strip-option>` instead of `<option>`. 
+
+#### Syntax 
+```html
+<sm-strip-select>
+    <sm-strip-option value="value1">option1</sm-strip-option>
+    <sm-strip-option value="value2">option2</sm-strip-option>
+    <sm-strip-option value="value3">option3</sm-strip-option>
+</sm-strip-select>
+```
+You can specify `sm-strip-option` value using `value=""` attribute in option markup.
+
+#### Events
+
+This supports `change` event that fires when new value is selected from dropdown.
+
+#### Is it ***Responsive***?
+
+No, As by default this is an inline element that means it won't strech accross whole horizontal space. But this behaviour can be changed that by following css.
+```css
+sm-select{
+  width: 100%;
+}
+```
+#### Interactions
+
+When `sm-strip-select` encounters an environment where only touch is supported it switches to touch based navigation like swipe scrolling and tapping. But when pointer like mouse is suppoted it switches to arrow button based navigation. 
+
+#### Accessibility
+
+This component supports keyboard interactivity like ***Enter*** or ***Spacebar*** to select an option. Also can be accessed using ***Tab***. 
+
+### Tabs
+[See Demo](https://sairaj-mote.github.io/components/)
+
+```html
+<sm-tabs></sm-tabs>
+```
+
+`<sm-tabs>` allows you to create tab based UI easily. It consists of mainly two components `<sm-tab>` and `<sm-panel>`. Every tab will have its corresponding panel that will be shown when tab is clicked.  
+
+#### Syntax 
+```html
+<sm-tabs>
+    <sm-tab slot="tab">Tab Title 1</sm-tab>
+    <sm-panel slot="panel">
+        //Body of panel
+    </sm-panel>
+ 
+    <sm-tab slot="tab">Tab Title 2</sm-tab>
+    <sm-panel slot="panel">
+        //Body of panel
+    </sm-panel>
+</sm-tabs>
+```
+Notice how every `sm-tab` is folloed by `sm-option`, This is default structure or syntax for using `sm-tabs`. ***If you didn't add a panel after a tab, the component won't work.***
+Another key part is `sm-tab` should have `slot="tab"` as attribute and `slot="panel"` for `sm-panel`. As this component uses HTML5 ***[<slot>](https://developer.mozilla.org/en-US/docs/Web/HTML/Element/slot)*** tag to organize user added data. For more information, please refer to this [MDN article](https://developer.mozilla.org/en-US/docs/Web/Web_Components/Using_templates_and_slots).
+
+#### Custom Attributes
+This has two custom attributes `checked` and `disabled`.
+
+1. enable-flick
+```html
+<!--To enable flick gesture to change panel in view -->
+<sm-tabs enable-flick="true">
+//Tabs body
+</sm-tabs>
+```
+#### Variants
+Variants are different stylistic versions of same component, But they have same functions.
+
+1. tab
+Setting this variant will change default sliding indicator to a block for providing a different stylistic option. 
+```html
+<!-- change variant to tab -->
+<sm-tabs variant="tab">
+//Tabs body
+</sm-tabs>
+```
+
+#### Is it ***Responsive***?
+
+Yes, it will adjust according to screen size and input interrfaces like mouse, touch. 
+
+#### Interactions
+
+This supports touch gesture flick to change visible panels if enabled with `enable-flick="true"`.
+
+#### Accessibility
+
+This component supports keyboard interactivity like ***Enter*** or ***Spacebar*** to select an option. Also can be accessed using ***Tab***. 
