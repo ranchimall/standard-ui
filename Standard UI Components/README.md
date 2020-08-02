@@ -2,10 +2,16 @@
 
 ## Overview
 
-These components are based on HTML5 custom elements API.
-It uses 'sm' namespace for all components. So every component tag starts with ***'sm-'.***
+These components are based on HTML5 custom elements API. This is an attempt to unify UI development patterns and elements that are used multiple times throughout any general web app.It uses 'sm' namespace for all components. So every component tag starts with ***'sm-'.***
 
-They can replace some older UI elements like `<select>` `<input>` `<input type="checkbox">` `<button>` But also more modern additions like Carousels, Popups(modals), Tabs and many more.
+They can replace some older UI elements like `<select>` `<input>` `<input type="checkbox">` `<button>` But also more modern additions like Carousels, Popups(modals), Tabs and more.
+
+### features
+- Based on [Custom Elements API](https://developer.mozilla.org/en-US/docs/Web/Web_Components/Using_custom_elements) which means it's a web platform standard that can be used in various popular frameworks like ***React***, ***Vue***, ***Angular*** etc.
+- ***Keyboard and Touch friendly*** Multiple ways to interact with every components.
+- ***Standalone*** Every component can be used seperately on its own with all the functionality encapulated.
+- ***Easy styling*** styling of components is handled by [CSS variables](https://developer.mozilla.org/en-US/docs/Web/CSS/Using_CSS_custom_properties). Also CSS of components is encapsulated in shadow DOM so it won't affect styling of rest of the app.
+- ***Relative Sizing*** These components use relative units `rem` and `em` to resize them. Changing default font size of `<body>` will resize components according to screen size.
 
 Some components have some cool tricks under their sleeves like custom events and variantions. They allow developers to access more information about component or simply react to whatever state change happen to them. We will go more in-depth about all the variantions and customs events related to each event as we go further.
 
@@ -20,7 +26,7 @@ To start using these Components
 
 ### Styling
 
-Every component responds to some css variable that needs to be set in order to start using them.
+Every component responds to some CSS variable that needs to be set in order to start using them.
 
 ```css
 --accent-color: teal;
@@ -555,7 +561,6 @@ Notice how every `sm-tab` is folloed by `sm-option`, This is default structure o
 Another key part is `sm-tab` should have `slot="tab"` as attribute and `slot="panel"` for `sm-panel`. As this component uses HTML5 ***[<slot>](https://developer.mozilla.org/en-US/docs/Web/HTML/Element/slot)*** tag to organize user added data. For more information, please refer to this [MDN article](https://developer.mozilla.org/en-US/docs/Web/Web_Components/Using_templates_and_slots).
 
 #### Custom Attributes
-This has two custom attributes `checked` and `disabled`.
 
 1. enable-flick
 ```html
