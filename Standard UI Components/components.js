@@ -14,20 +14,20 @@ smButton.innerHTML = `
             :host([disabled='true']) .button{
                 cursor: default;
                 opacity: 1;
-                background: rgba(var(--text), 0.4) !important;
-                color: rgba(var(--foreground), 1);
+                background: rgba(var(--text-color), 0.4) !important;
+                color: rgba(var(--foreground-color), 1);
             }
             :host([variant='primary']) .button{
                 background: var(--accent-color);
-                color: rgba(var(--foreground), 1);
+                color: rgba(var(--foreground-color), 1);
             }
             :host([variant='outlined']) .button{
                 box-shadow: 0 0 0 0.1rem var(--accent-color) inset;
-                background: rgba(var(--foreground), 1); 
+                background: rgba(var(--foreground-color), 1); 
                 color: var(--accent-color);
             }
             :host([variant='no-outline']) .button{
-                background: rgba(var(--foreground), 1); 
+                background: rgba(var(--foreground-color), 1); 
                 color: var(--accent-color);
             }
             .button {
@@ -40,11 +40,11 @@ smButton.innerHTML = `
                 transition: box-shadow 0.3s;
                 text-transform: uppercase;
                 font-weight: 500;
-                color: rgba(var(--text), 0.9);
+                color: rgba(var(--text-color), 0.9);
                 letter-spacing: 0.1rem;
                 font-family: var(--font-family);
                 font-size: 0.9rem;
-                background: rgba(var(--text), 0.1); 
+                background: rgba(var(--text-color), 0.1); 
                 -webkit-tap-highlight-color: transparent;
                 outline: none;
             }
@@ -170,7 +170,7 @@ smInput.innerHTML = `
             height: 1.6rem;
             width: 1.6rem;
             padding: 0.5rem;
-            stroke: rgba(var(--text), 0.7);
+            stroke: rgba(var(--text-color), 0.7);
             stroke-width: 10;
             overflow: visible;
             stroke-linecap: round;
@@ -187,7 +187,7 @@ smInput.innerHTML = `
             padding: 0.6rem 1rem;
             border-radius: 0.2em;
             transition: opacity 0.3s;
-            background: rgba(var(--text), 0.1);
+            background: rgba(var(--text-color), 0.1);
             font-family: var(--font-family);
             width: 100%
         }
@@ -224,7 +224,7 @@ smInput.innerHTML = `
             border: none;
             background: transparent;
             outline: none;
-            color: rgba(var(--text), 1);
+            color: rgba(var(--text-color), 1);
             width: 100%;
         }
         .animate-label .container input {
@@ -244,7 +244,7 @@ smInput.innerHTML = `
         }
         @media (any-hover: hover){
             .icon:hover{
-                background: rgba(var(--text), 0.1);
+                background: rgba(var(--text-color), 0.1);
             }
         }
     </style>
@@ -303,7 +303,7 @@ customElements.define('sm-input',
             }
         }
 
-        checkInput = (label, inputParent, clear, helperText) => {
+        checkInput = () => {
             if (!this.hasAttribute('placeholder') || this.getAttribute('placeholder') === '')
                 return;
             if (this.input.value !== '') {
@@ -364,6 +364,10 @@ customElements.define('sm-input',
             })
             this.input.addEventListener('input', e => {
                 this.checkInput()
+                this.dispatchEvent(new CustomEvent('input', {
+                    bubbles: true,
+                    composed: true
+                }))
             })
             this.input.addEventListener('change', e => {
                 this.valueChanged = true;
@@ -434,7 +438,7 @@ smTabs.innerHTML = `
     display: none;
 }
 :host([variant="tab"]) slot[name="tab"]::slotted(.active){
-    color: rgba(var(--foreground), 1);
+    color: rgba(var(--foreground-color), 1);
 }
 
 slot[name="tab"]::slotted(.active){
@@ -523,6 +527,7 @@ customElements.define('sm-tabs', class extends HTMLElement {
             }
         this.prevTab
         this.allTabs
+
         this.shadowRoot.querySelector('slot[name="panel"]').addEventListener('slotchange', () => {
             this.shadowRoot.querySelector('slot[name="panel"]').assignedElements().forEach((panel, index) => {
                 panel.classList.add('hide-completely')
@@ -613,7 +618,7 @@ customElements.define('sm-tabs', class extends HTMLElement {
         },
             { threshold: 1.0 })
         observer.observe(this.tabHeader)
-        if (this.hasAttribute('swipable') && this.getAttribute('swipable') == 'true') {
+        if (this.hasAttribute('enable-swipe') && this.getAttribute('enable-swipe') == 'true') {
             let touchStartTime = 0,
                 touchEndTime = 0,
                 swipeTimeThreshold = 200,
@@ -724,7 +729,7 @@ p{
 
 .checkbox:active .icon,
 .checkbox:focus .icon{
-    background: rgba(var(--text), 0.2);
+    background: rgba(var(--text-color), 0.2);
 }
 
 .checkbox input {
@@ -740,7 +745,7 @@ p{
 
 .checkbox input:checked ~ svg .checkmark {
     stroke-dashoffset: 0;
-    stroke: rgba(var(--foreground), 1);
+    stroke: rgba(var(--foreground-color), 1);
 }
 .checkbox input:checked ~ svg {
     stroke: var(--accent-color);
@@ -754,7 +759,7 @@ p{
     height: 2.6rem;
     width: 2.6rem;
     padding: 0.7rem;
-    stroke: rgba(var(--text), 0.7);
+    stroke: rgba(var(--text-color), 0.7);
     stroke-width: 6;
     overflow: visible;
     stroke-linecap: round;
@@ -810,6 +815,13 @@ customElements.define('sm-checkbox', class extends HTMLElement {
         this.setAttribute('checked', value)
     }
 
+    dispatch = () => {
+        this.dispatchEvent(new CustomEvent('change', {
+            bubbles: true,
+            composed: true
+        }))
+    }
+
     connectedCallback() {
         this.addEventListener('keyup', e => {
             if ((e.code === "Enter" || e.code === "Space") && this.isDisabled == false) {
@@ -834,10 +846,12 @@ customElements.define('sm-checkbox', class extends HTMLElement {
                 if (newValue == 'true') {
                     this.isChecked = true
                     this.input.checked = true
+                    this.dispatch()
                 }
                 else {
                     this.isChecked = false
                     this.input.checked = false
+                    this.dispatch()
                 }
             }
         }
@@ -870,7 +884,7 @@ smAudio.innerHTML = `
           user-select: none;
   padding: 0.6rem;
   border-radius: 0.2rem;
-  background: rgba(var(--text), 0.08);
+  background: rgba(var(--text-color), 0.08);
   overflow: hidden;
   width: 100%;
 }
@@ -880,7 +894,7 @@ smAudio.innerHTML = `
 }
 
 .icon{
-  stroke: rgba(var(--text), 1);
+  stroke: rgba(var(--text-color), 1);
   stroke-width: 6;
   stroke-linecap: round;
   stroke-linejoin: round;
@@ -895,7 +909,7 @@ smAudio.innerHTML = `
 }
 
 .icon:hover{
-  background: rgba(var(--text), 0.1);
+  background: rgba(var(--text-color), 0.1);
 }
 
 audio {
@@ -1061,7 +1075,7 @@ input {
     height: 1.4rem;
     -webkit-transition: background 0.3s;
     transition: background 0.3s;
-    background: rgba(var(--text), 0.4);
+    background: rgba(var(--text-color), 0.4);
     box-shadow: 0 0.1rem 0.3rem #00000040 inset;
     border-radius: 1rem;
 }
@@ -1083,7 +1097,7 @@ input {
     position: absolute;
     height: 2.6rem;
     width: 2.6rem;
-    background: rgba(var(--text), 0.2);
+    background: rgba(var(--text-color), 0.2);
     border-radius: 2rem;
     opacity: 0;
     transition: opacity 0.3s;
@@ -1099,7 +1113,7 @@ input {
     border-radius: 1rem;
     box-shadow: 0 0.1rem 0.4rem #00000060;
     transition: transform 0.3s;
-    border: solid 0.3rem rgba(var(--foreground), 1);
+    border: solid 0.3rem rgba(var(--foreground-color), 1);
 }
 
 input:checked ~ .button {
@@ -1150,8 +1164,14 @@ customElements.define('sm-switch', class extends HTMLElement {
         this.setAttribute('checked', value)
     }
 
-    connectedCallback() {
+    dispatch = () => {
+        this.dispatchEvent(new CustomEvent('change', {
+            bubbles: true,
+            composed: true
+        }))
+    }
 
+    connectedCallback() {
         this.addEventListener('keyup', e => {
             if ((e.code === "Enter" || e.code === "Space") && this.isDisabled == false) {
                 this.isChecked = !this.isChecked
@@ -1176,10 +1196,12 @@ customElements.define('sm-switch', class extends HTMLElement {
                 if (newValue == 'true') {
                     this.isChecked = true
                     this.input.checked = true
+                    this.dispatch()
                 }
                 else {
                     this.isChecked = false
                     this.input.checked = false
+                    this.dispatch()
                 }
             }
         }
@@ -1199,7 +1221,7 @@ smSelect.innerHTML = `
                 fill: none;
                 height: 0.8rem;
                 width: 0.8rem;
-                stroke: rgba(var(--text), 0.7);
+                stroke: rgba(var(--text-color), 0.7);
                 stroke-width: 6;
                 overflow: visible;
                 stroke-linecap: round;
@@ -1220,13 +1242,6 @@ smSelect.innerHTML = `
                 width: 100%;
                 -webkit-tap-highlight-color: transparent;
             }
-            .heading{
-                text-transform: capitalize;
-                color: var(--accent-color);
-                grid-area: heading;
-                font-weight: 500;
-                margin-bottom: 0.2rem;
-            }
             .option-text{
                 overflow: hidden;
                 text-overflow: ellipsis;
@@ -1238,8 +1253,8 @@ smSelect.innerHTML = `
                 grid-template-columns: 1fr auto;
                 grid-template-areas: 'heading heading' '. .';
                 padding: 0.4rem 1rem;
-                background: rgba(var(--text), 0.06);
-                border: solid 1px rgba(var(--text), 0.2);
+                background: rgba(var(--text-color), 0.06);
+                border: solid 1px rgba(var(--text-color), 0.2);
                 align-items: center;
                 outline: none;
             }
@@ -1264,9 +1279,9 @@ smSelect.innerHTML = `
                 display: flex;
                 flex-direction: column;
                 min-width: 100%;
-                background: rgba(var(--foreground), 1);
+                background: rgba(var(--foreground-color), 1);
                 transition: opacity 0.3s, top 0.3s;
-                border: solid 1px rgba(var(--text), 0.2);
+                border: solid 1px rgba(var(--text-color), 0.2);
                 border-radius: 0.2rem;
                 z-index: 2;
                 box-shadow: 0.4rem 0.8rem 1.2rem #00000030;
@@ -1277,7 +1292,6 @@ smSelect.innerHTML = `
         </style>
         <div class="select" >
             <div class="selection" tabindex="0">
-                <h5 class="heading">select title</h5>
                 <div class="option-text"></div>
                 <svg class="icon toggle" viewBox="0 0 64 64">
                     <polyline points="63.65 15.99 32 47.66 0.35 15.99"/>
@@ -1306,7 +1320,7 @@ customElements.define('sm-select', class extends HTMLElement {
         this.optionList.animate(this.slideUp, this.animationOptions)
         this.optionList.classList.add('hide')
         this.chevron.classList.remove('rotate')
-        open = false
+        this.open = false
     }
     connectedCallback() {
         this.availableOptions
@@ -1315,6 +1329,7 @@ customElements.define('sm-select', class extends HTMLElement {
         let slot = this.shadowRoot.querySelector('.options slot'),
             selection = this.shadowRoot.querySelector('.selection'),
             previousOption
+        this.open = false;
             this.slideDown = [
                 { transform: `translateY(-0.5rem)` },
                 { transform: `translateY(0)` }
@@ -1327,14 +1342,13 @@ customElements.define('sm-select', class extends HTMLElement {
                 duration: 300,
                 fill: "forwards",
                 easing: 'ease'
-            },
-            open = false;
+            }
         selection.addEventListener('click', e => {
-            if (!open) {
+            if (!this.open) {
                 this.optionList.classList.remove('hide')
                 this.optionList.animate(this.slideDown, this.animationOptions)
                 this.chevron.classList.add('rotate')
-                open = true
+                this.open = true
             } else {
                 this.collapse()
             }
@@ -1345,11 +1359,11 @@ customElements.define('sm-select', class extends HTMLElement {
                 this.availableOptions[0].focus()
             }
             if (e.code === 'Enter' || e.code === 'Space')
-                if (!open) {
+                if (!this.open) {
                     this.optionList.classList.remove('hide')
                     this.optionList.animate(this.slideDown, this.animationOptions)
                     this.chevron.classList.add('rotate')
-                    open = true
+                    this.open = true
                 } else {
                     this.collapse()
                 }
@@ -1381,9 +1395,7 @@ customElements.define('sm-select', class extends HTMLElement {
                 previousOption = e.target;
             }
             if(!e.detail.switching)
-            setTimeout(() => {
                 this.collapse()
-            }, 200);
 
             e.target.classList.add('check-selected')
         })
@@ -1432,7 +1444,7 @@ smOption.innerHTML = `
             }
             :host(:focus){
                 outline: none;
-                background: rgba(var(--text), 0.1);
+                background: rgba(var(--text-color), 0.1);
             }
             :host(:focus) .option .icon{
                 opacity: 0.4
@@ -1445,7 +1457,7 @@ smOption.innerHTML = `
                 fill: none;
                 height: 0.8rem;
                 width: 0.8rem;
-                stroke: rgba(var(--text), 0.7);
+                stroke: rgba(var(--text-color), 0.7);
                 stroke-width: 10;
                 overflow: visible;
                 stroke-linecap: round;
@@ -1455,7 +1467,7 @@ smOption.innerHTML = `
             }
             @media (hover: hover){
                 .option:hover{
-                    background: rgba(var(--text), 0.1);
+                    background: rgba(var(--text-color), 0.1);
                 }
                 .option:hover .icon{
                     opacity: 0.4
@@ -1498,11 +1510,11 @@ customElements.define('sm-option', class extends HTMLElement {
             this.sendDetails()
         })
         this.addEventListener('keyup', e => {
-            if (e.code === 'Enter') {
+            if (e.code === 'Enter' || e.code === 'Space') {
                 e.preventDefault()
                 this.sendDetails(false)
             }
-            if (validKey.includes(e.key)) {
+            if (validKey.includes(e.code)) {
                 e.preventDefault()
                 this.sendDetails(true)
             }
@@ -1534,7 +1546,7 @@ smStripSelect.innerHTML = `
                 height: 2.6rem;
                 width: 2.6rem;
                 padding: 0.9rem;
-                stroke: rgba(var(--text), 0.7);
+                stroke: rgba(var(--text-color), 0.7);
                 stroke-width: 10;
                 overflow: visible;
                 stroke-linecap: round;
@@ -1542,7 +1554,7 @@ smStripSelect.innerHTML = `
                 cursor: pointer;
                 min-width: 0;
                 z-index: 1;
-                background: rgba(var(--foreground), 1);
+                background: rgba(var(--foreground-color), 1);
                 -webkit-tap-highlight-color: transparent;
                 transition: opacity 0.3s; 
             }
@@ -1577,17 +1589,17 @@ smStripSelect.innerHTML = `
                 z-index: 1;
             }
             .left{
-                background: linear-gradient(to left, transparent, rgba(var(--foreground), 1))
+                background: linear-gradient(to left, transparent, rgba(var(--foreground-color), 1))
             }
             .right{
                 right: 0;
-                background: linear-gradient(to right, transparent, rgba(var(--foreground), 1))
+                background: linear-gradient(to right, transparent, rgba(var(--foreground-color), 1))
             }
             slot::slotted(.active){
                 border-radius: 2rem;
                 opacity: 1;
-                background-color: rgba(var(--text), .6);  
-                color: rgba(var(--foreground), 1);
+                background-color: rgba(var(--text-color), .6);  
+                color: rgba(var(--foreground-color), 1);
             }
             @media (hover: none){
                 ::-webkit-scrollbar-track {
@@ -1756,11 +1768,11 @@ smStripOption.innerHTML = `
                 outline: none;
                 border-radius: 2rem;
                 text-transform: capitalize;
-                border: solid 1px rgba(var(--text), .3);
+                border: solid 1px rgba(var(--text-color), .3);
                 opacity: 0.9;
             }
             .option:focus{
-                background: rgba(var(--text), 0.1);
+                background: rgba(var(--text-color), 0.1);
             }
 
             @media (hover: hover){
@@ -1768,7 +1780,7 @@ smStripOption.innerHTML = `
                     transition: background 0.3s;
                 }
                 .option:hover{
-                    background: rgba(var(--text), 0.1);
+                    background: rgba(var(--text-color), 0.1);
                 }
             }
         </style>
@@ -1780,29 +1792,31 @@ customElements.define('sm-strip-option', class extends HTMLElement {
         super()
         this.attachShadow({ mode: 'open' }).append(smStripOption.content.cloneNode(true))
     }
+    sendDetails = () => {
+        let optionSelected = new CustomEvent('optionSelected', {
+            bubbles: true,
+            composed: true,
+            detail: {
+                text: this.textContent,
+                value: this.getAttribute('value')
+            }
+        })
+        this.dispatchEvent(optionSelected)
+    }
+
     connectedCallback() {
         this.addEventListener('click', e => {
-            let optionSelected = new CustomEvent('optionSelected', {
-                bubbles: true,
-                composed: true,
-                detail: {
-                    text: this.textContent,
-                    value: this.getAttribute('value')
-                }
-            })
-            this.dispatchEvent(optionSelected)
+            this.sendDetails()
+        })
+        this.addEventListener('keyup', e => {
+            if (e.code === 'Enter' || e.code === 'Space') {
+                e.preventDefault()
+                this.sendDetails(false)
+            }
         })
         if (this.hasAttribute('default')) {
             setTimeout(() => {
-                let optionSelected = new CustomEvent('optionSelected', {
-                    bubbles: true,
-                    composed: true,
-                    detail: {
-                        text: this.textContent,
-                        value: this.getAttribute('value')
-                    }
-                })
-                this.dispatchEvent(optionSelected)
+                this.sendDetails()
             }, 0);
         }
     }
@@ -1843,7 +1857,7 @@ smPopup.innerHTML = `
         display: flex;
         transform: translateY(100%);
         transition: transform 0.3s;
-        background: rgba(var(--foreground), 1);
+        background: rgba(var(--foreground-color), 1);
         box-shadow: 0 -1rem 2rem #00000020;
         overflow-y: auto;
         max-height: 100%;
@@ -1853,7 +1867,7 @@ smPopup.innerHTML = `
         width: 100%;
         align-items: center;
         justify-content: space-between;
-        border-bottom: 1px solid rgba(var(--text), 0.3);
+        border-bottom: 1px solid rgba(var(--text-color), 0.3);
     }
     .popup-top{
         display: flex;
@@ -1874,7 +1888,7 @@ smPopup.innerHTML = `
         height: 1.6rem;
         width: 1.6rem;
         padding: 0.4rem;
-        stroke: rgba(var(--text), 0.7);
+        stroke: rgba(var(--text-color), 0.7);
         stroke-width: 8;
         overflow: visible;
         stroke-linecap: round;
@@ -1905,7 +1919,7 @@ smPopup.innerHTML = `
         .handle{
             height: 0.3rem;
             width: 2rem;
-            background: rgba(var(--text), .2);
+            background: rgba(var(--text-color), .2);
             border-radius: 1rem;
             margin: 0.5rem 0;
         }
@@ -2059,7 +2073,7 @@ smCarousel.innerHTML = `
         width: 2.6rem;
         border-radius: 3rem;
         padding: 0.9rem;
-        stroke: rgba(var(--text), 0.7);
+        stroke: rgba(var(--text-color), 0.7);
         stroke-width: 10;
         overflow: visible;
         stroke-linecap: round;
@@ -2067,7 +2081,7 @@ smCarousel.innerHTML = `
         cursor: pointer;
         min-width: 0;
         z-index: 1;
-        background: rgba(var(--foreground), 1);
+        background: rgba(var(--foreground-color), 1);
         box-shadow: 0 0.2rem 0.2rem #00000020,
                     0 0.5rem 1rem #00000040; 
         -webkit-tap-highlight-color: transparent;
@@ -2093,11 +2107,11 @@ smCarousel.innerHTML = `
         transition: opacity 0.3s;
     }
     .left{
-        background: linear-gradient(to left, transparent, rgba(var(--foreground), 0.6))
+        background: linear-gradient(to left, transparent, rgba(var(--foreground-color), 0.6))
     }
     .right{
         right: 0;
-        background: linear-gradient(to right, transparent, rgba(var(--foreground), 0.6))
+        background: linear-gradient(to right, transparent, rgba(var(--foreground-color), 0.6))
     }
     .carousel-container{
         position: relative;
@@ -2303,10 +2317,10 @@ smNotifications.innerHTML = `
         border-radius: 0.3rem;
         box-shadow: 0.1rem 0.2rem 0.2rem rgba(0, 0, 0, 0.1),
                     0.5rem 1rem 2rem rgba(0, 0, 0, 0.1);
-        background: rgba(var(--foreground), 1);
+        background: rgba(var(--foreground-color), 1);
         transition: height 0.3s, transform 0.3s, opacity 0.3s;
         overflow: hidden;
-        border-bottom: 1px solid rgba(var(--text), 0.2);
+        border-bottom: 1px solid rgba(var(--text-color), 0.2);
     }
     h4:first-letter,
     p:first-letter{
@@ -2317,7 +2331,7 @@ smNotifications.innerHTML = `
     }
     p{
         line-height: 1.6;
-        color: rgba(var(--text), 0.8);
+        color: rgba(var(--text-color), 0.8);
         overflow-wrap: break-word;
     }
     .notification:last-of-type{
@@ -2333,7 +2347,7 @@ smNotifications.innerHTML = `
         fill: none;
         height: 1.6rem;
         width: 1.6rem;
-        stroke: rgba(var(--text), 0.7);
+        stroke: rgba(var(--text-color), 0.7);
         overflow: visible;
         stroke-linecap: round;
         border-radius: 1rem;
@@ -2366,7 +2380,7 @@ smNotifications.innerHTML = `
             margin-right: 1.5rem;
             margin-bottom: 1rem;
             border-bottom: none;
-            border: solid 1px rgba(var(--text), 0.2);
+            border: solid 1px rgba(var(--text-color), 0.2);
             transform: translateX(1rem);
         }
     }
@@ -2438,9 +2452,10 @@ customElements.define('sm-notifications', class extends HTMLElement{
         this.notification.style.transform = `translateX(0)`
     }
 
-    push = (messageHeader, messageBody, type ,pinned) => {
+    push = (messageHeader, messageBody, options) => {
         let notification = document.createElement('div'),
-            composition = ``;
+            composition = ``,
+            { pinned, type } = options;
         notification.classList.add('notification')
         if (pinned)
             notification.classList.add('pinned')
