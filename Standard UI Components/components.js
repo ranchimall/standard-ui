@@ -404,14 +404,22 @@ smTabs.innerHTML = `
     display: flex;
 }
 .tabs{
+    position: relative;
+    display: grid;
+    grid-template-rows: auto 1fr;
+}
+.panel-container{
+    position: relative;
     display: flex;
     flex-direction: column;
     width: 100%;
-    position: relative;
     overflow: hidden auto;
 }
 .tab-header{
-    display: flex;
+    display: grid;
+    grid-auto-flow: column;
+    justify-content: flex-start;
+    gap: 1rem;
     position: relative;
     overflow: auto hidden;
     max-width: 100%;
@@ -460,11 +468,13 @@ slot[name="panel"]::slotted(.hide-completely){
 }         
 </style>
 <div class="tabs">
-    <div class="tab-header">
+    <div part="tab-header" class="tab-header">
         <slot name="tab">Nothing to see here</slot>
         <div class="indicator"></div>
     </div>
-    <slot name="panel">Nothing to see here</slot>
+    <div part="panel-container" class="panel-container">
+        <slot name="panel">Nothing to see here</slot>
+    </div>
 </div>
 `;
 
@@ -595,6 +605,15 @@ customElements.define('sm-tabs', class extends HTMLElement {
             }
             this.prevTab = e.target;
         })
+        let resizeObserver = new ResizeObserver(entries => {
+            entries.forEach((entry) => { 
+                if (this.prevTab) {
+                    let tabDimensions = this.prevTab.getBoundingClientRect();
+                    this.indicator.setAttribute('style', `width: ${tabDimensions.width}px; transform: translateX(${tabDimensions.left - this.tabSlot.assignedElements()[0].parentNode.getBoundingClientRect().left + this.tabHeader.scrollLeft}px)`)
+                }
+            })
+        })
+        resizeObserver.observe(this)
         let observer = new IntersectionObserver((entries) => {
             entries.forEach((entry) => {
                 if (entry.isIntersecting) {
@@ -604,21 +623,21 @@ customElements.define('sm-tabs', class extends HTMLElement {
                     })
                     if (activeElement.length) {
                         let tabDimensions = activeElement[0].getBoundingClientRect();
-                        this.indicator.setAttribute('style', `width: ${tabDimensions.width}px; transform: translateX(${tabDimensions.left - activeElement[0].parentNode.getBoundingClientRect().left + this.tabHeader.scrollLeft}px)`)
+                        this.indicator.setAttribute('style', `transform: translateX(${tabDimensions.left - activeElement[0].parentNode.getBoundingClientRect().left + this.tabHeader.scrollLeft}px)`)
                     }
                     else {
                         this.tabSlot.assignedElements()[0].classList.add('active')
                         this.panelSlot.assignedElements()[0].classList.remove('hide-completely')
                         let tabDimensions = this.tabSlot.assignedElements()[0].getBoundingClientRect();
-                        this.indicator.setAttribute('style', `width: ${tabDimensions.width}px; transform: translateX(${tabDimensions.left - this.tabSlot.assignedElements()[0].parentNode.getBoundingClientRect().left + this.tabHeader.scrollLeft}px)`)
+                        this.indicator.setAttribute('style', `transform: translateX(${tabDimensions.left - this.tabSlot.assignedElements()[0].parentNode.getBoundingClientRect().left + this.tabHeader.scrollLeft}px)`)
                         this.prevTab = this.tabSlot.assignedElements()[0];
                     }
                 }
             })
         },
             { threshold: 1.0 })
-        observer.observe(this.tabHeader)
-        if (this.hasAttribute('enable-swipe') && this.getAttribute('enable-swipe') == 'true') {
+        observer.observe(this)
+        if (this.hasAttribute('enable-flick') && this.getAttribute('enable-flick') == 'true') {
             let touchStartTime = 0,
                 touchEndTime = 0,
                 swipeTimeThreshold = 200,
@@ -1264,7 +1283,7 @@ smSelect.innerHTML = `
             .icon{
                 margin-left: 1rem;
             }
-            :host([align-select="right"]) .options{
+            :host([align-select="left"]) .options{
                 left: 0;
             }
             :host([align-select="right"]) .options{
@@ -1414,7 +1433,7 @@ customElements.define('sm-select', class extends HTMLElement {
             }
         });
         document.addEventListener('mousedown', e => {
-            if (!this.contains(e.target)) {
+            if (!this.contains(e.target) && this.open) {
                 this.collapse()
             }
         })
@@ -2073,32 +2092,32 @@ smCarousel.innerHTML = `
         width: 2.6rem;
         border-radius: 3rem;
         padding: 0.9rem;
-        stroke: rgba(var(--text-color), 0.7);
-        stroke-width: 10;
+        stroke: rgba(var(--foreground-color), 0.8);
+        stroke-width: 14;
         overflow: visible;
         stroke-linecap: round;
         stroke-linejoin: round;
         cursor: pointer;
         min-width: 0;
         z-index: 1;
-        background: rgba(var(--foreground-color), 1);
-        box-shadow: 0 0.2rem 0.2rem #00000020,
+        background: rgba(var(--text-color), 1);
+        box-shadow: 0 0.2rem 0.2rem #00000020, 
                     0 0.5rem 1rem #00000040; 
         -webkit-tap-highlight-color: transparent;
-        transition: transform 0.3s; 
+        transform: scale(0)
     }
     .hide{
         pointer-events: none;
         opacity: 0;
     }
-    .shrink{
-        transform: scale(0)
+    .expand{
+        transform: scale(1)
     }
     .previous-item{
-        left: -1.3rem;
+        left: 1rem;
     }
     .next-item{
-        right: -1.3rem;
+        right: 1rem;
     }
     .left,.right{
         position: absolute;
@@ -2120,7 +2139,8 @@ smCarousel.innerHTML = `
         align-items: center;
     }
     .carousel{
-        display: flex;
+        display: grid;
+        grid-auto-flow: column;
         max-width: 100%;
         overflow: auto hidden;
         scroll-snap-type: x mandatory;
@@ -2136,9 +2156,6 @@ smCarousel.innerHTML = `
     }
     :host([align-items="end"]) slot::slotted(*){
         scroll-snap-align: end;
-    }
-    @media screen and (min-width: 640px){
-        
     }
     @media (hover: hover){
         .carousel{
@@ -2170,14 +2187,14 @@ smCarousel.innerHTML = `
 </style>
 <div class="carousel-container">
     <div class="left"></div>
-    <svg class="icon previous-item hide" viewBox="4 0 64 64">
+    <svg class="icon previous-item" viewBox="4 0 64 64">
         <title>Previous</title>
         <polyline points="48.01 0.35 16.35 32 48.01 63.65"/>
     </svg>
     <div class="carousel">
         <slot></slot>
     </div>
-    <svg class="icon next-item hide" viewBox="-6 0 64 64">
+    <svg class="icon next-item" viewBox="-6 0 64 64">
         <title>Next</title>
         <polyline points="15.99 0.35 47.65 32 15.99 63.65"/>
     </svg>
@@ -2219,11 +2236,11 @@ customElements.define('sm-carousel', class extends HTMLElement{
         this.scrollDistance = this.carouselContainer.getBoundingClientRect().width/3
         const firstElementObserver = new IntersectionObserver(entries => {
             if (entries[0].isIntersecting){
-                this.previousArrow.classList.add('hide', 'shrink')
+                this.previousArrow.classList.remove('expand')
                 this.previousGradient.classList.add('hide')
             }
             else {
-                this.previousArrow.classList.remove('hide', 'shrink')
+                this.previousArrow.classList.add('expand')
                 this.previousGradient.classList.remove('hide')
             }
         }, {
@@ -2232,11 +2249,11 @@ customElements.define('sm-carousel', class extends HTMLElement{
         })        
         const lastElementObserver = new IntersectionObserver(entries => {
             if (entries[0].isIntersecting){
-                this.nextArrow.classList.add('hide', 'shrink')
+                this.nextArrow.classList.remove('expand')
                 this.nextGradient.classList.add('hide')
             }
             else{
-                this.nextArrow.classList.remove('hide', 'shrink')
+                this.nextArrow.classList.add('expand')
                 this.nextGradient.classList.remove('hide')
             }
         }, {
@@ -2596,5 +2613,283 @@ customElements.define('sm-notifications', class extends HTMLElement{
             childList: true,
             subtree: true
         })
+    }
+})
+// sm-menu
+const smMenu = document.createElement('template')
+smMenu.innerHTML = `
+        <style>     
+            *{
+                padding: 0;
+                margin: 0;
+                box-sizing: border-box;
+            } 
+            .menu{
+                display: grid;
+                place-items: center;
+                position: relative;
+                height: 2rem;
+                width: 2rem;
+                outline: none;
+            }
+            .icon {
+                position: absolute;
+                fill: rgba(var(--text-color), 0.7);
+                height: 2.4rem;
+                width: 2.4rem;
+                padding: 0.7rem;
+                stroke: rgba(var(--text-color), 0.7);
+                stroke-width: 6;
+                overflow: visible;
+                stroke-linecap: round;
+                stroke-linejoin: round;
+                border-radius: 2rem;
+                transition: background 0.3s;
+            }      
+            :host{
+                display: inline-flex;
+            }
+            .hide{
+                opacity: 0;
+                pointer-events: none;
+            }
+            .select{
+                position: relative;
+                display: flex;
+                flex-direction: column;
+                cursor: pointer;
+                width: 100%;
+                -webkit-tap-highlight-color: transparent;
+            }
+            .menu:focus .icon,
+            .focused{
+                background: rgba(var(--text-color), 0.1); 
+            }
+            :host([align-options="left"]) .options{
+                left: 0;
+            }
+            :host([align-options="right"]) .options{
+                right: 0;
+            }
+            .options{
+                padding: 0.5rem 0;
+                overflow: hidden auto;
+                position: absolute;
+                display: flex;
+                min-width: 100%;
+                transform: translateY(-1rem);
+                flex-direction: column;
+                background: rgba(var(--foreground-color), 1);
+                transition: opacity 0.3s, transform 0.3s;
+                border: solid 1px rgba(var(--text-color), 0.2);
+                border-radius: 0.2rem;
+                z-index: 2;
+                box-shadow: 0.4rem 0.8rem 1.2rem #00000030;
+                top: 100%;
+                margin: 0.4rem 0 0 0;
+                bottom: auto;
+            }
+            .moveUp{
+                top: auto;
+                margin: 0 0 0.4rem 0;
+                bottom: 100%;
+                transform: translateY(1rem);
+            }
+            .moveLeft{
+                left: auto: 
+                right: 0;
+            }
+            .no-transformations{
+                transform: none !important;
+            }
+            @media (hover: hover){
+                .menu:hover .icon{
+                    background: rgba(var(--text-color), 0.1); 
+                }
+            }
+        </style>
+        <div class="select">
+            <div class="menu" tabindex="0">
+                <svg class="icon" viewBox="0 0 64 64">
+                    <title>options</title>
+                    <circle cx="32" cy="6" r="5.5"/>
+                    <circle cx="32" cy="58" r="5.5"/>
+                    <circle cx="32" cy="31.89" r="5.5"/>
+                </svg>
+            </div>
+            <div class="options hide">
+                <slot></slot> 
+            </div>
+        </div>`;
+customElements.define('sm-menu', class extends HTMLElement {
+    constructor() {
+        super()
+        this.attachShadow({ mode: 'open' }).append(smMenu.content.cloneNode(true))
+    }
+    static get observedAttributes() {
+        return ['value']
+    }
+    get value() {
+        return this.getAttribute('value')
+    }
+    set value(val) {
+        this.setAttribute('value', val)
+    }
+    expand = () => {
+        if (!this.open) {
+            if (this.containerDimensions.left > this.containerDimensions.width) {
+                this.optionList.style.right = 0
+            }
+            else {
+                this.optionList.style.right = 'auto'
+            }
+            this.optionList.classList.remove('hide')
+            this.optionList.classList.add('no-transformations')
+            this.open = true
+            this.icon.classList.add('focused')
+        }
+    }
+    collapse = () => {
+        if (this.open) {
+            this.open = false
+            this.icon.classList.remove('focused')
+            this.optionList.classList.add('hide')
+            this.optionList.classList.remove('no-transformations')
+        }
+    }
+    connectedCallback() {
+        this.availableOptions
+        this.containerDimensions
+        this.optionList = this.shadowRoot.querySelector('.options')
+        let slot = this.shadowRoot.querySelector('.options slot'),
+            menu = this.shadowRoot.querySelector('.menu')
+        this.icon = this.shadowRoot.querySelector('.icon')
+        this.open = false;
+        menu.addEventListener('click', e => {
+            if (!this.open) {
+                this.expand()
+            } else {
+                this.collapse()
+            }
+        })
+        menu.addEventListener('keydown', e => {
+            if (e.code === 'ArrowDown' || e.code === 'ArrowRight') {
+                e.preventDefault()
+                this.availableOptions[0].focus()
+            }
+            if (e.code === 'Enter' || e.code === 'Space') {
+                e.preventDefault()
+                if (!this.open) {
+                    this.expand()
+                } else {
+                    this.collapse()
+                }
+            }
+        })
+        this.optionList.addEventListener('keydown', e => {
+            if (e.code === 'ArrowUp' || e.code === 'ArrowRight') {
+                e.preventDefault()
+                if (document.activeElement.previousElementSibling) {
+                    document.activeElement.previousElementSibling.focus()
+                }
+            }
+            if (e.code === 'ArrowDown' || e.code === 'ArrowLeft') {
+                e.preventDefault()
+                if (document.activeElement.nextElementSibling)
+                    document.activeElement.nextElementSibling.focus()
+            }
+        })
+        this.optionList.addEventListener('click', e => {
+            this.collapse()
+        })
+        slot.addEventListener('slotchange', e => {
+            this.availableOptions = slot.assignedElements()
+            this.containerDimensions = this.optionList.getBoundingClientRect()
+            this.menuDimensions = menu.getBoundingClientRect()
+        });
+        window.addEventListener('mousedown', e => {
+            if (!this.contains(e.target) && e.button !== 2) {
+                this.collapse()
+            }
+        })
+        if (this.hasAttribute('set-context') && this.getAttribute('set-context') === 'true'){
+            this.parentNode.addEventListener('mouseup', e => {
+                if (e.button === 2) {
+                    this.expand()
+                }
+            })
+        }
+        const intersectionObserver = new IntersectionObserver(entries => {
+            entries.forEach(entry => {
+                if (!entry.isIntersecting && this.open) {
+                    if(window.innerHeight - entry.intersectionRect.top < this.containerDimensions.height)
+                        this.optionList.classList.add('moveUp')
+                    else
+                        this.optionList.classList.remove('moveUp')
+                    if (entry.intersectionRect.left > this.containerDimensions.width) {
+                        this.optionList.style.right = 0
+                    }
+                    else {
+                        this.optionList.style.right = 'auto'
+                    }
+                }
+            })
+        }, {
+                threshold: 1
+        })
+        intersectionObserver.observe(this.optionList)
+    }
+})
+
+// option
+const smMenuOption = document.createElement('template')
+smMenuOption.innerHTML = `
+        <style>     
+            *{
+                padding: 0;
+                margin: 0;
+                box-sizing: border-box;
+            }     
+            :host{
+                display: flex;
+            }
+            .option{
+                min-width: 100%;
+                padding: 0.8rem 1.6rem;
+                cursor: pointer;
+                overflow-wrap: break-word;
+                white-space: nowrap;
+                outline: none;
+                display: flex;
+                align-items: center;
+                text-transform: capitalize;
+            }
+            :host(:focus){
+                outline: none;
+                background: rgba(var(--text-color), 0.1);
+            }
+            @media (hover: hover){
+                .option:hover{
+                    background: rgba(var(--text-color), 0.1);
+                }
+            }
+        </style>
+        <div class="option">
+            <slot></slot> 
+        </div>`;
+customElements.define('sm-menu-option', class extends HTMLElement {
+    constructor() {
+        super()
+        this.attachShadow({ mode: 'open' }).append(smMenuOption.content.cloneNode(true))
+    }
+
+    connectedCallback() {
+        this.addEventListener('keyup', e => {
+            if (e.code === 'Enter' || e.code === 'Space') {
+                e.preventDefault()
+                this.click()
+            }
+        })
+        this.setAttribute('tabindex', '0')
     }
 })
