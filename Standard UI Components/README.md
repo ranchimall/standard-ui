@@ -278,6 +278,32 @@ console.log(myInput.value)
 console.log(myInput.isValid)
 ```
 
+### Menu
+[See Demo](https://sairaj-mote.github.io/components/)
+
+```html
+<sm-menu></sm-menu>
+```
+You can add options using `<sm-menu-option></sm-menu-option>` instead of `<option>`. 
+
+#### Syntax 
+```html
+<sm-menu id="my_menu">
+    <sm-menu-option>first option</sm-menu-option>
+    <sm-menu-option>second option</sm-menu-option>
+    <sm-menu-option>third option</sm-menu-option>
+</sm-menu>
+```
+
+#### Is it ***Responsive***?
+
+No, As by default this is an inline element that means it won't strech accross whole horizontal space.
+
+#### Accessibility
+
+This component supports keyboard interactivity like ***Enter*** or ***Spacebar*** to expand/collapse options. ***Arrow keys*** can be used to navigate between options.
+Also can be accessed using ***Tab***. 
+
 ### Notifications
 [See Demo](https://sairaj-mote.github.io/components/)
 
