@@ -159,7 +159,6 @@ smInput.innerHTML = `
         }
         :host{
             display: inline-flex;
-            flex-direction: column;
         }
         .hide{
            opacity: 0 !important;
@@ -190,6 +189,7 @@ smInput.innerHTML = `
             background: rgba(var(--text-color), 0.1);
             font-family: var(--font-family);
             width: 100%
+            outline: none;
         }
 
         input:focus{
@@ -364,10 +364,6 @@ customElements.define('sm-input',
             })
             this.input.addEventListener('input', e => {
                 this.checkInput()
-                this.dispatchEvent(new CustomEvent('input', {
-                    bubbles: true,
-                    composed: true
-                }))
             })
             this.input.addEventListener('change', e => {
                 this.valueChanged = true;
@@ -1886,11 +1882,13 @@ smPopup.innerHTML = `
         width: 100%;
         align-items: center;
         justify-content: space-between;
-        border-bottom: 1px solid rgba(var(--text-color), 0.3);
     }
     .popup-top{
         display: flex;
         width: 100%;
+    }
+    .popup-body{
+        padding: 1.5rem;
     }
     .heading{
         font-weight: 400;
@@ -1966,7 +1964,9 @@ smPopup.innerHTML = `
                 </svg>
             </div>
         </div>
-        <slot></slot>
+        <div class="popup-body">
+            <slot></slot>
+        </div>
     </div>
 </div>
 `;
@@ -1976,7 +1976,17 @@ customElements.define('sm-popup', class extends HTMLElement {
         this.attachShadow({ mode: 'open' }).append(smPopup.content.cloneNode(true))
     }
 
-    show() {
+    resumeScrolling = () => {
+        const scrollY = document.body.style.top;
+        window.scrollTo(0, parseInt(scrollY || '0') * -1);
+        setTimeout(() => {
+            document.body.setAttribute('style', `overflow: auto; top: initial`)
+        }, 300);
+    }
+
+    show(pinned, popupStack) {
+        this.pinned = pinned
+        this.popupStack = popupStack
         this.popupContainer.classList.remove('hide')
         if (window.innerWidth < 648)
             this.popup.style.transform = 'translateY(0)';
@@ -1990,9 +2000,15 @@ customElements.define('sm-popup', class extends HTMLElement {
             this.popup.style.transform = 'translateY(100%)';
         else
             this.popup.style.transform = 'scale(0.9)';
-        const scrollY = document.body.style.top;
-        document.body.setAttribute('style', `overflow: auto; top: initial`)
-        window.scrollTo(0, parseInt(scrollY || '0') * -1);
+        if (typeof this.popupStack !== 'undefined') {
+            this.popupStack.pop()
+            if (this.popupStack.items.length === 0) {
+                this.resumeScrolling()
+            }
+        }
+        else {
+           this.resumeScrolling()
+        }
     }
 
     handleTouchStart = (e) => {
@@ -2036,6 +2052,8 @@ customElements.define('sm-popup', class extends HTMLElement {
     }
 
     connectedCallback() {
+        this.pinned = false
+        this.popupStack
         this.popupContainer = this.shadowRoot.querySelector('.popup-container')
         this.popup = this.shadowRoot.querySelector('.popup')
         this.offset
@@ -2051,7 +2069,7 @@ customElements.define('sm-popup', class extends HTMLElement {
             this.shadowRoot.querySelector('.heading').textContent = this.getAttribute('heading')
                 
         this.popupContainer.addEventListener('mousedown', e => {
-            if (e.target === this.popupContainer) {
+            if (e.target === this.popupContainer && !this.pinned) {
                 this.hide()
             }
         })
@@ -2099,7 +2117,6 @@ smCarousel.innerHTML = `
         stroke-linejoin: round;
         cursor: pointer;
         min-width: 0;
-        z-index: 1;
         background: rgba(var(--text-color), 1);
         box-shadow: 0 0.2rem 0.2rem #00000020, 
                     0 0.5rem 1rem #00000040; 
@@ -2139,8 +2156,7 @@ smCarousel.innerHTML = `
         align-items: center;
     }
     .carousel{
-        display: grid;
-        grid-auto-flow: column;
+        display: flex;
         max-width: 100%;
         overflow: auto hidden;
         scroll-snap-type: x mandatory;
@@ -2806,13 +2822,20 @@ customElements.define('sm-menu', class extends HTMLElement {
             this.availableOptions = slot.assignedElements()
             this.containerDimensions = this.optionList.getBoundingClientRect()
             this.menuDimensions = menu.getBoundingClientRect()
+            if (this.containerDimensions.left > this.containerDimensions.width) {
+                this.optionList.style.right = 0
+            }
+            else {
+                this.optionList.style.right = 'auto'
+            }
         });
         window.addEventListener('mousedown', e => {
             if (!this.contains(e.target) && e.button !== 2) {
                 this.collapse()
             }
         })
-        if (this.hasAttribute('set-context') && this.getAttribute('set-context') === 'true'){
+        if (this.hasAttribute('set-context') && this.getAttribute('set-context') === 'true') {
+            this.parentNode.setAttribute('oncontextmenu', 'return false')
             this.parentNode.addEventListener('mouseup', e => {
                 if (e.button === 2) {
                     this.expand()
