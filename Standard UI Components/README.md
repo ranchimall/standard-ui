@@ -51,6 +51,7 @@ Now you are ready to use them in your HTML markup as any other standard HMTL tag
 | [Carousel](#carousel) |
 | [Checkbox](#checkbox) |
 | [Input](#input) |
+| [Menu](#menu) |
 | [Notifications](#notifications) |
 | [Popup](#popup) |
 | [Switch](#switch) |
