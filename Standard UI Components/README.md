@@ -89,19 +89,16 @@ Variants are different stylistic versions of same component, But they have same 
 
 #### Disabled State
 
-These can disabled adding `disabled="true` attribute. That makes them look in-active but they still will receive events. ***Thats why it's important to only use it's custom event to listen for click event*** more on that further. 
+These can disabled adding `disable` attribute. That makes them look in-active but they still will receive events. ***Thats why it's important to only use it's custom event to listen for click event*** more on that further. 
 ```html
-<sm-button disabled="true">Disabled</sm-button>
+<sm-button disable>Disabled</sm-button>
 ```
 #### Custom Events
 
-1. `clicked` is a custom event specified for `sm-button` that listens to button being clicked like normal `click` event. The main difference being `click` event will fire even if `disabled="true"` is set as sm-button doesn't stop actual component from receiving pointer events. The reason being it has another event to handle disabled state.  
+1. `clicked` is a custom event specified for `sm-button` that listens to button being clicked like normal `click` event. The main difference being `click` event will fire even if `disable` is set as sm-button doesn't stop actual component from receiving pointer events. The reason being it has another event to handle disabled state.  
 
 2. `disabled` event fires when button is disabled and user tries to click on it. This event can be useful if you want to validate a form but user clicked submit before all data so you show message according to situation.
 
-#### Is it ***Responsive***?
-
-No, As by default this is an inline element that means it won't strech accross whole horizontal space. But this behaviour can be changed that by following css.
 ```css
 sm-button{
   width: 100%;
@@ -169,22 +166,22 @@ This has two custom attributes `checked` and `disabled`.
 1. Checked
 ```html
 <!--To set checkbox as checked-->
-<sm-checkbox checked="true"></sm-checkbox>
+<sm-checkbox checked></sm-checkbox>
 ```
 2. disabled
 ```html
 <!-- To set disabled -->
-<sm-checkbox disabled="true"></sm-checkbox>
+<sm-checkbox disable></sm-checkbox>
 ```
 
 #### Disabled State
 
-This component can disabled adding `disabled="true` attribute.
+This component can disabled adding `disable` attribute.
 
 You can also have option to use both of these attributes at the same time.
 ```html
 <!-- Setting checkbox true while it's disabled -->
-<sm-checkbox disabled="true" checked="true"></sm-checkbox>
+<sm-checkbox disable checked></sm-checkbox>
 ```
 
 #### Supported Events
@@ -208,7 +205,7 @@ let myCheckbox = document.getElementById('my_checkbox');
 ```
 ##### To set checked 
 ```js
-checkbox.checked="true"
+checkbox.checked = true
 //or
 myCheckbox.setAttribute('checked', 'true')
 ```
@@ -216,9 +213,9 @@ Replace `"true"` with `"false"` to un-tick checkbox
 
 ##### To set disabled
 ```js
-myCheckbox.disabled="true"
+myCheckbox.disabled = true
 //or
-myCheckbox.setAttribute('disabled', 'true')
+myCheckbox.setAttribute('disable', '')
 ```
 
 ### Input
@@ -246,9 +243,7 @@ By default placeholder will disappear when input field has some value.
 
 All events supported by traditional input.
 
-#### Is it ***Responsive***?
 
-No, As by default this is an inline element that means it won't strech accross whole horizontal space. But this behaviour can be changed that by following css.
 ```css
 sm-input{
   width: 100%;
@@ -432,12 +427,12 @@ This has two custom attributes `checked` and `disabled`.
 1. Checked
 ```html
 <!--To set switch as checked or on -->
-<sm-switch checked="true"></sm-switch>
+<sm-switch checked></sm-switch>
 ```
 2. disabled
 ```html
 <!--To set switch as disabled  -->
-<sm-switch disabled="true"></sm-switch>
+<sm-switch disabled></sm-switch>
 ```
 
 #### Disabled State
@@ -447,7 +442,7 @@ This component can disabled adding `disabled="true` attribute.
 You can also have option to use both of these attributes at the same time.
 ```html
 <!-- Setting switch checked true while it's disabled -->
-<sm-checkbox disabled="true" checked="true"></sm-checkbox>
+<sm-checkbox disable checked></sm-checkbox>
 ```
 
 #### Supported Events
@@ -471,19 +466,17 @@ let mySwitch = document.getElementById('mySwitch');
 ```
 ##### To set checked 
 ```js
-mySwitch.checked="true"
+mySwitch.checked = true
 //or
-mySwitch.setAttribute('checked', 'true')
+mySwitch.setAttribute('checked', '')
 ```
-Replace `"true"` with `"false"` to turn switch off.
 
 ##### To set disabled
 ```js
-mySwitch.disabled="true"
+mySwitch.disabled = true
 //or
-mySwitch.setAttribute('disabled', 'true')
+mySwitch.setAttribute('disable', '')
 ```
-Replace `"true"` with `"false"` to enable switch.
 
 ### Select
 [See Demo](https://sairaj-mote.github.io/components/)
@@ -508,9 +501,6 @@ You can specify `sm-option` value using `value=""` attribute in option markup.
 
 This supports `change` event that fires when new value is selected from dropdown.
 
-#### Is it ***Responsive***?
-
-No, As by default this is an inline element that means it won't strech accross whole horizontal space. But this behaviour can be changed that by following css.
 ```css
 sm-select{
   width: 100%;
@@ -587,15 +577,7 @@ This component supports keyboard interactivity like ***Enter*** or ***Spacebar**
 Notice how every `sm-tab` is folloed by `sm-option`, This is default structure or syntax for using `sm-tabs`. ***If you didn't add a panel after a tab, the component won't work.***
 Another key part is `sm-tab` should have `slot="tab"` as attribute and `slot="panel"` for `sm-panel`. As this component uses HTML5 ***[<slot>](https://developer.mozilla.org/en-US/docs/Web/HTML/Element/slot)*** tag to organize user added data. For more information, please refer to this [MDN article](https://developer.mozilla.org/en-US/docs/Web/Web_Components/Using_templates_and_slots).
 
-#### Custom Attributes
 
-1. enable-flick
-```html
-<!--To enable flick gesture to change panel in view -->
-<sm-tabs enable-flick="true">
-//Tabs body
-</sm-tabs>
-```
 #### Variants
 Variants are different stylistic versions of same component, But they have same functions.
 
@@ -608,9 +590,6 @@ Setting this variant will change default sliding indicator to a block for provid
 </sm-tabs>
 ```
 
-#### Is it ***Responsive***?
-
-Yes, it will adjust according to screen size and input interrfaces like mouse, touch. 
 
 #### Interactions
 
