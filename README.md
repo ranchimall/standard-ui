@@ -8,6 +8,8 @@
 
 #### To use Standard UI Components, Go to Standard UI Components folder, and link or add components.js to your project. Read the detailed documentation inside the Standard UI Components for instructions on how to use
 
-#### aggregate.js contains all common visual js used in RanchiMall projects. These are for reference only. Users should use components.js inside Standard UI Components folder
+#### aggregate.js contains all common visual js used in RanchiMall projects. Normally you will not need it. But if you like one of the common UI features in any of RanchiMall apps, it is available here
 
-#### We also provide notification sounds which are approved sound files for RanchiMall applications. These are available in Notification Sounds folder.
+#### aggregate.svg contains all common visual svg elements used in RanchiMall projects. Users get access to all our SVG that we have actually used from all the projects from aggregate.svg
+
+#### We also provide approved notification sounds for RanchiMall applications. These are available in Notification Sounds folder.
