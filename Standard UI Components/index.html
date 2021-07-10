@@ -925,7 +925,7 @@
 
         let allComponentsObj = []
         async function getComponents() {
-            const files = await fetch('https://api.github.com/repos/sairaj-mote/components/contents/dist')
+            const files = await fetch('https://api.github.com/repos/ranchimall/standard-visual-design-system/contents/Standard%20UI%20Components/dist')
             allComponentsObj = await files.json()
         }
         function downloadJs(componentsArray, options = {minified: true}){
