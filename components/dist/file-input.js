@@ -8,7 +8,7 @@ fileInput.innerHTML = `
 		}
 		:host{
 			--border-radius: 0.3rem;
-			--button-color: inherit;
+			--button-color: var(--background-color);
 			--button-font-weight: 500;
 			--button-background-color: var(--accent-color);
 		}
@@ -16,7 +16,7 @@ fileInput.innerHTML = `
 			display: flex;
 		}
 		
-		.file-picker {
+		.file-picker-button {
             display: flex;
 			cursor: pointer;
 			user-select: none;
@@ -56,7 +56,7 @@ fileInput.innerHTML = `
   	</style>
 	<ul class="files-preview-wrapper"></ul>
   	<label tabindex="0" class="file-input">
-		<div class="file-picker"><slot>Choose file</slot></div>
+		<div class="file-picker-button"><slot>Choose file</slot></div>
 		<input type="file">
 	</label>
 `
@@ -70,7 +70,7 @@ customElements.define('file-input', class extends HTMLElement {
 		this.input = this.shadowRoot.querySelector('input')
 		this.fileInput = this.shadowRoot.querySelector('.file-input')
 		this.filesPreviewWraper = this.shadowRoot.querySelector('.files-preview-wrapper')
-		this.observeList = ['accept', 'multiple', 'capture']
+		this.reflectedAttributes = ['accept', 'multiple', 'capture']
 
 		this.reset = this.reset.bind(this)
 		this.formatBytes = this.formatBytes.bind(this)
@@ -142,7 +142,7 @@ customElements.define('file-input', class extends HTMLElement {
         this.fileInput.addEventListener('keydown', this.handleKeyDown)
 	}
 	attributeChangedCallback(name) {
-		if (this.observeList.includes(name)){
+		if (this.reflectedAttributes.includes(name)){
             if (this.hasAttribute(name)) {
                 this.input.setAttribute(name, this.getAttribute(name) ? this.getAttribute(name) : '')
 			}

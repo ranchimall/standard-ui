@@ -178,6 +178,11 @@ customElements.define('sm-menu', class extends HTMLElement {
             menu = this.shadowRoot.querySelector('.menu')
         this.icon = this.shadowRoot.querySelector('.icon')
         this.open = false;
+
+        slot.addEventListener('slotchange', e => {
+            this.availableOptions = slot.assignedElements()
+            this.containerDimensions = this.optionList.getBoundingClientRect()
+        });
         menu.addEventListener('click', e => {
             if (!this.open) {
                 this.expand()
@@ -204,21 +209,22 @@ customElements.define('sm-menu', class extends HTMLElement {
                 e.preventDefault()
                 if (document.activeElement.previousElementSibling) {
                     document.activeElement.previousElementSibling.focus()
+                } else {
+                    this.availableOptions[this.availableOptions.length - 1].focus()
                 }
             }
             if (e.code === 'ArrowDown' || e.code === 'ArrowLeft') {
                 e.preventDefault()
-                if (document.activeElement.nextElementSibling)
+                if (document.activeElement.nextElementSibling) {
                     document.activeElement.nextElementSibling.focus()
+                } else{
+                    this.availableOptions[0].focus()
+                }
             }
         })
         this.optionList.addEventListener('click', e => {
             this.collapse()
         })
-        slot.addEventListener('slotchange', e => {
-            this.availableOptions = slot.assignedElements()
-            this.containerDimensions = this.optionList.getBoundingClientRect()
-        });
         window.addEventListener('mousedown', e => {
             if (!this.contains(e.target) && e.button !== 2) {
                 this.collapse()

@@ -40,7 +40,7 @@ customElements.define('sm-form', class extends HTMLElement {
 		this.handleKeydown = this.handleKeydown.bind(this)
 		this.reset = this.reset.bind(this)
 	}
-	debounce(callback, wait){
+	debounce(callback, wait) {
 		let timeoutId = null;
 		return (...args) => {
 			window.clearTimeout(timeoutId);
@@ -64,12 +64,22 @@ customElements.define('sm-form', class extends HTMLElement {
 			if (this.allRequiredValid) {
 				this.submitButton.click()
 			}
-			else {
-				// implement show validity logic 
-			}
+/* 			else {
+				this.requiredElements.find(elem => !elem.isValid)
+					.animate([
+						{ transform: 'translateX(-1rem)' },
+						{ transform: 'translateX(1rem)' },
+						{ transform: 'translateX(-0.5rem)' },
+						{ transform: 'translateX(0.5rem)' },
+						{ transform: 'translateX(0)' },
+					], {
+						duration: 300,
+						easing: 'ease'
+					})
+			} */
 		}
 	}
-	reset(){
+	reset() {
 		this.formElements.forEach(elem => elem.reset())
 	}
 	connectedCallback() {
@@ -79,7 +89,7 @@ customElements.define('sm-form', class extends HTMLElement {
 			this.requiredElements = this.formElements.filter(elem => elem.hasAttribute('required'))
 			this.submitButton = e.target.assignedElements().find(elem => elem.getAttribute('variant') === 'primary' || elem.getAttribute('type') === 'submit');
 			this.resetButton = e.target.assignedElements().find(elem => elem.getAttribute('type') === 'reset');
-            if (this.resetButton) {
+			if (this.resetButton) {
 				this.resetButton.addEventListener('click', this.reset)
 			}
 		})

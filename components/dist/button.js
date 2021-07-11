@@ -60,15 +60,11 @@ smButton.innerHTML = `
     -webkit-box-pack: center; 
         -ms-flex-pack: center; 
             justify-content: center;
-    -webkit-transition: -webkit-box-shadow 0.3s;
-    transition: -webkit-box-shadow 0.3s;
-    -o-transition: box-shadow 0.3s;
-    transition: box-shadow 0.3s;
-    transition: box-shadow 0.3s, -webkit-box-shadow 0.3s;
+    transition: box-shadow 0.3s, background-color 0.3s;
     font-family: inherit;
     font-size: 0.9rem;
     font-weight: 500;
-    background: var(--background); 
+    background-color: var(--background); 
     -webkit-tap-highlight-color: transparent;
     outline: none;
     overflow: hidden;

@@ -16,20 +16,17 @@ html, body {
 
 body {
   --accent-color: #4d2588;
-  --light-shade: rgba(var(--text-color), 0.06);
   --text-color: 17, 17, 17;
   --text-color-light: 100, 100, 100;
   --foreground-color: 255, 255, 255;
   --background-color: #F6f6f6;
   --error-color: red;
-  --green: #00843b;
   color: rgba(var(--text-color), 1);
   background: var(--background-color);
 }
 
 body[data-theme=dark] {
   --accent-color: #976dd6;
-  --green: #13ff5a;
   --text-color: 240, 240, 240;
   --text-color-light: 170, 170, 170;
   --foreground-color: 20, 20, 20;
@@ -73,6 +70,7 @@ p {
   font-size: 0.8;
   max-width: 75ch;
   line-height: 1.7;
+  margin-bottom: 1.5rem;
   color: rgba(var(--text-color), 0.8);
 }
 p:not(:last-of-type) {
@@ -449,7 +447,7 @@ main {
   font-size: 0.9rem;
   letter-spacing: 0.08em;
   text-transform: uppercase;
-  padding: 1rem 1.5rem;
+  padding: 1.5rem;
 }
 
 .right {
@@ -497,6 +495,7 @@ sm-tab-header {
 .page {
   display: flex;
   flex-direction: column;
+  padding-bottom: 3rem;
 }
 
 ol {

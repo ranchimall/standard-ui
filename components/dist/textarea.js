@@ -118,7 +118,7 @@ customElements.define('sm-textarea',
             this.textarea = this.shadowRoot.querySelector('textarea')
             this.textareaBox = this.shadowRoot.querySelector('.textarea')
             this.placeholder = this.shadowRoot.querySelector('.placeholder')
-            this.observeList = ['required', 'readonly', 'rows', 'minlength', 'maxlength']
+            this.reflectedAttributes = ['required', 'readonly', 'rows', 'minlength', 'maxlength']
         
             this.reset = this.reset.bind(this)
             this.focusIn = this.focusIn.bind(this)
@@ -168,7 +168,7 @@ customElements.define('sm-textarea',
             })
         }
         attributeChangedCallback(name, oldValue, newValue) {
-            if (this.observeList.includes(name)) {
+            if (this.reflectedAttributes.includes(name)) {
                 if (this.hasAttribute(name)) {
                     this.textarea.setAttribute(name, this.getAttribute(name) ? this.getAttribute(name) : '')
                 }

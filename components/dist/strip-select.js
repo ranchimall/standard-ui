@@ -23,10 +23,18 @@ stripSelect.innerHTML = `
         padding: 1rem 0;
     }
     .strip-select{
+        position: relative;
+    }
+    :host([multiline]) .strip-select{
+        display: flex;
+        flex-wrap: wrap;
+        gap: 0.5rem;
+        overflow: auto hidden;
+    }
+    :host(:not([multiline])) .strip-select{
         display: grid;
         grid-auto-flow: column;
         gap: var(--gap);
-        position: relative;
         max-width: 100%;   
         align-items: center;
         overflow: auto hidden;
@@ -69,13 +77,6 @@ stripSelect.innerHTML = `
         fill: rgba(var(--text-color), .8);
     }
     @media (hover: none){
-        ::-webkit-scrollbar-track {
-            background-color: transparent !important;
-        }
-        ::-webkit-scrollbar {
-            height: 0;
-            background-color: transparent;
-        }
         .nav-button{
             display: none;
         }
@@ -87,6 +88,13 @@ stripSelect.innerHTML = `
         }
     }
     @media (hover: hover){
+        ::-webkit-scrollbar-track {
+            background-color: transparent !important;
+        }
+        ::-webkit-scrollbar {
+            height: 0;
+            background-color: transparent;
+        }
         .strip-select{
             overflow: hidden;
         }
@@ -163,17 +171,19 @@ customElements.define('strip-select', class extends HTMLElement{
                     this._value = elem.value
                 }
             })
-            if (assignedElements.length > 0) {
-                firstOptionObserver.observe(slot.assignedElements()[0])
-                lastOptionObserver.observe(slot.assignedElements()[slot.assignedElements().length - 1])
-            }
-            else {
-                navButtonLeft.classList.add('hide')
-                navButtonRight.classList.add('hide')
-                coverLeft.classList.add('hide')
-                coverRight.classList.add('hide')
-                firstOptionObserver.disconnect()
-                lastOptionObserver.disconnect()
+            if (!this.hasAttribute('multiline')) {
+                if (assignedElements.length > 0) {
+                    firstOptionObserver.observe(slot.assignedElements()[0])
+                    lastOptionObserver.observe(slot.assignedElements()[slot.assignedElements().length - 1])
+                }
+                else {
+                    navButtonLeft.classList.add('hide')
+                    navButtonRight.classList.add('hide')
+                    coverLeft.classList.add('hide')
+                    coverRight.classList.add('hide')
+                    firstOptionObserver.disconnect()
+                    lastOptionObserver.disconnect()
+                }
             }
         })
         const resObs = new ResizeObserver(entries => {

@@ -43,6 +43,7 @@ border: none;
     --border-radius: 0.3rem;
     --padding: 0.7rem 1rem;
     --background: rgba(var(--text-color), 0.06);
+    --success-color: #00C853;
 }
 .hide{
    opacity: 0 !important;
@@ -179,15 +180,29 @@ input{
 .animate-label:focus-within:not(.readonly) .label{
     color: var(--accent-color)
 }
-.feedback-text{
-    font-size: 0.9rem;
+.feedback-text:not(:empty){
+    display: flex;
     width: 100%;
-    color: var(--error-color);
-    padding: 0.6rem 1rem;
     text-align: left;
+    font-size: 0.9rem;
+    align-items: center;
+    padding: 0.8rem 1rem;
+    color: rgba(var(--text-color), 0.8);
 }
-.feedback-text:empty{
-    padding: 0;
+.success{
+    color: var(--success-color);
+}
+.error{
+    color: var(--error-color);
+}
+.status-icon{
+    margin-right: 0.2rem;
+}
+.status-icon--error{
+    fill: var(--error-color);
+}
+.status-icon--success{
+    fill: var(--success-color);
 }
 @media (any-hover: hover){
     .icon:hover{
@@ -199,12 +214,12 @@ input{
     <label part="input" class="input">
         <slot name="icon"></slot>
         <div class="container">
-            <input/>
+            <input type="text"/>
             <div part="placeholder" class="label"></div>
         </div>
         <svg class="icon clear hide" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="24" height="24"><path fill="none" d="M0 0h24v24H0z"/><path d="M12 22C6.477 22 2 17.523 2 12S6.477 2 12 2s10 4.477 10 10-4.477 10-10 10zm0-11.414L9.172 7.757 7.757 9.172 10.586 12l-2.829 2.828 1.415 1.415L12 13.414l2.828 2.829 1.415-1.415L13.414 12l2.829-2.828-1.415-1.415L12 10.586z"/></svg>
     </label>
-    <div class="feedback-text"></div>
+    <p class="feedback-text"></p>
 </div>
 `;
 customElements.define('sm-input',
@@ -221,13 +236,13 @@ customElements.define('sm-input',
             this.clearBtn = this.shadowRoot.querySelector('.clear')
             this.label = this.shadowRoot.querySelector('.label')
             this.feedbackText = this.shadowRoot.querySelector('.feedback-text')
+            this._helperText
+            this._errorText
+            this.isRequired = false
             this.validationFunction
-            this.observeList = ['type', 'required', 'disabled', 'readonly', 'min', 'max', 'pattern', 'minlength', 'maxlength', 'step']
+            this.reflectedAttributes = ['required', 'disabled', 'type', 'inputmode', 'readonly', 'min', 'max', 'pattern', 'minlength', 'maxlength', 'step']
         
             this.reset = this.reset.bind(this)
-            this.setValidity = this.setValidity.bind(this)
-            this.showValidity = this.showValidity.bind(this)
-            this.hideValidity = this.hideValidity.bind(this)
             this.focusIn = this.focusIn.bind(this)
             this.focusOut = this.focusOut.bind(this)
             this.fireEvent = this.fireEvent.bind(this)
@@ -236,7 +251,7 @@ customElements.define('sm-input',
         }
 
         static get observedAttributes() {
-            return ['placeholder', 'type', 'required', 'disabled', 'readonly', 'min', 'max', 'pattern', 'minlength', 'maxlength', 'step']
+            return ['placeholder', 'required', 'disabled', 'type', 'inputmode', 'readonly', 'min', 'max', 'pattern', 'minlength', 'maxlength', 'step', 'helper-text', 'error-text']
         }
 
         get value() {
@@ -266,12 +281,12 @@ customElements.define('sm-input',
         }
 
         get isValid() {
+            const _isValid = this.input.checkValidity()
+            let _customValid = true
             if (this.customValidation) {
-                return this.validationFunction(this.input.value)
+                _customValid = this.validationFunction(this.input.value)
             }
-            else {
-                return this.input.checkValidity()
-            }
+            return (_isValid && _customValid)
         }
 
         get validity() {
@@ -294,20 +309,14 @@ customElements.define('sm-input',
         set customValidation(val) {
             this.validationFunction = val
         }
+        set errorText(val) {
+            this._errorText = val
+        }
+        set helperText(val) {
+            this._helperText = val
+        }
         reset(){
             this.value = ''
-        }
-
-        setValidity(message){
-            this.feedbackText.textContent = message
-        }
-
-        showValidity(){
-            this.feedbackText.classList.remove('hide-completely')
-        }
-
-        hideValidity(){
-            this.feedbackText.classList.add('hide-completely')
         }
 
         focusIn(){
@@ -342,9 +351,26 @@ customElements.define('sm-input',
                     this.clearBtn.classList.remove('hide')
                 } else {
                     this.clearBtn.classList.add('hide')
+                    if (this.isRequired) {
+                        this.feedbackText.textContent = '* required'
+                    }
+                }
+                if (!this.isValid) {
+                    if (this._errorText) {
+                        this.feedbackText.classList.add('error')
+                        this.feedbackText.classList.remove('success')
+                        this.feedbackText.innerHTML = `
+                            <svg class="status-icon status-icon--error" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="24" height="24"><path fill="none" d="M0 0h24v24H0z"/><path d="M12 22C6.477 22 2 17.523 2 12S6.477 2 12 2s10 4.477 10 10-4.477 10-10 10zm-1-7v2h2v-2h-2zm0-8v6h2V7h-2z"/></svg>
+                        ${this._errorText}
+                        `
+                    }
+                } else {
+                    this.feedbackText.classList.remove('error')
+                    this.feedbackText.classList.add('success')
+                    this.feedbackText.textContent = ''
                 }
             }
-            if (!this.hasAttribute('placeholder') || this.getAttribute('placeholder') === '') return;
+            if (!this.hasAttribute('placeholder') || this.getAttribute('placeholder').trim() === '') return;
             if (this.input.value !== '') {
                 if (this.animate)
                     this.inputParent.classList.add('animate-label')
@@ -361,24 +387,13 @@ customElements.define('sm-input',
 
         connectedCallback() {
             this.animate = this.hasAttribute('animate')
-            if (this.hasAttribute('value')) {
-                this.input.value = this.getAttribute('value')
-                this.checkInput()
-            }
-            if (this.hasAttribute('error-text')) {
-                this.feedbackText.textContent = this.getAttribute('error-text')
-            }
-            if (!this.hasAttribute('type')) {
-                this.setAttribute('type', 'text')
-            }
-
             this.input.addEventListener('input', this.checkInput)
             this.clearBtn.addEventListener('click', this.reset)
         }
         
         attributeChangedCallback(name, oldValue, newValue) {
             if (oldValue !== newValue) {
-                if (this.observeList.includes(name)) {
+                if (this.reflectedAttributes.includes(name)) {
                     if (this.hasAttribute(name)) {
                         this.input.setAttribute(name, this.getAttribute(name) ? this.getAttribute(name) : '')
                     }
@@ -390,10 +405,23 @@ customElements.define('sm-input',
                     this.label.textContent = newValue;
                     this.setAttribute('aria-label', newValue);
                 }
+                else if (this.hasAttribute('value')) {
+                    this.checkInput()
+                }
                 else if (name === 'type') {
                     if (this.hasAttribute('type') && this.getAttribute('type') === 'number') {
                         this.input.setAttribute('inputmode', 'numeric')
                     }
+                }
+                else if (name === 'helper-text') {
+                    this._helperText = this.getAttribute('helper-text')
+                }
+                else if (name === 'error-text') {
+                    this._errorText = this.getAttribute('error-text')
+                }
+                else if (name === 'required') {
+                    this.isRequired = this.hasAttribute('required')
+                    this.feedbackText.textContent = '* required'
                 }
                 else if (name === 'readonly') {
                     if (this.hasAttribute('readonly')) {

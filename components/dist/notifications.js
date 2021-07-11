@@ -11,6 +11,8 @@ smNotifications.innerHTML = `
         display: -webkit-box;
         display: -ms-flexbox;
         display: flex;
+        --icon-height: 2rem;
+        --icon-width: 2rem;
     }
     .hide{
         opacity: 0 !important;
@@ -25,7 +27,7 @@ smNotifications.innerHTML = `
         bottom: 0;
         z-index: 100;
         max-height: 100%;
-        padding: 1.5rem;
+        padding: 1rem;
         overflow: hidden auto;
         -ms-scroll-chaining: none;
             overscroll-behavior: contain;
@@ -39,10 +41,6 @@ smNotifications.innerHTML = `
         display: flex;
         position: relative;
         border-radius: 0.3rem;
-        -webkit-box-shadow: 0 0.1rem 0.2rem rgba(0, 0, 0, 0.1),
-        0.5rem 1rem 2rem rgba(0, 0, 0, 0.1);
-        box-shadow: 0 0.1rem 0.2rem rgba(0, 0, 0, 0.1),
-        0.5rem 1rem 2rem rgba(0, 0, 0, 0.1);
         background: rgba(var(--foreground-color), 1);
         overflow: hidden;
         overflow-wrap: break-word;
@@ -55,6 +53,11 @@ smNotifications.innerHTML = `
         hyphens: auto;
         max-width: 100%;
         padding: 1rem;
+    }
+    .icon-container:not(:empty){
+        margin-right: 0.5rem;
+        height: var(--icon-height);
+        width: var(--icon-width);
     }
     h4:first-letter,
     p:first-letter{
@@ -148,24 +151,35 @@ customElements.define('sm-notifications', class extends HTMLElement {
         }
 
         this.push = this.push.bind(this)
+        this.createNotification = this.createNotification.bind(this)
         this.removeNotification = this.removeNotification.bind(this)
         this.clearAll = this.clearAll.bind(this)
-        
+
     }
 
-    push(messageBody, options = {}) {
-        const {pinned} = options
-        let notification = document.createElement('div'),
-            composition = ``
+    createNotification(message, options) {
+        const { pinned = false, icon = '' } = options
+        const notification = document.createElement('div')
         notification.classList.add('notification')
-        if (pinned)
-            notification.classList.add('pinned')
+        let composition = ``
         composition += `
-            <p>${messageBody}</p>
-            <button class="close">
-                <svg class="icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="24" height="24"><path fill="none" d="M0 0h24v24H0z"/><path d="M12 10.586l4.95-4.95 1.414 1.414-4.95 4.95 4.95 4.95-1.414 1.414-4.95-4.95-4.95 4.95-1.414-1.414 4.95-4.95-4.95-4.95L7.05 5.636z"/></svg>
-            </button>`
+            <div class="icon-container">${icon}</div>
+            <p>${message}</p>
+            `
+        if (pinned) {
+            notification.classList.add('pinned')
+            composition += `
+                <button class="close">
+                    <svg class="icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="24" height="24"><path fill="none" d="M0 0h24v24H0z"/><path d="M12 10.586l4.95-4.95 1.414 1.414-4.95 4.95 4.95 4.95-1.414 1.414-4.95-4.95-4.95 4.95-1.414-1.414 4.95-4.95-4.95-4.95L7.05 5.636z"/></svg>
+                </button>
+            `
+        }
         notification.innerHTML = composition
+        return notification
+    }
+
+    push(message, options = {}) {
+        const notification = this.createNotification(message, options)
         this.notificationPanel.append(notification)
         notification.animate([
             {
@@ -179,7 +193,7 @@ customElements.define('sm-notifications', class extends HTMLElement {
         ], this.animationOptions)
     }
 
-    removeNotification(notification){
+    removeNotification(notification) {
         notification.animate([
             {
                 transform: `none`,
@@ -194,7 +208,7 @@ customElements.define('sm-notifications', class extends HTMLElement {
         }
     }
 
-    clearAll(){
+    clearAll() {
         Array.from(this.notificationPanel.children).forEach(child => {
             this.removeNotification(child)
         })
@@ -202,7 +216,7 @@ customElements.define('sm-notifications', class extends HTMLElement {
 
     connectedCallback() {
         this.notificationPanel.addEventListener('click', e => {
-            if (e.target.closest('.close'))(
+            if (e.target.closest('.close')) (
                 this.removeNotification(e.target.closest('.notification'))
             )
         })
@@ -210,11 +224,12 @@ customElements.define('sm-notifications', class extends HTMLElement {
         const observer = new MutationObserver(mutationList => {
             mutationList.forEach(mutation => {
                 if (mutation.type === 'childList') {
-                    if (mutation.addedNodes.length && !mutation.addedNodes[0].classList.contains('pinned'))
+                    if (mutation.addedNodes.length && !mutation.addedNodes[0].classList.contains('pinned')) {
                         setTimeout(() => {
                             this.removeNotification(mutation.addedNodes[0])
                         }, 5000);
                     }
+                }
             })
         })
         observer.observe(this.notificationPanel, {

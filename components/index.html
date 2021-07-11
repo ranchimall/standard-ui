@@ -104,7 +104,7 @@
                 <p class="description">
                     To start using SM Components, Select components you want to download.
                 </p>
-                <div class="grid grid-3 gap-0-5">
+                <div class="grid grid-3 gap-0-5 align-center">
                     <sm-checkbox id="get_minified" checked>
                         <span class="comp-checkbox__title">
                             Get minified
@@ -201,7 +201,8 @@
                     To start using SM Components
                 </p>
                 <sm-form>
-                    <sm-input placeholder="Enter name" required animate></sm-input>
+                    <sm-input placeholder="Email" type="email" error-text="please enter correct email" required animate></sm-input>
+                    <sm-input placeholder="Password" type="password" required animate></sm-input>
                     <sm-button variant="primary" disabled>Submit</sm-button>
                 </sm-form>
                 <p id="insert_text"></p>
@@ -211,7 +212,7 @@
                 <p class="description">
                     To start using SM Components
                 </p>
-                <sm-input id="my_input" placeholder="something" type="email" helper-text="please enter correct email"
+                <sm-input placeholder="something" type="email" error-text="please enter correct email"
                     animate></sm-input>
                 <p id="insert_text"></p>
             </section>
@@ -237,9 +238,9 @@
                 <h4>Example</h4>
 
                 <sm-button
-                    onclick="notify('Lorem ipsum dolor, consectetur adipisicing elit.')">
+                    onclick="notify('Lorem ipsum dolor, consectetur adipisicing elit.', 'success')">
                     push success notification</sm-button>
-                <sm-button onclick="notify('Lorem ipsum dolor, sit amet.')">
+                <sm-button onclick="notify('Lorem ipsum dolor, sit amet.', 'error')">
                     push error notification</sm-button>
                 <sm-button
                     onclick="notify('Lorem ipsum dolor, sit amet consectetur adipisicing elit.', '', {pinned: true})">
@@ -273,10 +274,17 @@
                     Popups are used to show addition UI elements that you may want to hide at first and reveal them when
                     needed.
                 </p>
-                <sm-radio name="abc" value="1" checked></sm-radio>
-                <sm-radio name="abc" value="2"></sm-radio>
-                <sm-radio name="abc" value="3"></sm-radio>
-                <sm-radio name="abc" value="4"></sm-radio>
+                <div class="grid gap-0-5">
+                    <sm-radio name="abc" value="on" checked>
+                        <div class="flex">&nbsp;&nbsp;On</div>
+                    </sm-radio>
+                    <sm-radio name="abc" value="off">
+                        <div class="flex">&nbsp;&nbsp;Off</div>
+                    </sm-radio>
+                    <sm-radio name="abc" value="🤷">
+                        <div class="flex">&nbsp;&nbsp;🤷</div>
+                    </sm-radio>
+                </div>
             </section>
 
             <section id="switch_page" class="page hide-completely">
@@ -307,7 +315,7 @@
                 <p class="description">
                     To start using SM Components
                 </p>
-                <strip-select id="browse_category_selector">
+                <strip-select id="browse_category_selector" multiline>
                     <strip-option value="movie" selected>Movie</strip-option>
                     <strip-option value="tv series">TV series</strip-option>
                     <strip-option value="video">Video</strip-option>
@@ -418,9 +426,12 @@
             }
         }
 
-        function create(tagName, obj) {
-            const { className, textContent, innerHTML } = obj
+        function createElement(tagName, obj) {
+            const { className, textContent, innerHTML, attributes = {}} = obj
             const elem = document.createElement(tagName)
+            for(let attribute in attributes){
+                elem.setAttribute(attribute, attributes[attribute])
+            }
             if (className)
                 elem.className = className
             elem.textContent = textContent
@@ -595,7 +606,16 @@
         function notify(message, mode, options = {}) {
             const {pinned = false, sound} = options
             if (mode === "error") console.error(message);
-            getRef("notification_drawer").push(message, {pinned});
+            let icon
+            switch(mode){
+                case 'success':
+                    icon = `<svg class="icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="24" height="24"><path fill="none" d="M0 0h24v24H0z"/><path d="M10 15.172l9.192-9.193 1.415 1.414L10 18l-6.364-6.364 1.414-1.414z"/></svg>`
+                break;
+                case 'error':
+                    icon = `<svg class="icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="24" height="24"><path fill="none" d="M0 0h24v24H0z"/><path d="M12 22C6.477 22 2 17.523 2 12S6.477 2 12 2s10 4.477 10 10-4.477 10-10 10zm-1-7v2h2v-2h-2zm0-8v6h2V7h-2z"/></svg>`
+                break;
+            }
+            getRef("notification_drawer").push(message, {pinned, icon});
             if (navigator.onLine && sound) {
                 getRef("notification_sound").currentTime = 0;
                 getRef("notification_sound").play();
@@ -633,23 +653,8 @@
             }
         }
 
-        const inputValidation = debounce((e) => {
-            if (e.target.closest('sm-input')) {
-                const input = e.target.closest('sm-input')
-                if (input.value === '')
-                    input.setValidity('')
-                if (input.hasAttribute('data-flo-id')) {
-                    if (validateAddr(input.value.trim()) || input.value.trim() === '')
-                        input.setValidity('')
-                    else
-                        input.setValidity('Invalid FLO address.')
-                }
-            }
-        }, 100)
-
         window.addEventListener("load", () => {
             // document.querySelectorAll('sm-input[data-flo-id]').forEach(input => input.customValidation = validateAddr)
-            document.addEventListener('input', inputValidation)
             document.addEventListener('keyup', (e) => {
                 if (e.code === 'Escape') {
                     hidePopup()
@@ -930,12 +935,15 @@
         }
         function downloadJs(componentsArray, options = {minified: true}){
             const {minified} = options  
-            const element = document.createElement('a');
-            element.setAttribute('href', 'data:application/javascript;charset=utf-8,' + encodeURIComponent(componentsArray.join("\n")));
             const extension = minified ? '.min.js': '.js'
-            element.setAttribute('download', `components${extension}`);
+            const element = createElement('a', {
+                attributes: {
+                    'href': 'data:application/javascript;charset=utf-8,' + encodeURIComponent(componentsArray.join("\n")),
+                    'download': `components${extension}`,
+                    'style': 'display:none'
+                }
+            });
         
-            element.style.display = 'none';
             document.body.appendChild(element);
         
             element.click();

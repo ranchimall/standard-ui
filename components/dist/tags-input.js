@@ -87,7 +87,7 @@ customElements.define('tags-input', class extends HTMLElement {
 		this.input = this.shadowRoot.querySelector('input')
 		this.tagsWrapper = this.shadowRoot.querySelector('.tags-wrapper')
 		this.placeholder = this.shadowRoot.querySelector('.placeholder')
-		this.observeList = ['placeholder', 'limit']
+		this.reflectedAttributes = ['placeholder', 'limit']
 		this.limit = undefined
 		this.tags = new Set()
 

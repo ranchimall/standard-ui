@@ -11,8 +11,8 @@ smCheckbox.innerHTML = `
         display: -webkit-inline-box;
         display: -ms-inline-flexbox;
         display: inline-flex;
-        --height: 1.4rem;
-        --width: 1.4rem;
+        --height: 1.2rem;
+        --width: 1.2rem;
         --border-radius: 0.2rem;
         --border-color: rgba(var(--text-color), 0.7);
     }
@@ -30,7 +30,6 @@ smCheckbox.innerHTML = `
             -ms-flex-align: center;
                 align-items: center;
         cursor: pointer;
-        height: 1.5rem;
         outline: none;
         -webkit-tap-highlight-color: transparent;
     }
@@ -40,7 +39,7 @@ smCheckbox.innerHTML = `
     }
     .checkbox:active .icon,
     .checkbox:focus-within .icon{
-        box-shadow: 0 0 0 0.2rem var(--accent-color) inset;
+        box-shadow: 0 0 0 0.1rem var(--accent-color) inset;
     }
     
     input {
@@ -65,14 +64,14 @@ smCheckbox.innerHTML = `
         background: var(--accent-color);
     }
     :host(:not([checked])) .icon {
-        box-shadow: 0 0 0 0.2rem var(--border-color) inset;
+        box-shadow: 0 0 0 0.1rem var(--border-color) inset;
     }
     
     .icon {
         fill: none;
         height: var(--height);
         width: var(--width);
-        padding: 0.2rem;
+        padding: 0.1rem;
         stroke: rgba(var(--text-color), 0.7);
         stroke-width: 6;
         overflow: visible;
