@@ -11,8 +11,8 @@ smNotifications.innerHTML = `
         display: -webkit-box;
         display: -ms-flexbox;
         display: flex;
-        --icon-height: 2rem;
-        --icon-width: 2rem;
+        --icon-height: 1.5rem;
+        --icon-width: 1.5rem;
     }
     .hide{
         opacity: 0 !important;
@@ -147,7 +147,7 @@ customElements.define('sm-notifications', class extends HTMLElement {
         this.animationOptions = {
             duration: 300,
             fill: "forwards",
-            easing: "ease"
+            easing: "cubic-bezier(0.175, 0.885, 0.32, 1.275)"
         }
 
         this.push = this.push.bind(this)
@@ -200,7 +200,7 @@ customElements.define('sm-notifications', class extends HTMLElement {
                 opacity: '1'
             },
             {
-                transform: `translateY(1rem)`,
+                transform: `translateY(0.5rem)`,
                 opacity: '0'
             }
         ], this.animationOptions).onfinish = () => {

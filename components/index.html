@@ -309,6 +309,14 @@
                     <sm-option value="3">option3</sm-option>
                 </sm-select>
             </section>
+            <section id="spinner_page" class="page hide-completely">
+                <h1 class="page__title">Spinner</h1>
+                <p>
+                    <code>&lt;sm-select&gt;</code> is very similar to starndatd HTML5 select and it's markup stucture is
+                    also identical.
+                </p>
+                <sm-spinner></sm-spinner>
+            </section>
 
             <section id="strip_select_page" class="page hide-completely">
                 <h1 class="page__title">Strip select</h1>
@@ -375,6 +383,13 @@
                 </p>
                 <sm-textarea placeholder="Add some text here..." rows="4"></sm-textarea>
             </section>
+            <section id="text_field_page" class="page hide-completely">
+                <h1 class="page__title">Text field</h1>
+                <p class="description">
+                    To start using SM Components
+                </p>
+                <text-field value="Double click me!"></text-field>
+            </section>
         </div>
     </main>
     <template id="nav_item_template">
@@ -399,11 +414,13 @@
     <script src="dist/popup.js"></script>
     <script src="dist/radio.js"></script>
     <script src="dist/select.js"></script>
+    <script src="dist/sm-spinner.js"></script>
     <script src="dist/strip-select.js"></script>
     <script src="dist/switch.js"></script>
     <script src="dist/tabs.js"></script>
     <script src="dist/tags-input.js"></script>
     <script src="dist/textarea.js"></script>
+    <script src="dist/text-field.js"></script>
     <script id="default_ui_library">
         const domRefs = {};
 
@@ -818,6 +835,10 @@
                 pageId: 'select_page'
             },
             {
+                name: 'Spinner',
+                pageId: 'spinner_page'
+            },
+            {
                 name: 'Strip select',
                 pageId: 'strip_select_page'
             },
@@ -832,6 +853,10 @@
             {
                 name: 'textarea',
                 pageId: 'textarea_page'
+            },
+            {
+                name: 'Text field',
+                pageId: 'text_field_page'
             },
         ]
         function sideNav(show = true) {
