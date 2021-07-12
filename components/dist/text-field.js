@@ -5,7 +5,14 @@ textField.innerHTML = `
         padding: 0;
         margin: 0;
         box-sizing: border-box;
-    } 
+    }
+    :host{
+        --accent-color: #4d2588;
+        --text-color: 17, 17, 17;
+        --foreground-color: 255, 255, 255;
+        --background-color: #F6f6f6;
+        --danger-color: red;
+    }
     .text-field{
         display: flex;
         align-items: center;
@@ -39,18 +46,16 @@ textField.innerHTML = `
         height: 1.8rem;
         width: 1.8rem;
     }
+    :host([disabled]) .icon-container{
+        display: none;
+    }
     .icon{
         position: absolute;
         cursor: pointer;
-        fill: none;
-        stroke-width: 8;
-        stroke: rgba(var(--text-color), 1);
-        height: 1.8rem;
-        width: 1.8rem;
-        padding: 0.4rem;
-        overflow: visible;
-        stroke-linecap: round;
-        stroke-linejoin: round;
+        height: 2rem;
+        width: 2rem;
+        padding: 0.3rem;
+        fill: rgba(var(--text-color), 1);
     }
     .hide{
         display: none;
@@ -58,14 +63,14 @@ textField.innerHTML = `
 </style>
 <div class="text-field">
     <div class="text" part="text"></div>
-    <div class="icon-container">
-        <svg class="edit-button icon" viewBox="0 0 64 64">
+    <div tabindex="0" class="icon-container">
+        <svg class="edit-button icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="24" height="24">
             <title>Edit</title>
-            <path d="M46.73,14.81l7,7,7.65-7.6A7.15,7.15,0,0,0,61.39,4L60.11,2.77a7.23,7.23,0,0,0-10.19,0L3.87,48.57a5,5,0,0,0-1.39,2.6L.53,61.27a1.74,1.74,0,0,0,2,2l10.15-1.94A5.06,5.06,0,0,0,15.34,60L49.6,25.9"/>
+            <path fill="none" d="M0 0h24v24H0z"/><path d="M12.9 6.858l4.242 4.243L7.242 21H3v-4.243l9.9-9.9zm1.414-1.414l2.121-2.122a1 1 0 0 1 1.414 0l2.829 2.829a1 1 0 0 1 0 1.414l-2.122 2.121-4.242-4.242z"/>
         </svg>
-        <svg class="save-button icon hide" viewBox="0 0 64 64">
+        <svg class="save-button icon hide" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="24" height="24">
             <title>Save</title>
-            <polyline points="0.35 31.82 21.45 52.98 63.65 10.66"/>
+            <path fill="none" d="M0 0h24v24H0z"/><path d="M10 15.172l9.192-9.193 1.415 1.414L10 18l-6.364-6.364 1.414-1.414z"/>
         </svg>
     </div>
 </div>
@@ -93,7 +98,7 @@ customElements.define('text-field', class extends HTMLElement{
     }
 
     static get observedAttributes(){
-        return ['disable']
+        return ['disabled']
     }
 
     get value(){
@@ -107,9 +112,9 @@ customElements.define('text-field', class extends HTMLElement{
     set disabled(val) {
         this.isDisabled = val
         if(this.isDisabled)
-            this.setAttribute('disable', '')
+            this.setAttribute('disabled', '')
         else
-            this.removeAttribute('disable')
+            this.removeAttribute('disabled')
     }
     fireEvent(value){
         let event = new CustomEvent('contentchanged', {
@@ -209,16 +214,14 @@ customElements.define('text-field', class extends HTMLElement{
         }
     }
     attributeChangedCallback(name) {
-        if (name === 'disable') {
-            if (this.hasAttribute('disable')) {
-                this.iconsContainer.classList.add('hide')
+        if (name === 'disabled') {
+            if (this.hasAttribute('disabled')) {
                 this.textContainer.removeEventListener('dblclick', this.setEditable)
                 this.editButton.removeEventListener('click', this.setEditable)
                 this.saveButton.removeEventListener('click', this.setNonEditable)
                 this.revert()
             }
             else {
-                this.iconsContainer.classList.remove('hide')
                 this.textContainer.addEventListener('dblclick', this.setEditable)
                 this.editButton.addEventListener('click', this.setEditable)
                 this.saveButton.addEventListener('click', this.setNonEditable)

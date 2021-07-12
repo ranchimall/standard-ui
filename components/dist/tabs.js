@@ -11,6 +11,11 @@ smTabHeader.innerHTML = `
         display: -webkit-box;
         display: -ms-flexbox;
         display: flex;
+        --accent-color: #4d2588;
+        --text-color: 17, 17, 17;
+        --foreground-color: 255, 255, 255;
+        --background-color: #F6f6f6;
+        --danger-color: red;
     }
     .tabs{
         position: relative;

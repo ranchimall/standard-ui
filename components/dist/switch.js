@@ -12,6 +12,11 @@ smSwitch.innerHTML = `
         display: -webkit-inline-box;
         display: -ms-inline-flexbox;
         display: inline-flex;
+        --accent-color: #4d2588;
+        --text-color: 17, 17, 17;
+        --foreground-color: 255, 255, 255;
+        --background-color: #F6f6f6;
+        --danger-color: red;
     }
     label{
         display: -webkit-box;

@@ -11,6 +11,11 @@ smCheckbox.innerHTML = `
         display: -webkit-inline-box;
         display: -ms-inline-flexbox;
         display: inline-flex;
+        --accent-color: #4d2588;
+        --text-color: 17, 17, 17;
+        --foreground-color: 255, 255, 255;
+        --background-color: #F6f6f6;
+        --danger-color: red;
         --height: 1.2rem;
         --width: 1.2rem;
         --border-radius: 0.2rem;

@@ -37,13 +37,18 @@ border: none;
     display: -webkit-box;
     display: -ms-flexbox;
     display: flex;
+    --accent-color: #4d2588;
+    --text-color: 17, 17, 17;
+    --foreground-color: 255, 255, 255;
+    --background-color: #F6f6f6;
+    --success-color: #00C853;
+    --danger-color: red;
     --width: 100%;
     --font-size: 1rem;
     --icon-gap: 0.5rem;
     --border-radius: 0.3rem;
     --padding: 0.7rem 1rem;
     --background: rgba(var(--text-color), 0.06);
-    --success-color: #00C853;
 }
 .hide{
    opacity: 0 !important;
@@ -193,13 +198,13 @@ input{
     color: var(--success-color);
 }
 .error{
-    color: var(--error-color);
+    color: var(--danger-color);
 }
 .status-icon{
     margin-right: 0.2rem;
 }
 .status-icon--error{
-    fill: var(--error-color);
+    fill: var(--danger-color);
 }
 .status-icon--success{
     fill: var(--success-color);

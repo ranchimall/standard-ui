@@ -58,6 +58,11 @@
                         Quick start
                     </a>
                 </li>
+                <li>
+                    <a href="#global_styling_page" class="list__item interact">
+                        Global styling
+                    </a>
+                </li>
             </ul>
             <h4>Components</h4>
             <ul id="components_list" class="list"></ul>
@@ -71,39 +76,42 @@
                 </div>
                 <div>
                     <h1 class="page__title">Overview</h1>
-                    <p class="description">
-                        These components are based on HTML5 custom elements API. This is an attempt to unify UI
-                        development
-                        patterns and
-                        elements that are used multiple times throughout any general web app.It uses 'sm' namespace for
-                        all
-                        components. So every
-                        component tag starts with <strong>'sm-'</strong>
+                    <p>
+                        Component-based design is the cornerstone of the modern UI development process. With rise of more UI frameworks every day, the web platform has a serious issue of fragmentation and portability.
                     </p>
                     <p>
-                        They can replace some older UI elements like <code>&lt;select&gt;</code>
-                        <code>&lt;input&gt;</code>
-                        <code>&lt;checkbox&gt;</code> <code>&lt;button&gt;</code>
-                        But also more modern additions like <strong>popups(modals), tabs and many more.</strong>
+                        Web components to the rescue! This is the collection of web components (WC here forward) that we use at RanchiMall.especially since we are a framework-less development environment so this was a logical choice.
                     </p>
                     <p>
-                        Some of the components have some cool tricks under their sleeves like <strong>custom events and
-                            variantions</strong>.
-                        They allow developers to access more information about component or simply react to whatever
-                        state
-                        change happen to them.
-                        We will go more in-depth about all the variantions and customs events related to each event as
-                        we go
-                        further.
+                        Just download the components you like, link them with a script tag and drop it in HTML done!. 
                     </p>
+                    <h3>Features</h3>
+                    <ul class="grid gap-1">
+                        <li>Native and Cross framework support</li>
+                        <li>Standalone functionality</li>
+                        <li>Easy styling</li>
+                        <li>Adaptive scaling </li>
+                    </ul>
                 </div>
             </section>
 
             <section id="quick_start_page" class="page hide-completely">
                 <h1 class="page__title">Quick Start</h1>
-                <p class="description">
-                    To start using SM Components, Select components you want to download.
-                </p>
+                <ol>
+                    <li>
+                        To start using these components, Select the ones you want to add to your project. You can un-check 'get minified' to get the readable code.
+                    </li>
+                    <li>
+                        Now you can download or copy the source code for selected components. 
+                        <strong class="important">
+                            You might get a warning while downloading like this file is not safe,
+                             please allow the download as this is caused when downloading files with '.js' extension. These components are 100% safe to use. 
+                        </strong>
+                    </li>
+                    <li>
+                        Link the downloaded js with <code>&lt;script src=".../components.js"&gt;&lt;/script&gt;</code> at bottom of your HTML file just before <code>&lt;/body&gt;</code> tag.
+                    </li>
+                </ol>
                 <div class="grid grid-3 gap-0-5 align-center">
                     <sm-checkbox id="get_minified" checked>
                         <span class="comp-checkbox__title">
@@ -120,9 +128,13 @@
                 </div>
             </section>
 
+            <section id="global_styling_page" class="page hide-completely">
+                <h1 class="page__title">Global styling</h1>
+                
+            </section>
             <section id="button_page" class="page hide-completely">
                 <h1 class="page__title">Buttons</h1>
-                <p class="description">
+                <p>
                     Buttons are used in various basic UI interactions to perform an action.
                 </p>
                 <sm-button>default</sm-button>
@@ -143,7 +155,7 @@
 
             <section id="carousel_page" class="page hide-completely">
                 <h1 class="page__title">Carousel</h1>
-                <p class="description">
+                <p>
                     To start using SM Components
                 </p>
                 <sm-carousel align-items="start" indicator>
@@ -168,7 +180,7 @@
 
             <section id="checkbox_page" class="page hide-completely">
                 <h1 class="page__title">Checkbox</h1>
-                <p class="description">
+                <p>
                     To start using SM Components
                 </p>
                 <label>
@@ -181,7 +193,7 @@
 
             <section id="copy_page" class="page hide-completely">
                 <h1 class="page__title">Copy</h1>
-                <p class="description">
+                <p>
                     To start using SM Components
                 </p>
                 <sm-copy value="copy this message"></sm-copy>
@@ -189,7 +201,7 @@
 
             <section id="file_input_page" class="page hide-completely">
                 <h1 class="page__title">File input</h1>
-                <p class="description">
+                <p>
                     To start using SM Components
                 </p>
                 <file-input></file-input>
@@ -197,7 +209,7 @@
             </section>
             <section id="form_page" class="page hide-completely">
                 <h1 class="page__title">Form</h1>
-                <p class="description">
+                <p>
                     To start using SM Components
                 </p>
                 <sm-form>
@@ -209,7 +221,7 @@
             </section>
             <section id="input_page" class="page hide-completely">
                 <h1 class="page__title">Input</h1>
-                <p class="description">
+                <p>
                     To start using SM Components
                 </p>
                 <sm-input placeholder="something" type="email" error-text="please enter correct email"
@@ -219,7 +231,7 @@
 
             <section id="menu_page" class="page hide-completely">
                 <h1 class="page__title">Menu</h1>
-                <p class="description">
+                <p>
                     To start using SM Components
                 </p>
                 <sm-menu id="my_menu">
@@ -232,7 +244,7 @@
 
             <section id="notifications_page" class="page hide-completely">
                 <h1 class="page__title">Notifications</h1>
-                <p class="description">
+                <p>
                     To start using SM Components
                 </p>
                 <h4>Example</h4>
@@ -249,7 +261,7 @@
 
             <section id="popup_page" class="page hide-completely">
                 <h1 class="page__title">Popup / dialog</h1>
-                <p class="description">
+                <p>
                     Popups are used to show addition UI elements that you may want to hide at first and reveal them when
                     needed.
                 </p>
@@ -270,7 +282,7 @@
 
             <section id="radio_page" class="page hide-completely">
                 <h1 class="page__title">Radio</h1>
-                <p class="description">
+                <p>
                     Popups are used to show addition UI elements that you may want to hide at first and reveal them when
                     needed.
                 </p>
@@ -289,7 +301,7 @@
 
             <section id="switch_page" class="page hide-completely">
                 <h1 class="page__title">Switch</h1>
-                <p class="description">
+                <p>
                     To start using SM Components
                 </p>
                 <sm-switch id="switch"></sm-switch>
@@ -320,7 +332,7 @@
 
             <section id="strip_select_page" class="page hide-completely">
                 <h1 class="page__title">Strip select</h1>
-                <p class="description">
+                <p>
                     To start using SM Components
                 </p>
                 <strip-select id="browse_category_selector" multiline>
@@ -333,7 +345,7 @@
 
             <section id="tabs_page" class="page hide-completely">
                 <h1 class="page__title">Tabs</h1>
-                <p class="description">
+                <p>
                     To start using SM Components
                 </p>
                 <sm-tab-header variant="tab" target="tab1">
@@ -371,21 +383,21 @@
             </section>
             <section id="tags_input_page" class="page hide-completely">
                 <h1 class="page__title">Tags input</h1>
-                <p class="description">
+                <p>
                     To start using SM Components
                 </p>
                 <tags-input placeholder="Add tags..."></tags-input>
             </section>
             <section id="textarea_page" class="page hide-completely">
                 <h1 class="page__title">Textarea</h1>
-                <p class="description">
+                <p>
                     To start using SM Components
                 </p>
                 <sm-textarea placeholder="Add some text here..." rows="4"></sm-textarea>
             </section>
             <section id="text_field_page" class="page hide-completely">
                 <h1 class="page__title">Text field</h1>
-                <p class="description">
+                <p>
                     To start using SM Components
                 </p>
                 <text-field value="Double click me!"></text-field>

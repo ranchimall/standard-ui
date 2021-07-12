@@ -12,6 +12,11 @@ smPopup.innerHTML = `
     display: -ms-grid;
     display: grid;
     z-index: 10;
+    --accent-color: #4d2588;
+    --text-color: 17, 17, 17;
+    --foreground-color: 255, 255, 255;
+    --background-color: #F6f6f6;
+    --danger-color: red;
     --width: 100%;
     --height: auto;
     --min-width: auto;

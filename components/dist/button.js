@@ -11,6 +11,11 @@ smButton.innerHTML = `
     display: -webkit-inline-box;
     display: -ms-inline-flexbox;
     display: inline-flex;
+    --accent-color: #4d2588;
+    --text-color: 17, 17, 17;
+    --foreground-color: 255, 255, 255;
+    --background-color: #F6f6f6;
+    --danger-color: red;
     --padding: 0.6rem 1.2rem;
     --border-radius: 0.3rem;
     --background: rgba(var(--text-color), 0.1);

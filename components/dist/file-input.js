@@ -7,6 +7,11 @@ fileInput.innerHTML = `
 			box-sizing: border-box;
 		}
 		:host{
+			--accent-color: #4d2588;
+			--text-color: 17, 17, 17;
+			--foreground-color: 255, 255, 255;
+			--background-color: #F6f6f6;
+			--danger-color: red;
 			--border-radius: 0.3rem;
 			--button-color: var(--background-color);
 			--button-font-weight: 500;

@@ -14,10 +14,9 @@ html, body{
 body {
     --accent-color: #4d2588;
     --text-color: 17, 17, 17;
-    --text-color-light: 100, 100, 100;
     --foreground-color: 255, 255, 255;
     --background-color: #F6f6f6;
-    --error-color: red;
+    --danger-color: red;
     color: rgba(var(--text-color), 1);
     background: var(--background-color);
 }
@@ -27,37 +26,11 @@ body[data-theme='dark']{
     --text-color-light: 170, 170, 170;
     --foreground-color: 20, 20, 20;
     --background-color: #0a0a0a;
-    --error-color: rgb(255, 106, 106);
+    --danger-color: rgb(255, 106, 106);
 }
-.full-bleed{
-    grid-column: 1/4;
-}
-.h1{
-    font-size: 2.5rem;
-}
-.h2{
-    font-size: 2rem;
-}
-.h3{
-    font-size: 1.4rem;
-}
-.h4{
-    font-size: 1rem;
-}
-.h5{
-    font-size: 0.8rem;
-}
-
-.uppercase{
-    text-transform: uppercase;
-}
-.capitalize{
-    text-transform: capitalize;
-}
-
 p {
     font-size: 0.8;
-    max-width: 75ch;
+    max-width: 65ch;
     line-height: 1.7;
     margin-bottom: 1.5rem;
     color: rgba(var(--text-color), 0.8);
@@ -123,6 +96,31 @@ ul{
     -moz-hyphens: auto;
     -webkit-hyphens: auto;
     hyphens: auto;
+}
+.full-bleed{
+    grid-column: 1/4;
+}
+.h1{
+    font-size: 2.5rem;
+}
+.h2{
+    font-size: 2rem;
+}
+.h3{
+    font-size: 1.4rem;
+}
+.h4{
+    font-size: 1rem;
+}
+.h5{
+    font-size: 0.8rem;
+}
+
+.uppercase{
+    text-transform: uppercase;
+}
+.capitalize{
+    text-transform: capitalize;
 }
 .flex{
     display: flex;
@@ -286,11 +284,10 @@ pre{
     background: rgba(var(--text-color), .04);
 }
 code{
-    font-family: 'Roboto Mono', monospace;
-    border-radius: 0.2rem;
+    border-radius: 0.3rem;
     font-weight: 400;
     padding: 0.2rem 0.4rem;
-    background: rgba(var(--text-color), .04);
+    background: rgba(var(--text-color), .1);
 }
 code > *{
     font-family: 'Roboto Mono', monospace;
@@ -391,6 +388,8 @@ sm-tab-header{
 }
 ol{
     padding: 0.6rem 1rem;
+    max-width: 75ch;
+    margin-bottom: 3rem;
     li{
         margin-bottom: 1rem;
         &:last-of-type{
@@ -400,6 +399,14 @@ ol{
             text-transform: capitalize;
         }
     }
+}
+strong.important{
+    display: flex;
+    padding: 0.5rem;
+    margin: 0.5rem 0;
+    border-radius: 0.3rem;
+    color: rgba(0,0,0, 0.8);
+    background-color: khaki;
 }
 #total_components_count{
     font-size: 4rem;
@@ -454,6 +461,9 @@ ol{
         & > * {
             grid-column: 2/3;
         }
+    }
+    .page__title{
+        font-size: 2rem;
     }
     #overview_page{
         display: grid;

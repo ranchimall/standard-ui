@@ -7,6 +7,9 @@ spinner.innerHTML = `
     -webkit-box-sizing: border-box;
             box-sizing: border-box;
 }
+:host{
+    --accent-color: #4d2588;
+}
 .loader {
     height: 1.6rem;
     width: 1.6rem;
