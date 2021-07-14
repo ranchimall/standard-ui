@@ -13,9 +13,7 @@ smCheckbox.innerHTML = `
         display: inline-flex;
         --accent-color: #4d2588;
         --text-color: 17, 17, 17;
-        --foreground-color: 255, 255, 255;
-        --background-color: #F6f6f6;
-        --danger-color: red;
+        --background-color: 255, 255, 255;
         --height: 1.2rem;
         --width: 1.2rem;
         --border-radius: 0.2rem;
@@ -61,7 +59,7 @@ smCheckbox.innerHTML = `
     
     :host([checked]) .checkmark {
         stroke-dashoffset: 0;
-        stroke: rgba(var(--foreground-color), 1);
+        stroke: rgba(var(--background-color), 1);
     }
     :host([checked]) .icon {
         stroke-width: 8; 

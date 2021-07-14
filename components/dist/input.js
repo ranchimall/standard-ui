@@ -39,8 +39,7 @@ border: none;
     display: flex;
     --accent-color: #4d2588;
     --text-color: 17, 17, 17;
-    --foreground-color: 255, 255, 255;
-    --background-color: #F6f6f6;
+    --background-color: 255, 255, 255;
     --success-color: #00C853;
     --danger-color: red;
     --width: 100%;
@@ -168,7 +167,7 @@ input{
 }
 :host(.outlined) .input {
     box-shadow: 0 0 0 0.1rem rgba(var(--text-color), 0.4) inset;
-    background: rgba(var(--foreground-color), 1);
+    background: rgba(var(--background-color), 1);
 }
 :host(.outlined) .label {
     width: max-content;
@@ -180,7 +179,7 @@ input{
             -ms-transform: translate(0.1rem, -1.5rem) scale(0.8);
         transform: translate(0.1rem, -1.5rem) scale(0.8);
     opacity: 1;
-    background: rgba(var(--foreground-color), 1);
+    background: rgba(var(--background-color), 1);
 }
 .animate-label:focus-within:not(.readonly) .label{
     color: var(--accent-color)

@@ -9,9 +9,7 @@ textField.innerHTML = `
     :host{
         --accent-color: #4d2588;
         --text-color: 17, 17, 17;
-        --foreground-color: 255, 255, 255;
-        --background-color: #F6f6f6;
-        --danger-color: red;
+        --background-color: 255, 255, 255;
     }
     .text-field{
         display: flex;

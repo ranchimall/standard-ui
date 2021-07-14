@@ -13,9 +13,7 @@ smTabHeader.innerHTML = `
         display: flex;
         --accent-color: #4d2588;
         --text-color: 17, 17, 17;
-        --foreground-color: 255, 255, 255;
-        --background-color: #F6f6f6;
-        --danger-color: red;
+        --background-color: 255, 255, 255;
     }
     .tabs{
         position: relative;
@@ -71,7 +69,7 @@ smTabHeader.innerHTML = `
         border-radius: 0.3rem;
     }
     :host([variant="tab"]) slot::slotted(.active){
-        color: rgba(var(--foreground-color), 1);
+        color: rgba(var(--background-color), 1);
     }
     slot::slotted(.active){
         color: var(--accent-color);

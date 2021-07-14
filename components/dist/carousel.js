@@ -13,16 +13,14 @@ smCarousel.innerHTML = `
     display: flex;
     --accent-color: #4d2588;
     --text-color: 17, 17, 17;
-    --foreground-color: 255, 255, 255;
-    --background-color: #F6f6f6;
-    --danger-color: red;
+    --background-color: 255, 255, 255;
     --arrow-left: 1rem;
     --arrow-right: 1rem;
     --arrow-top: auto;
     --arrow-bottom: auto;
-    --arrow-fill: rgba(var(--foreground-color), 1);
-    --arrow-background: rgba(var(--text-color), 1);
-    --arrow-box-shadow: 0 0.2rem 0.2rem #00000020, 0 0.5rem 1rem #00000040;
+    --nav-icon-fill: rgba(var(--background-color), 1);
+    --nav-background-color: rgba(var(--text-color), 1);
+    --nav-box-shadow: 0 0.2rem 0.2rem #00000020, 0 0.5rem 1rem #00000040;
     --indicator-top: auto;
     --indicator-bottom: -1rem;
     --active-indicator-color: var(--accent-color);
@@ -37,9 +35,9 @@ smCarousel.innerHTML = `
     top:  var(--arrow-top);
     bottom:  var(--arrow-bottom);
     border: none;
-    background: var(--arrow-background);
-    -webkit-box-shadow: var(--arrow-box-shadow);
-            box-shadow:  var(--arrow-box-shadow); 
+    background: var(--nav-background-color);
+    -webkit-box-shadow: var(--nav-box-shadow);
+            box-shadow:  var(--nav-box-shadow); 
     -webkit-tap-highlight-color: transparent;
     transition: transform 0.3s;
     z-index: 1;
@@ -64,7 +62,7 @@ button:focus-visible{
 .icon {
     height: 1.5rem;
     width: 1.5rem;
-    fill: var(--arrow-fill);
+    fill: var(--nav-icon-fill);
 }
 .hide{
     display: none !important;

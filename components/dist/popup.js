@@ -14,9 +14,7 @@ smPopup.innerHTML = `
     z-index: 10;
     --accent-color: #4d2588;
     --text-color: 17, 17, 17;
-    --foreground-color: 255, 255, 255;
-    --background-color: #F6f6f6;
-    --danger-color: red;
+    --background-color: 255, 255, 255;
     --width: 100%;
     --height: auto;
     --min-width: auto;
@@ -71,7 +69,7 @@ smPopup.innerHTML = `
     -o-transition: transform 0.3s;
     transition: transform 0.3s, -webkit-transform 0.3s;
     transition: transform 0.3s;
-    background: rgba(var(--foreground-color), 1);
+    background: rgba(var(--background-color), 1);
     -webkit-box-shadow: 0 -1rem 2rem #00000020;
             box-shadow: 0 -1rem 2rem #00000020;
     content-visibility: auto;

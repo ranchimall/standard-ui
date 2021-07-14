@@ -82,7 +82,7 @@ smMenu.innerHTML = `
     -webkit-box-direction: normal;
         -ms-flex-direction: column;
             flex-direction: column;
-    background: rgba(var(--foreground-color), 1);
+    background: rgba(var(--background-color), 1);
     -webkit-transition: opacity 0.3s, -webkit-transform 0.3s;
     transition: opacity 0.3s, -webkit-transform 0.3s;
     -o-transition: opacity 0.3s, transform 0.3s;

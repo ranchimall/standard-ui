@@ -23,9 +23,7 @@ smSelect.innerHTML = `
     display: inline-flex;
     --accent-color: #4d2588;
     --text-color: 17, 17, 17;
-    --foreground-color: 255, 255, 255;
-    --background-color: #F6f6f6;
-    --danger-color: red;
+    --background-color: 255, 255, 255;
     --max-height: auto;
     --min-width: 100%;
 }
@@ -95,7 +93,7 @@ smSelect.innerHTML = `
             flex-direction: column;
     min-width: var(--min-width);
     max-height: var(--max-height);
-    background: rgba(var(--foreground-color), 1);
+    background: rgba(var(--background-color), 1);
     border: solid 1px rgba(var(--text-color), 0.2);
     border-radius: 0.3rem;
     z-index: 2;

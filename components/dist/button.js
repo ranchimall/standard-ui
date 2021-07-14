@@ -11,27 +11,17 @@ smButton.innerHTML = `
     display: -webkit-inline-box;
     display: -ms-inline-flexbox;
     display: inline-flex;
+    width: auto;
     --accent-color: #4d2588;
     --text-color: 17, 17, 17;
-    --foreground-color: 255, 255, 255;
-    --background-color: #F6f6f6;
-    --danger-color: red;
+    --background-color: 255, 255, 255;
     --padding: 0.6rem 1.2rem;
     --border-radius: 0.3rem;
     --background: rgba(var(--text-color), 0.1);
 }
-:host([disabled]) .button{
-    cursor: not-allowed;
-    opacity: 0.6;
-    background: rgba(var(--text-color), 0.3) !important;
-    color: rgba(var(--foreground-color), 0.6);
-}
-:host([disabled][variant="primary"]) .button{
-    color: rgba(var(--text-color), 1);
-}
 :host([variant='primary']) .button{
     background: var(--accent-color);
-    color: rgba(var(--foreground-color), 1);
+    color: rgba(var(--background-color), 1);
 }
 :host([variant='outlined']) .button{
     -webkit-box-shadow: 0 0 0 1px rgba(var(--text-color), 0.2) inset;
@@ -40,14 +30,8 @@ smButton.innerHTML = `
     color: var(--accent-color);
 }
 :host([variant='no-outline']) .button{
-    background: rgba(var(--foreground-color), 1); 
+    background: rgba(var(--background-color), 1); 
     color: var(--accent-color);
-}
-:host(.small) .button{
-    padding: 0.4rem 0.8rem;
-}
-:host(.round) .button{
-    border-radius: 10rem;
 }
 .button {
     position: relative;
@@ -77,13 +61,11 @@ smButton.innerHTML = `
     color: inherit;
     align-items: center;
 }
-:host(:not([disabled])) .button:focus-visible{
-    -webkit-box-shadow: 0 0 0 0.1rem var(--accent-color);
-            box-shadow: 0 0 0 0.1rem var(--accent-color);
-}
-:host([variant='outlined']) .button:focus-visible{
-    -webkit-box-shadow: 0 0 0 1px rgba(var(--text-color), 0.2) inset, 0 0.1rem 0.1rem rgba(0, 0, 0, 0.1), 0 0 0 0.1rem var(--accent-color);
-            box-shadow: 0 0 0 1px rgba(var(--text-color), 0.2) inset, 0 0.1rem 0.1rem rgba(0, 0, 0, 0.1), 0 0 0 0.1rem var(--accent-color);
+:host([disabled]) .button{
+    cursor: not-allowed;
+    opacity: 0.6;
+    color: rgba(var(--text-color), 1);
+    background-color: rgba(var(--text-color), 0.3);
 }
 @media (hover: hover){
     :host(:not([disabled])) .button:hover{
@@ -106,9 +88,9 @@ smButton.innerHTML = `
     }
 }
 </style>
-<button part="button" class="button">
+<div part="button" class="button">
     <slot></slot>   
-</button>`;
+</div>`;
 customElements.define('sm-button',
     class extends HTMLElement {
         constructor() {
@@ -117,42 +99,36 @@ customElements.define('sm-button',
                 mode: 'open'
             }).append(smButton.content.cloneNode(true))
         }
+        static get observedAttributes() {
+            return ['disabled'];
+        }
 
         get disabled() {
-            return this.isDisabled
+            return this.hasAttribute('disabled')
         }
 
         set disabled(value) {
-            if (value && !this.isDisabled) {
-                this.isDisabled = true
+            if (value) {
                 this.setAttribute('disabled', '')
-                this.button.removeAttribute('tabindex')
-            } else if (!value && this.isDisabled) {
-                this.isDisabled = false
+            }else {
                 this.removeAttribute('disabled')
-            }
-        }
-        dispatch() {
-            if (this.isDisabled) {
-                this.dispatchEvent(new CustomEvent('disabled', {
-                    bubbles: true,
-                    composed: true
-                }))
-            } else {
-                this.dispatchEvent(new CustomEvent('clicked', {
-                    bubbles: true,
-                    composed: true
-                }))
             }
         }
 
         connectedCallback() {
-            this.isDisabled = false
-            this.button = this.shadowRoot.querySelector('.button')
-            if (this.hasAttribute('disabled') && !this.isDisabled)
-                this.isDisabled = true
-            this.addEventListener('click', (e) => {
-                this.dispatch()
-            })
+            if (!this.hasAttribute('disabled')) {
+                this.setAttribute('tabindex', '0')
+            }
+            this.setAttribute('role', 'button')
+        }
+        attributeChangedCallback(name, oldVal, newVal) {
+            if (name === 'disabled') {
+                this.removeAttribute('tabindex')
+                this.setAttribute('aria-disabled', 'true')
+            }
+            else {
+                this.setAttribute('tabindex', '0')
+                this.setAttribute('aria-disabled', 'false')
+            }
         }
     })

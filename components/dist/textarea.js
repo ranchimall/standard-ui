@@ -19,8 +19,7 @@ smTextarea.innerHTML = `
     display: grid;
     --accent-color: #4d2588;
     --text-color: 17, 17, 17;
-    --foreground-color: 255, 255, 255;
-    --background-color: #F6f6f6;
+    --background-color: 255, 255, 255;
     --danger-color: red;
     --border-radius: 0.3rem;
     --background: rgba(var(--text-color), 0.06);
@@ -30,7 +29,7 @@ smTextarea.innerHTML = `
 }
 :host(.outlined) .textarea {
     box-shadow: 0 0 0 0.1rem rgba(var(--text-color), 0.4) inset;
-    background: rgba(var(--foreground-color), 1);
+    background: rgba(var(--background-color), 1);
 }
 .textarea{
     display: grid;
