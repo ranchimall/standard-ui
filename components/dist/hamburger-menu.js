@@ -15,7 +15,7 @@ hamburgerMenu.innerHTML = `
     overflow-y: auto;
     --accent-color: #4d2588;
     --text-color: 17, 17, 17;
-    --background-color: inherit;
+    --background-color: 255, 255, 255;
     --padding: 0 0 3rem 0;
     --backdrop-color: rgba(0,0,0,0.5);
 }
@@ -40,7 +40,7 @@ hamburgerMenu.innerHTML = `
         overflow-y: auto;  
         width: calc(100% - 4rem);
         transition: transform 0.3s;
-        background-color: var(--background-color);
+        background-color: rgba(var(--background-color), 1);
         box-shadow: 0.5rem 0 2rem rgba(0,0,0, 0.1);
         z-index: 1;
     }

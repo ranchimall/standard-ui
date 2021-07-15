@@ -77,10 +77,14 @@
                 <div>
                     <h1 class="page__title">Overview</h1>
                     <p>
-                        Component-based design is the cornerstone of the modern UI development process. With rise of more UI frameworks every day, the web platform has a serious issue of fragmentation and portability.
+                        Component-based design is the cornerstone of the modern UI development process. With rise of
+                        more UI frameworks every day, the web platform has a serious issue of fragmentation and
+                        portability.
                     </p>
                     <p>
-                        Web components to the rescue! This is the collection of web components (WC here forward) that we use at RanchiMall, especially since we are a framework-less development environment so this was a logical choice.
+                        Web components to the rescue! This is the collection of web components (WC here forward) that we
+                        use at RanchiMall, especially since we are a framework-less development environment so this was
+                        a logical choice.
                     </p>
                     <p>
                         Just download the components you like, link them with a script tag and drop it in HTML done!
@@ -99,17 +103,20 @@
                 <h1 class="page__title">Quick Start</h1>
                 <ol>
                     <li>
-                        To start using these components, Select the ones you want to add to your project. You can un-check 'get minified' to get the readable code.
+                        To start using these components, Select the ones you want to add to your project. You can
+                        un-check 'get minified' to get the readable code.
                     </li>
                     <li>
-                        Now you can download or copy the source code for selected components. 
+                        Now you can download or copy the source code for selected components.
                         <strong class="important">
                             You might get a warning while downloading like this file is not safe,
-                             please allow the download as this is caused when downloading files with '.js' extension. These components are 100% safe to use. 
+                            please allow the download as this is caused when downloading files with '.js' extension.
+                            These components are 100% safe to use.
                         </strong>
                     </li>
                     <li>
-                        Link the downloaded js with <code>&lt;script src=".../components.js"&gt;&lt;/script&gt;</code> at bottom of your HTML file just before <span class="highlight">&lt;/body&gt;</span> tag.
+                        Link the downloaded js with <code>&lt;script src=".../components.js"&gt;&lt;/script&gt;</code>
+                        at bottom of your HTML file just before <span class="highlight">&lt;/body&gt;</span> tag.
                     </li>
                 </ol>
                 <div class="grid grid-3 gap-0-5 align-center">
@@ -130,72 +137,66 @@
 
             <section id="global_styling_page" class="page hide-completely">
                 <h1 class="page__title">Global styling</h1>
-                <p>These components use <strong>CSS variables</strong> to customize styling. they share some CSS variables that make global styling easier.</p>
+                <p>These components use <strong>CSS variables</strong> to customize styling. they share some CSS
+                    variables that make global styling easier.</p>
                 <h4>Some common CSS variables and their use</h4>
-                <table>
-                    <thead>
-                        <tr>
-                            <th>Variable</th>
-                            <th>Use</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        <tr>
-                            <td><span class="highlight">--accent-color</span></td>
-                            <td>Color which will be used for denoting active state</td>
-                        </tr>
-                        <tr>
-                            <td><span class="highlight">--text-color</span></td>
-                            <td>
-                                default text color for all components. <br>
-                                ( Use comma separated rgb values. e.g 17, 17, 17 )
-                            </td>
-                        </tr>
-                        <tr>
-                            <td><span class="highlight">--background-color</span></td>
-                            <td>
-                                default background color for all components. <br>
-                                ( Use comma separated rgb values. e.g 255, 255, 255 )
-                            </td>
-                        </tr>
-                        <tr>
-                            <td><span class="highlight">--danger-color</span></td>
-                            <td>Used for error/invalid state</td>
-                        </tr>
-                    </tbody>
-                </table>                
+                <section class="table">
+                    <div class="tr">
+                        <h4 class="table__heading">Variable</h4>
+                        <h4 class="table__heading">Use</h4>
+                    </div>
+                    <div class="tr">
+                        <div><span class="highlight">--accent-color</span></div>
+                        <p>Color which will be used for denoting active state</p>
+                    </div>
+                    <div class="tr">
+                        <div><span class="highlight">--text-color</span></div>
+                        <p>
+                            default text color for all components. <br>
+                            ( Use comma separated rgb values. e.g 17, 17, 17 )
+                        </p>
+                    </div>
+                    <div class="tr">
+                        <div><span class="highlight">--background-color</span></div>
+                        <p>
+                            default background color for all components. <br>
+                            ( Use comma separated rgb values. e.g 255, 255, 255 )
+                        </p>
+                    </div>
+                    <div class="tr">
+                        <div><span class="highlight">--danger-color</span></div>
+                        <p>Used for error/invalid state</p>
+                    </div>
+                </section>
             </section>
             <section id="button_page" class="page hide-completely">
                 <h1 class="page__title">Buttons</h1>
+                <sm-button>Default button</sm-button>
                 <p><span class="highlight">sm-button</span> has 3 variants that define how the button looks.</p>
-                <table>
-                    <thead>
-                        <tr>
-                            <th>Variant type</th>
-                            <th>Example</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        <tr>
-                            <td><span class="highlight">primary</span></td>
-                            <td>
-                                <sm-button variant="primary">Primary</sm-button>
-                            </td>
-                        </tr>
-                        <tr>
-                            <td><span class="highlight">outlined</span></td>
-                            <td>
-                                <sm-button variant="outlined">Outlined</sm-button>
-                            </td>
-                        </tr>
-                        <tr>
-                            <td><span class="highlight">no--outline</span></td>
-                            <td>
-                                <sm-button variant="no-outline">No outline</sm-button>
-                            </td>
-                        </tr>
-                    </tbody>
-                </table>  
+                <section class="table">
+                    <div class="tr">
+                        <h4 class="table__heading">Variant type</h4>
+                        <h4 class="table__heading">Example</h4>
+                    </div>
+                    <div class="tr">
+                        <div><span class="highlight">primary</span></div>
+                        <p>
+                            <sm-button variant="primary">Primary</sm-button>
+                        </p>
+                    </div>
+                    <div class="tr">
+                        <div><span class="highlight">outlined</span></div>
+                        <p>
+                            <sm-button variant="outlined">Outlined</sm-button>
+                        </p>
+                    </div>
+                    <div class="tr">
+                        <div><span class="highlight">no--outline</span></div>
+                        <p>
+                            <sm-button variant="no-outline">No outline</sm-button>
+                        </p>
+                    </div>
+                </section>
                 <h4>How to define variant</h4>
                 <pre>
                     <code class="prettyprint">
@@ -204,11 +205,11 @@
                         &lt;sm-button variant="no-outline"&gt;no-outline&lt;/sm-button&gt;
                     </code>
                 </pre>
-                
+
                 <h2>States</h2>
                 <h4>Disabled</h4>
-                <p>To  disable the button add <span class="highlight">disabled</span> attribute.</p>
-                <sm-button  disabled>Disabled</sm-button>
+                <p>To disable the button add <span class="highlight">disabled</span> attribute.</p>
+                <sm-button disabled>Disabled</sm-button>
                 <pre>
                     <code class="prettyprint">
                         &lt;sm-button disabled&gt;Disabled&lt;/sm-button&gt;
@@ -216,67 +217,60 @@
                 </pre>
                 <h2>Attributes</h2>
                 <p>All the native HTML checkbox attributes are valid</p>
-                <table>
-                    <thead>
-                        <tr>
-                            <th>Attribute</th>
-                            <th>Description</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        <tr>
-                            <td><span class="highlight">disabled</span> (boolean)</td>
-                            <td>
-                                Button is disabled by default. all the interactions are disabled
-                            </td>
-                        </tr>
-                        <tr>
-                            <td><span class="highlight">type</span> (string)</td>
-                            <td>
-                               Has values <span class="highlight">submit</span> <span class="highlight">reset</span> <br>
-                               Can only used withing <spna class="highlight">sm-form</spna> to submit or reset the form.
-                            </td>
-                        </tr>
-                    </tbody>
-                </table> 
+                <section class="table">
+                    <div class="tr">
+                        <h4 class="table__heading">Attribute</h4>
+                        <h4 class="table__heading">Description</h4>
+                    </div>
+                    <div class="tr">
+                        <div><span class="highlight">disabled</span> (boolean)</div>
+                        <p>
+                            Button is disabled by default. all the interactions are disabled
+                        </p>
+                    </div>
+                    <div class="tr">
+                        <div><span class="highlight">type</span> (string)</div>
+                        <p>
+                            Has values <span class="highlight">submit</span> <span class="highlight">reset</span> <br>
+                            Can only used withing <spna class="highlight">sm-form</spna> to submit or reset the form.
+                        </p>
+                    </div>
+                </section>
 
                 <h2>Styling</h2>
                 <p>CSS variables used to style this component</p>
-                <table>
-                    <thead>
-                        <tr>
-                            <th>Variable</th>
-                            <th>Description</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        <tr>
-                            <td><span class="highlight">--background</span></td>
-                            <td>
-                                Define background of button. accepts all values of CSS background property
-                            </td>
-                        </tr>
-                        <tr>
-                            <td><span class="highlight">--border-radius</span></td>
-                            <td>
-                                Set curvature at button corners
-                            </td>
-                        </tr>
-                        <tr>
-                            <td><span class="highlight">--padding</span></td>
-                            <td>
-                                Specify padding of button
-                            </td>
-                        </tr>
-                    </tbody>
-                </table>  
+                <section class="table">
+                    <div class="tr">
+                        <h4 class="table__heading">Variable</h4>
+                        <h4 class="table__heading">Description</h4>
+                    </div>
+                    <div class="tr">
+                        <div><span class="highlight">--background</span></div>
+                        <p>
+                            Define background of button. accepts all values of CSS background property
+                        </p>
+                    </div>
+                    <div class="tr">
+                        <div><span class="highlight">--border-radius</span></div>
+                        <p>
+                            Set curvature at button corners
+                        </p>
+                    </div>
+                    <div class="tr">
+                        <div><span class="highlight">--padding</span></div>
+                        <p>
+                            Specify padding of button
+                        </p>
+                    </div>
+                </section>
             </section>
 
             <section id="carousel_page" class="page hide-completely">
                 <h1 class="page__title">Carousel</h1>
                 <p>
                     Carousel is a very common UI component primarily used to display images or slides.
-                    This carousel switches user interactions based on type of input devices present. For hover capable devices slides can be scrolled with buttons and on 
+                    This carousel switches user interactions based on type of input devices present. For hover capable
+                    devices slides can be scrolled with buttons and on
                     touch enabled devices swipe can be used.
                 </p>
                 <h2>Interactive demo</h2>
@@ -306,74 +300,67 @@
                 </pre>
                 <h2>Custom attributes</h2>
                 <p>These attributes cane used to customize carousel behaviour and features</p>
-                <table>
-                    <thead>
-                        <tr>
-                            <th>Attribute</th>
-                            <th>Description</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        <tr>
-                            <td><span class="highlight">align-items</span></td>
-                            <td>
-                                Has values <span class="highlight">start</span>
-                                <span class="highlight">center</span> <span class="highlight">end</span>
-                                Specifies how carousel items should align. default is <span class="highlight">center</span>.
-                            </td>
-                        </tr>
-                        <tr>
-                            <td><span class="highlight">indicator</span> (boolean)</td>
-                            <td>
-                                if added carousel shows dot indicators of carousel items. 
-                            </td>
-                        </tr>
-                    </tbody>
-                </table>  
+                <section class="table">
+                    <div class="tr">
+                        <h4 class="table__heading">Attribute</h4>
+                        <h4 class="table__heading">Description</h4>
+                    </div>
+                    <div class="tr">
+                        <div><span class="highlight">align-items</span></div>
+                        <p>
+                            Has values <span class="highlight">start</span>
+                            <span class="highlight">center</span> <span class="highlight">end</span>
+                            Specifies how carousel items should align. default is <span class="highlight">center</span>.
+                        </p>
+                    </div>
+                    <div class="tr">
+                        <div><span class="highlight">indicator</span> (boolean)</div>
+                        <p>
+                            if added carousel shows dot indicators of carousel items.
+                        </p>
+                    </div>
+                </section>
 
                 <h2>Styling</h2>
                 <p>CSS variables used to style this component</p>
-                <table>
-                    <thead>
-                        <tr>
-                            <th>Variable</th>
-                            <th>Description</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        <tr>
-                            <td><span class="highlight">--active-indicator-color</span></td>
-                            <td>
-                                Defines background color of active slide indicator
-                            </td>
-                        </tr>
-                        <tr>
-                            <td><span class="highlight">--nav-background-color</td>
-                            <td>
-                               Defines background color of carousel navigation buttons
-                            </td>
-                        </tr>
-                        <tr>
-                            <td><span class="highlight">--nav-box-shadow</td>
-                            <td>
-                                Defines box shadow of carousel navigation buttons
-                            </td>
-                        </tr>
-                        <tr>
-                            <td><span class="highlight">--nav-icon-fill</td>
-                                <td>
-                                Defines fill of arrow icon on carousel navigation buttons
-                            </td>
-                        </tr>
-                    </tbody>
-                </table>  
+                <section class="table">
+                    <div class="tr">
+                        <h4 class="table__heading">Variable</h4>
+                        <h4 class="table__heading">Description</h4>
+                    </div>
+                    <div class="tr">
+                        <div><span class="highlight">--active-indicator-color</span></div>
+                        <p>
+                            Defines background color of active slide indicator
+                        </p>
+                    </div>
+                    <div class="tr">
+                        <div><span class="highlight">--nav-background-color</div>
+                        <p>
+                            Defines background color of carousel navigation buttons
+                        </p>
+                    </div>
+                    <div class="tr">
+                        <div><span class="highlight">--nav-box-shadow</div>
+                        <p>
+                            Defines box shadow of carousel navigation buttons
+                        </p>
+                    </div>
+                    <div class="tr">
+                        <div><span class="highlight">--nav-icon-fill</div>
+                        <p>
+                            Defines fill of arrow icon on carousel navigation buttons
+                        </p>
+                    </div>
+                </section>
             </section>
 
             <section id="checkbox_page" class="page hide-completely">
                 <h1 class="page__title">Checkbox</h1>
                 <p><span class="highlight">sm-checkbox</span> supports all the attributes of native HTML5 checkbox</p>
                 <strong>
-                    linking some HTML element with <span class="highlght">sm-checbox</span> using <span class="highlight">label</span> tag won't work. <br>
+                    linking some HTML element with <span class="highlght">sm-checbox</span> using <span
+                        class="highlight">label</span> tag won't work. <br>
                     Add the element inside the opening and closing checkbox tag.
                 </strong>
                 <h2>Interactive demo</h2>
@@ -386,7 +373,7 @@
                 <h2>States</h2>
                 <h4>Disabled</h4>
                 <p>To disable the checkbox add <span class="highlight">disabled</span> attribute.</p>
-                <sm-checkbox  disabled>
+                <sm-checkbox disabled>
                     <div style="margin-left: 0.5rem;">
                         Disabled checkbox
                     </div>
@@ -416,65 +403,57 @@
 
                 <h2>Attributes</h2>
                 <p>All the native HTML checkbox attributes are valid</p>
-                <table>
-                    <thead>
-                        <tr>
-                            <th>Attribute</th>
-                            <th>Description</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        <tr>
-                            <td><span class="highlight">checked</span> (boolean)</td>
-                            <td>
-                                Sets checked state as default if added
-                            </td>
-                        </tr>
-                        <tr>
-                            <td><span class="highlight">disabled</span> (boolean)</td>
-                            <td>
-                                Checkbox is disabled by default. all the interactions are disabled
-                            </td>
-                        </tr>
-                        <tr>
-                            <td><span class="highlight">value</span> (string)</td>
-                            <td>
-                               Sets value of checkbox which can be accessed by value property with JS
-                            </td>
-                        </tr>
-                    </tbody>
-                </table>  
+                <section class="table">
+                    <div class="tr">
+                        <h4 class="table__heading">Attribute</h4>
+                        <h4 class="table__heading">Description</h4>
+                    </div>
+                    <div class="tr">
+                        <div><span class="highlight">checked</span> (boolean)</div>
+                        <p>
+                            Sets checked state as default if added
+                        </p>
+                    </div>
+                    <div class="tr">
+                        <div><span class="highlight">disabled</span> (boolean)</div>
+                        <p>
+                            Checkbox is disabled by default. all the interactions are disabled
+                        </p>
+                    </div>
+                    <div class="tr">
+                        <div><span class="highlight">value</span> (string)</div>
+                        <p>
+                            Sets value of checkbox which can be accessed by value property with JS
+                        </p>
+                    </div>
+                </section>
 
                 <h2>Styling</h2>
                 <p>CSS variables used to style this component</p>
-                <table>
-                    <thead>
-                        <tr>
-                            <th>Variable</th>
-                            <th>Description</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        <tr>
-                            <td><span class="highlight">--border-radius</span></td>
-                            <td>
-                                Defines border-radius of checkbox square
-                            </td>
-                        </tr>
-                        <tr>
-                            <td><span class="highlight">--height</td>
-                            <td>
-                               Defines height of checkbox
-                            </td>
-                        </tr>
-                        <tr>
-                            <td><span class="highlight">--width</td>
-                            <td>
-                               Defines width of checkbox
-                            </td>
-                        </tr>
-                    </tbody>
-                </table>  
+                <section class="table">
+                    <div class="tr">
+                        <h4 class="table__heading">Variable</h4>
+                        <h4 class="table__heading">Description</h4>
+                    </div>
+                    <div class="tr">
+                        <div><span class="highlight">--border-radius</span></div>
+                        <p>
+                            Defines border-radius of checkbox square
+                        </p>
+                    </div>
+                    <div class="tr">
+                        <div><span class="highlight">--height</div>
+                        <p>
+                            Defines height of checkbox
+                        </p>
+                    </div>
+                    <div class="tr">
+                        <div><span class="highlight">--width</div>
+                        <p>
+                            Defines width of checkbox
+                        </p>
+                    </div>
+                </section>
             </section>
 
             <section id="copy_page" class="page hide-completely">
@@ -499,7 +478,8 @@
                     To start using SM Components
                 </p>
                 <sm-form>
-                    <sm-input placeholder="Email" type="email" error-text="please enter correct email" required animate></sm-input>
+                    <sm-input placeholder="Email" type="email" error-text="please enter correct email" required animate>
+                    </sm-input>
                     <sm-input placeholder="Password" type="password" required animate></sm-input>
                     <sm-button variant="primary" disabled>Submit</sm-button>
                 </sm-form>
@@ -515,8 +495,8 @@
                 <p>
                     To start using SM Components
                 </p>
-                <sm-input placeholder="something" type="email" error-text="please enter correct email"
-                    animate></sm-input>
+                <sm-input placeholder="something" type="email" error-text="please enter correct email" animate>
+                </sm-input>
                 <p id="insert_text"></p>
             </section>
 
@@ -540,8 +520,7 @@
                 </p>
                 <h4>Example</h4>
 
-                <sm-button
-                    onclick="notify('Lorem ipsum dolor, consectetur adipisicing elit.', 'success')">
+                <sm-button onclick="notify('Lorem ipsum dolor, consectetur adipisicing elit.', 'success')">
                     push success notification</sm-button>
                 <sm-button onclick="notify('Lorem ipsum dolor, sit amet.', 'error')">
                     push error notification</sm-button>
@@ -603,7 +582,8 @@
             <section id="select_page" class="page hide-completely">
                 <h1 class="page__title">Select</h1>
                 <p>
-                    <span class="highlight">&lt;sm-select&gt;</span> is very similar to starndatd HTML5 select and it's markup stucture is
+                    <span class="highlight">&lt;sm-select&gt;</span> is very similar to starndatd HTML5 select and it's
+                    markup stucture is
                     also identical.
                 </p>
                 <sm-select>
@@ -615,7 +595,8 @@
             <section id="spinner_page" class="page hide-completely">
                 <h1 class="page__title">Spinner</h1>
                 <p>
-                    <span class="highlight">&lt;sm-select&gt;</span> is very similar to starndatd HTML5 select and it's markup stucture is
+                    <span class="highlight">&lt;sm-select&gt;</span> is very similar to starndatd HTML5 select and it's
+                    markup stucture is
                     also identical.
                 </p>
                 <sm-spinner></sm-spinner>
@@ -748,9 +729,9 @@
         }
 
         function createElement(tagName, obj) {
-            const { className, textContent, innerHTML, attributes = {}} = obj
+            const { className, textContent, innerHTML, attributes = {} } = obj
             const elem = document.createElement(tagName)
-            for(let attribute in attributes){
+            for (let attribute in attributes) {
                 elem.setAttribute(attribute, attributes[attribute])
             }
             if (className)
@@ -792,13 +773,13 @@
             notify(
                 "There seems to be a problem connecting to the internet, Please check you internet connection.",
                 "error",
-               {sound: true}
+                { sound: true }
             );
         window.addEventListener("offline", () => {
             notify(
                 "There seems to be a problem connecting to the internet, Please check you internet connection.",
                 "error",
-                {pinned: true, sound: true}
+                { pinned: true, sound: true }
             );
         });
         window.addEventListener("online", () => {
@@ -925,18 +906,18 @@
 
         //Function for displaying toast notifications. pass in error for mode param if you want to show an error.
         function notify(message, mode, options = {}) {
-            const {pinned = false, sound} = options
+            const { pinned = false, sound } = options
             if (mode === "error") console.error(message);
             let icon
-            switch(mode){
+            switch (mode) {
                 case 'success':
                     icon = `<svg class="icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="24" height="24"><path fill="none" d="M0 0h24v24H0z"/><path d="M10 15.172l9.192-9.193 1.415 1.414L10 18l-6.364-6.364 1.414-1.414z"/></svg>`
-                break;
+                    break;
                 case 'error':
                     icon = `<svg class="icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="24" height="24"><path fill="none" d="M0 0h24v24H0z"/><path d="M12 22C6.477 22 2 17.523 2 12S6.477 2 12 2s10 4.477 10 10-4.477 10-10 10zm-1-7v2h2v-2h-2zm0-8v6h2V7h-2z"/></svg>`
-                break;
+                    break;
             }
-            getRef("notification_drawer").push(message, {pinned, icon});
+            getRef("notification_drawer").push(message, { pinned, icon });
             if (navigator.onLine && sound) {
                 getRef("notification_sound").currentTime = 0;
                 getRef("notification_sound").play();
@@ -1028,8 +1009,8 @@
                 itemLink.href = `#${pageId}`
                 return item
             },
-            compCheckbox(obj){
-                const {name} = obj
+            compCheckbox(obj) {
+                const { name } = obj
                 const checkbox = getRef('comp_checkbox_template').content.cloneNode(true).firstElementChild
                 checkbox.setAttribute('value', name.toLowerCase().replaceAll(' ', '-'))
                 checkbox.firstElementChild.textContent = name
@@ -1074,7 +1055,7 @@
                 })
             const targetListItem = document.querySelector(`.list__item[href="#${pageId}"]`)
             targetListItem.classList.add('list__item--active')
-            if (firstLoad && window.innerWidth > 640 && targetListItem.getBoundingClientRect().top > getRef('side_nav').getBoundingClientRect().height){
+            if (firstLoad && window.innerWidth > 640 && targetListItem.getBoundingClientRect().top > getRef('side_nav').getBoundingClientRect().height) {
                 getRef('side_nav').scrollTo({
                     top: (targetListItem.getBoundingClientRect().top - getRef('side_nav').getBoundingClientRect().top + getRef('side_nav').scrollTop),
                     behavior: 'smooth'
@@ -1173,7 +1154,7 @@
             const checkboxFrag = document.createDocumentFragment()
             componentsList.forEach((component, index) => {
                 itemsFrag.append(render.navListItem(component))
-                checkboxFrag.append(render.compCheckbox({...component, index}))
+                checkboxFrag.append(render.compCheckbox({ ...component, index }))
             })
             getRef('components_list').innerHTML = ''
             getRef('components_selection_list').innerHTML = ''
@@ -1187,14 +1168,14 @@
         function clearAll() {
             getRef('components_selection_list').querySelectorAll('sm-checkbox').forEach(elem => elem.checked = false)
         }
-        async function getSelectedComponents(){
+        async function getSelectedComponents() {
             const selectedComponents = [...getRef('components_selection_list').querySelectorAll('sm-checkbox[checked]')].map(v => v.value)
             const extension = getRef('get_minified').checked ? '.min.js' : '.js'
             const filesList = []
             selectedComponents.forEach(async component => {
                 for (let compObj in allComponentsObj) {
-                    const {name, download_url} = allComponentsObj[compObj]
-                    if(name === `${component}${extension}`){
+                    const { name, download_url } = allComponentsObj[compObj]
+                    if (name === `${component}${extension}`) {
                         filesList.push(fetch(download_url).then(async res => await res.text()))
                     }
                 }
@@ -1204,23 +1185,23 @@
 
         async function downloadComponents() {
             const selectedComponents = await getSelectedComponents()
-            if(selectedComponents.length){
-                downloadJs(selectedComponents, {minified: getRef('get_minified').checked})
+            if (selectedComponents.length) {
+                downloadJs(selectedComponents, { minified: getRef('get_minified').checked })
             }
-            else{
+            else {
                 notify('Please select atleast one component', 'error')
             }
         }
-        
-        async function copySourceCode(){
+
+        async function copySourceCode() {
             const selectedComponents = await getSelectedComponents()
-            if(selectedComponents.length){
+            if (selectedComponents.length) {
                 const sourceCode = selectedComponents.join("\n")
                 window.navigator.clipboard.writeText(sourceCode).then(success => {
                     notify('Copied components source code')
                 }).catch(err => console.error(error))
             }
-            else{
+            else {
                 notify('Please select atleast one component', 'error')
             }
         }
@@ -1230,9 +1211,9 @@
             const files = await fetch('https://api.github.com/repos/ranchimall/standard-visual-design-system/contents/components/dist')
             allComponentsObj = await files.json()
         }
-        function downloadJs(componentsArray, options = {minified: true}){
-            const {minified} = options  
-            const extension = minified ? '.min.js': '.js'
+        function downloadJs(componentsArray, options = { minified: true }) {
+            const { minified } = options
+            const extension = minified ? '.min.js' : '.js'
             const element = createElement('a', {
                 attributes: {
                     'href': 'data:application/javascript;charset=utf-8,' + encodeURIComponent(componentsArray.join("\n")),
@@ -1240,11 +1221,11 @@
                     'style': 'display:none'
                 }
             });
-        
+
             document.body.appendChild(element);
-        
+
             element.click();
-        
+
             document.body.removeChild(element);
         }
     </script>

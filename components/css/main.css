@@ -15,72 +15,24 @@ html, body {
 }
 
 body {
-  --accent-color: #4d2588;
+  background: rgba(var(--background-color), 1);
+}
+body,
+body * {
+  --accent-color: #0D7377;
   --text-color: 17, 17, 17;
   --background-color: 255, 255, 255;
   --danger-color: red;
   color: rgba(var(--text-color), 1);
-  background: rgba(var(--background-color), 1);
-  /* string  - green */
-  /* keyword - dark pink */
-  /* comment - gray */
-  /* type - light blue */
-  /* literal */
-  /* html/xml tag */
-  /* html/xml attribute name */
-  /* html/xml attribute value*/
-  /* decimal - blue */
-}
-body pre .str, body code .str {
-  color: #65B042;
-}
-body pre .kwd, body code .kwd {
-  color: #E28964;
-}
-body pre .com, body code .com {
-  color: #AEAEAE;
-  font-style: italic;
-}
-body pre .typ, body code .typ {
-  color: #4395ff;
-}
-body pre .lit, body code .lit {
-  color: #1a76c2;
-}
-body pre .tag, body code .tag {
-  color: #1976D2;
-}
-body pre .atn, body code .atn {
-  color: #00C853;
-}
-body pre .atv, body code .atv {
-  color: #F57F17;
-}
-body pre .dec, body code .dec {
-  color: #3387CC;
 }
 
-body[data-theme=dark] {
-  /* html/xml tag */
-  /* html/xml attribute name */
-  /* html/xml attribute value*/
-}
 body[data-theme=dark],
 body[data-theme=dark] * {
-  --accent-color: #976dd6;
+  --accent-color: #32E0C4;
   --text-color: 240, 240, 240;
   --text-color-light: 170, 170, 170;
-  --background-color: 20, 20, 20;
+  --background-color: 10, 10, 10;
   --danger-color: rgb(255, 106, 106);
-}
-body[data-theme=dark] pre .tag, body[data-theme=dark] code .tag {
-  color: #29B6F6;
-}
-body[data-theme=dark] pre .atn, body[data-theme=dark] code .atn {
-  color: #1DE9B6;
-}
-body[data-theme=dark] pre .atv, body[data-theme=dark] code .atv {
-  color: #84FFFF;
 }
 
 p {
@@ -124,21 +76,33 @@ ul {
   list-style: none;
 }
 
-table {
+.table {
+  display: grid;
+  gap: 0.5rem;
+  margin: 1rem 0;
   position: relative;
   text-align: left;
+  overflow-x: auto;
   border-radius: 0.5rem;
   border-collapse: separate;
   border-spacing: 1rem 1.5rem;
   background-color: rgba(var(--text-color), 0.04);
-  margin: 1rem 0;
 }
-table p:only-of-type {
+.table p:only-of-type {
   margin-bottom: 0;
 }
-table td {
-  line-height: 1.7;
-  max-width: 65ch;
+
+.tr {
+  display: grid;
+  gap: 1rem;
+  padding: 1rem;
+  grid-template-columns: 12rem minmax(0, 1fr);
+}
+.tr:nth-of-type(odd) {
+  background-color: rgba(var(--text-color), 0.04);
+}
+.tr p {
+  min-width: 30ch;
 }
 
 .flex {
@@ -380,15 +344,61 @@ table td {
 }
 
 pre .pun, code .pun {
-  color: rgba(var(--text-color), 0.8);
+  color: khaki;
 }
 
 /* punctuation */
 pre .pln, code .pln {
-  color: rgba(var(--text-color), 0.8);
+  color: rgba(255, 255, 255, 0.8);
 }
 
 /* plaintext */
+pre .str, code .str {
+  color: #65B042;
+}
+
+/* string  - green */
+pre .kwd, code .kwd {
+  color: #E28964;
+}
+
+/* keyword - dark pink */
+pre .com, code .com {
+  color: #AEAEAE;
+  font-style: italic;
+}
+
+/* comment - gray */
+pre .typ, code .typ {
+  color: #4395ff;
+}
+
+/* type - light blue */
+pre .lit, code .lit {
+  color: #1a76c2;
+}
+
+/* literal */
+pre .dec, code .dec {
+  color: #3387CC;
+}
+
+/* decimal - blue */
+pre .tag, code .tag {
+  color: #29B6F6;
+}
+
+/* html/xml tag */
+pre .atn, code .atn {
+  color: #1DE9B6;
+}
+
+/* html/xml attribute name */
+pre .atv, code .atv {
+  color: #84FFFF;
+}
+
+/* html/xml attribute value*/
 pre {
   max-width: 100%;
   margin: 1rem 0;
@@ -398,7 +408,7 @@ pre {
   font-weight: 500;
   white-space: pre-line;
   border-radius: 0.5rem;
-  background: rgba(var(--text-color), 0.04);
+  background: rgba(0, 0, 0, 0.9);
   line-height: 1.7;
 }
 
@@ -445,16 +455,6 @@ main {
 #side_nav_button {
   padding: 0.5rem;
   margin-left: -0.5rem;
-}
-
-#backdrop {
-  position: fixed;
-  z-index: 4;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  background-color: rgba(0, 0, 0, 0.5);
 }
 
 .right {
@@ -555,6 +555,7 @@ strong.important {
   border-radius: 0.3rem;
   padding: 0 0.5rem;
   font-size: 0.9rem;
+  line-height: 1.6;
 }
 
 #total_components_count {

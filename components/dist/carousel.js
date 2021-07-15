@@ -22,7 +22,7 @@ smCarousel.innerHTML = `
     --nav-background-color: rgba(var(--text-color), 1);
     --nav-box-shadow: 0 0.2rem 0.2rem #00000020, 0 0.5rem 1rem #00000040;
     --indicator-top: auto;
-    --indicator-bottom: -1rem;
+    --indicator-bottom: -1.5rem;
     --active-indicator-color: var(--accent-color);
 }
 .carousel__button{
@@ -66,6 +66,9 @@ button:focus-visible{
 }
 .hide{
     display: none !important;
+}
+:host([indicator]) .carousel-container{
+    margin-bottom: 2rem;
 }
 .carousel-container{
     position: relative;
