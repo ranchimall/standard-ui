@@ -152,29 +152,29 @@ input{
     color: rgba(var(--text-color), 1);
     width: 100%;
 }
-:host(:not(.outlined)) .animate-label .container input {
+:host(:not([variant="outlined"])) .animate-label .container input {
     -webkit-transform: translateY(0.6rem);
             -ms-transform: translateY(0.6rem);
         transform: translateY(0.6rem);
     }
   
-:host(:not(.outlined)) .animate-label .label {
+:host(:not([variant="outlined"])) .animate-label .label {
     -webkit-transform: translateY(-0.7em) scale(0.8);
             -ms-transform: translateY(-0.7em) scale(0.8);
         transform: translateY(-0.7em) scale(0.8);
     opacity: 1;
     color: var(--accent-color)
 }
-:host(.outlined) .input {
+:host([variant="outlined"]) .input {
     box-shadow: 0 0 0 0.1rem rgba(var(--text-color), 0.4) inset;
     background: rgba(var(--background-color), 1);
 }
-:host(.outlined) .label {
+:host([variant="outlined"]) .label {
     width: max-content;
     margin-left: -0.5rem;
     padding: 0 0.5rem;
 }
-:host(.outlined) .animate-label .label {
+:host([variant="outlined"]) .animate-label .label {
     -webkit-transform: translate(0.1rem, -1.5rem) scale(0.8);
             -ms-transform: translate(0.1rem, -1.5rem) scale(0.8);
         transform: translate(0.1rem, -1.5rem) scale(0.8);
@@ -244,7 +244,7 @@ customElements.define('sm-input',
             this._errorText
             this.isRequired = false
             this.validationFunction
-            this.reflectedAttributes = ['required', 'disabled', 'type', 'inputmode', 'readonly', 'min', 'max', 'pattern', 'minlength', 'maxlength', 'step']
+            this.reflectedAttributes = ['value', 'required', 'disabled', 'type', 'inputmode', 'readonly', 'min', 'max', 'pattern', 'minlength', 'maxlength', 'step']
         
             this.reset = this.reset.bind(this)
             this.focusIn = this.focusIn.bind(this)
@@ -255,7 +255,7 @@ customElements.define('sm-input',
         }
 
         static get observedAttributes() {
-            return ['placeholder', 'required', 'disabled', 'type', 'inputmode', 'readonly', 'min', 'max', 'pattern', 'minlength', 'maxlength', 'step', 'helper-text', 'error-text']
+            return ['value', 'placeholder', 'required', 'disabled', 'type', 'inputmode', 'readonly', 'min', 'max', 'pattern', 'minlength', 'maxlength', 'step', 'helper-text', 'error-text']
         }
 
         get value() {

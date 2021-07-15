@@ -27,7 +27,7 @@ fileInput.innerHTML = `
 			padding: 0.5rem 0.8rem;
 			color: var(--button-color);
 			border-radius: var(--border-radius);
-			font-weight: var(--button-font-weigh);
+			font-weight: var(--button-font-weight);
 			background-color: var(--button-background-color);
 		}
 		.files-preview-wrapper{

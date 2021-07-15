@@ -115,8 +115,12 @@
                         </strong>
                     </li>
                     <li>
-                        Link the downloaded js with <code>&lt;script src=".../components.js"&gt;&lt;/script&gt;</code>
-                        at bottom of your HTML file just before <span class="highlight">&lt;/body&gt;</span> tag.
+                        Link the downloaded js before <span class="highlight">&lt;/body&gt;</span>
+                        <pre>
+                            <code>
+                                &lt;script src=".../components.js"&gt;&lt;/script&gt;
+                            </code>
+                        </pre>
                     </li>
                 </ol>
                 <div class="grid grid-3 gap-0-5 align-center">
@@ -138,7 +142,9 @@
             <section id="global_styling_page" class="page hide-completely">
                 <h1 class="page__title">Global styling</h1>
                 <p>These components use <strong>CSS variables</strong> to customize styling. they share some CSS
-                    variables that make global styling easier.</p>
+                    variables that make global styling easier. <br>
+                    Of course you can set these variables at individual component CSS rule set level.
+                </p>
                 <h4>Some common CSS variables and their use</h4>
                 <section class="table">
                     <div class="tr">
@@ -172,7 +178,9 @@
             <section id="button_page" class="page hide-completely">
                 <h1 class="page__title">Buttons</h1>
                 <sm-button>Default button</sm-button>
-                <p><span class="highlight">sm-button</span> has 3 variants that define how the button looks.</p>
+
+                <h2>Variants</h2>
+                <p>These are styled variations of base component</p>
                 <section class="table">
                     <div class="tr">
                         <h4 class="table__heading">Variant type</h4>
@@ -199,7 +207,7 @@
                 </section>
                 <h4>How to define variant</h4>
                 <pre>
-                    <code class="prettyprint">
+                    <code>
                         &lt;sm-button variant="primary"&gt;primary&lt;/sm-button&gt;
                         &lt;sm-button variant="outlined"&gt;outlined&lt;/sm-button&gt;
                         &lt;sm-button variant="no-outline"&gt;no-outline&lt;/sm-button&gt;
@@ -211,7 +219,7 @@
                 <p>To disable the button add <span class="highlight">disabled</span> attribute.</p>
                 <sm-button disabled>Disabled</sm-button>
                 <pre>
-                    <code class="prettyprint">
+                    <code>
                         &lt;sm-button disabled&gt;Disabled&lt;/sm-button&gt;
                     </code>
                 </pre>
@@ -292,9 +300,8 @@
                         <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit. Provident, optio.</p>
                     </div>
                 </sm-carousel>
-                <h4>Markup for above carousel</h4>
                 <pre>
-                    <code class="prettyprint">
+                    <code>
                         &lt;sm-carousel align-items="start" indicator&gt; ...carousel items... &lt;/sm-carousel&gt;
                     </code>
                 </pre>
@@ -379,7 +386,7 @@
                     </div>
                 </sm-checkbox>
                 <pre>
-                    <code class="prettyprint">
+                    <code>
                         &lt;sm-checkbox  disabled&gt;
                             &lt;div style="margin-left: 0.5rem;"&gt;Disabled checkbox&lt;/div&gt;
                         &lt;/sm-checkbox&gt;           
@@ -394,7 +401,7 @@
                     </div>
                 </sm-checkbox>
                 <pre>
-                    <code class="prettyprint">
+                    <code>
                         &lt;sm-checkbox  checked&gt;
                             &lt;div style="margin-left: 0.5rem;"&gt;Checked checkbox&lt;/div&gt;
                         &lt;/sm-checkbox&gt;           
@@ -467,23 +474,79 @@
             <section id="file_input_page" class="page hide-completely">
                 <h1 class="page__title">File input</h1>
                 <p>
-                    To start using SM Components
+                    <span class="highlight">&lt;file-input&gt;</span> is essentially native <span class="highlight">&lt;input type="file"/&gt;
+                    </span> with added style. <br>
+                    So every attribute supported by native file input is supported as can be used in exactly same way.
                 </p>
-                <file-input></file-input>
-                <p id="insert_text"></p>
+                <h2>Interactive demo</h2>
+                <file-input multiple>Select multiple files</file-input>
+                <pre>
+                    <code>
+                        &lt;file-input multiple&gt;Select multiple files&lt;/file-input&gt;
+                    </code>
+                </pre>
+                <h2>Attributes</h2>
+                <section class="table">
+                    <div class="tr">
+                        <h4 class="table__heading">Attribute</h4>
+                        <h4 class="table__heading">Description</h4>
+                    </div>
+                    <div class="tr">
+                        <div><span class="highlight">accept</span></div>
+                        <p>
+                            One or more unique file type specifiers describing file types to allow
+                        </p>
+                    </div>
+                    <div class="tr">
+                        <div><span class="highlight">capture</span></div>
+                        <p>
+                            What source to use for capturing image or video data
+                        </p>
+                    </div>
+                    <div class="tr">
+                        <div><span class="highlight">files</span></div>
+                        <p>
+                            A FileList listing the chosen files
+                        </p>
+                    </div>
+                    <div class="tr">
+                        <div><span class="highlight">multiple</span></div>
+                        <p>
+                            A Boolean which, if present, indicates that the user may choose more than one file
+                        </p>
+                    </div>
+                </section>
             </section>
             <section id="form_page" class="page hide-completely">
                 <h1 class="page__title">Form</h1>
                 <p>
-                    To start using SM Components
+                    Browser support for web components form validation or form submition is not perfect. 
+                    so to circumvent this problem <span class="highlight">&lt;sm-form&gt;</span> can be used.
                 </p>
+                <h2>Interactive demo</h2>
                 <sm-form>
                     <sm-input placeholder="Email" type="email" error-text="please enter correct email" required animate>
                     </sm-input>
                     <sm-input placeholder="Password" type="password" required animate></sm-input>
                     <sm-button variant="primary" disabled>Submit</sm-button>
                 </sm-form>
-                <p id="insert_text"></p>
+                <h2>Supported functions</h2>
+                <section class="table">
+                    <div class="tr">
+                        <h4 class="table__heading">Function</h4>
+                        <h4 class="table__heading">Description</h4>
+                    </div>
+                    <div class="tr">
+                        <div><span class="highlight">reset()</span></div>
+                        <p>
+                            When this function is called upon form element. all the form elements (sm- form elements only) will be reset to default state.
+                        </p>
+                    </div>
+                </section>
+                <h2>Nested element behaviour</h2>
+                <p>
+
+                </p>
             </section>
             <section id="hamburger_menu_page" class="page hide-completely">
                 <h1 class="page__title">Hamburger menu</h1>
@@ -492,12 +555,81 @@
             </section>
             <section id="input_page" class="page hide-completely">
                 <h1 class="page__title">Input</h1>
-                <p>
-                    To start using SM Components
-                </p>
-                <sm-input placeholder="something" type="email" error-text="please enter correct email" animate>
+                <h2>Interactive demo</h2>
+                <sm-input id="my_input" placeholder="Email" type="email" value="john@doe" animate>
                 </sm-input>
-                <p id="insert_text"></p>
+                <pre>
+                    <code>
+                        &lt;sm-input id="my_input" placeholder="Email" type="email" value="john@doe" animate&gt;&lt;/sm-input&gt;
+                    </code>
+                </pre>
+                <h2>Variants</h2>
+                <p><span class="highlight">outlined</span> is only one styled variation. Default is filled which doesn't require variant specified.</p>
+                <sm-input placeholder="Name" variant="outlined" animate></sm-input>
+                <pre>
+                    <code>
+                        &lt;sm-input placeholder="Name" variant="outlined" animate&gt;&lt;/sm-input&gt;
+                    </code>
+                </pre>
+                <h2>Custom Attributes</h2>
+                <p>All the native HTML input attributes are valid. These are additional attributes which can be used to add more functionality</p>
+                <section class="table">
+                    <div class="tr">
+                        <h4 class="table__heading">Attribute</h4>
+                        <h4 class="table__heading">Description</h4>
+                    </div>
+                    <div class="tr">
+                        <div><span class="highlight">animate</span> (boolean)</div>
+                        <p>
+                            If present, placeholder of input will be animated to occupy space above enterned text instead of vanishing.
+                        </p>
+                    </div>
+                    <div class="tr">
+                        <div><span class="highlight">error-text</span> (string)</div>
+                        <p>
+                            Message specified as value of this attribute will be shown if validation fails. 
+                        </p>
+                    </div>
+                </section>
+                <h2>Supported functions</h2>
+                <section class="table">
+                    <div class="tr">
+                        <h4 class="table__heading">Function</h4>
+                        <h4 class="table__heading">Description</h4>
+                    </div>
+                    <div class="tr">
+                        <div><span class="highlight">focusIn()</span></div>
+                        <p>
+                            To give focus to this component use this function instead of <span class="highlight">focus()</span>
+                        </p>
+                    </div>
+                    <div class="tr">
+                        <div><span class="highlight">reset()</span></div>
+                        <p>
+                            When this function is called upon form element. all the form elements (sm- form elements only) will be reset to default state.
+                        </p>
+                    </div>
+                </section>
+
+                <h2>Custom Setters</h2>
+                <section class="table">
+                    <div class="tr">
+                        <h4 class="table__heading">Function</h4>
+                        <h4 class="table__heading">Description</h4>
+                    </div>
+                    <div class="tr">
+                        <div><span class="highlight">customValidation</span></div>
+                        <p>
+                            If you want to perform custom validation on input value, set the desired validation function.  
+                        </p>
+                    </div>
+                </section>
+                <pre>
+                    <code class="language-js">
+                        /* Setting custom validation function */
+                        document.getElelementById('my_input').customValidation = myValidation
+                    </code>
+                </pre>
             </section>
 
             <section id="menu_page" class="page hide-completely">
@@ -686,6 +818,7 @@
             <span class="comp-checkbox__title"></span>
         </sm-checkbox>
     </template>
+    <script src="assets/prism.js"></script>
     <script src="dist/button.js"></script>
     <script src="dist/carousel.js"></script>
     <script src="dist/checkbox.js"></script>
@@ -736,7 +869,8 @@
             }
             if (className)
                 elem.className = className
-            elem.textContent = textContent
+            if(textContent)
+                elem.textContent = textContent
             if (innerHTML)
                 elem.innerHTML = innerHTML
             return elem
@@ -1024,7 +1158,7 @@
             renderComponentList()
             showPage(window.location.hash, { firstLoad: true })
             getRef('total_components_count').textContent = componentsList.length
-            PR.prettyPrint()
+            // PR.prettyPrint()
             getComponents()
         })
         function showPage(targetPage, options = {}) {
@@ -1062,7 +1196,7 @@
                 })
             }
             if (hashChange && window.innerWidth < 640) {
-                sideNav(false)
+                getRef('side_nav').close()
             }
         }
 
@@ -1229,7 +1363,6 @@
             document.body.removeChild(element);
         }
     </script>
-    <script src="prettify.js"></script>
 </body>
 
 </html>
