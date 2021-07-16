@@ -96,7 +96,8 @@ ul {
   display: grid;
   gap: 1rem;
   padding: 1rem;
-  grid-template-columns: 12rem minmax(0, 1fr);
+  grid-template-columns: 12rem 1fr;
+  width: 100%;
 }
 .tr:nth-of-type(odd) {
   background-color: rgba(var(--text-color), 0.04);
@@ -318,29 +319,6 @@ ul {
 }
 .button__icon--right {
   margin-left: 0.5rem;
-}
-
-.theme-switcher {
-  position: relative;
-  justify-self: flex-end;
-  width: 1.5rem;
-  height: 1.5rem;
-  cursor: pointer;
-  -webkit-tap-highlight-color: transparent;
-}
-.theme-switcher .icon {
-  position: absolute;
-  transition: transform 0.6s;
-}
-
-.theme-switcher__checkbox {
-  display: none;
-}
-.theme-switcher__checkbox:checked ~ .moon-icon {
-  transform: scale(0) rotate(90deg);
-}
-.theme-switcher__checkbox:not(:checked) ~ .sun-icon {
-  transform: scale(0) rotate(-90deg);
 }
 
 .token.comment,

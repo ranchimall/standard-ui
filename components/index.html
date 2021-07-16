@@ -28,22 +28,7 @@
                 </svg>
             </button>
             <h4>SM Components</h4>
-            <label class="theme-switcher" title="Change theme">
-                <input id="theme_switcher" class="theme-switcher__checkbox" type="checkbox"
-                    aria-label="Dark mode toggle">
-                <svg class="icon moon-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="24"
-                    height="24">
-                    <path fill="none" d="M0 0h24v24H0z" />
-                    <path
-                        d="M10 6a8 8 0 0 0 11.955 6.956C21.474 18.03 17.2 22 12 22 6.477 22 2 17.523 2 12c0-5.2 3.97-9.474 9.044-9.955A7.963 7.963 0 0 0 10 6zm-6 6a8 8 0 0 0 8 8 8.006 8.006 0 0 0 6.957-4.045c-.316.03-.636.045-.957.045-5.523 0-10-4.477-10-10 0-.321.015-.64.045-.957A8.006 8.006 0 0 0 4 12zm14.164-9.709L19 2.5v1l-.836.209a2 2 0 0 0-1.455 1.455L16.5 6h-1l-.209-.836a2 2 0 0 0-1.455-1.455L13 3.5v-1l.836-.209A2 2 0 0 0 15.29.836L15.5 0h1l.209.836a2 2 0 0 0 1.455 1.455zm5 5L24 7.5v1l-.836.209a2 2 0 0 0-1.455 1.455L21.5 11h-1l-.209-.836a2 2 0 0 0-1.455-1.455L18 8.5v-1l.836-.209a2 2 0 0 0 1.455-1.455L20.5 5h1l.209.836a2 2 0 0 0 1.455 1.455z" />
-                </svg>
-                <svg class="icon sun-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="24"
-                    height="24">
-                    <path fill="none" d="M0 0h24v24H0z" />
-                    <path
-                        d="M12 18a6 6 0 1 1 0-12 6 6 0 0 1 0 12zm0-2a4 4 0 1 0 0-8 4 4 0 0 0 0 8zM11 1h2v3h-2V1zm0 19h2v3h-2v-3zM3.515 4.929l1.414-1.414L7.05 5.636 5.636 7.05 3.515 4.93zM16.95 18.364l1.414-1.414 2.121 2.121-1.414 1.414-2.121-2.121zm2.121-14.85l1.414 1.415-2.121 2.121-1.414-1.414 2.121-2.121zM5.636 16.95l1.414 1.414-2.121 2.121-1.414-1.414 2.121-2.121zM23 11v2h-3v-2h3zM4 11v2H1v-2h3z" />
-                </svg>
-            </label>
+            <theme-toggle></theme-toggle>
         </header>
         <hamburger-menu id="side_nav">
             <h4>Getting Started</h4>
@@ -282,7 +267,7 @@
                     touch enabled devices swipe can be used.
                 </p>
                 <h2>Interactive demo</h2>
-                <sm-carousel align-items="start" indicator>
+                <sm-carousel indicator>
                     <div class="card">
                         <h3>Title</h3>
                         <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit. Provident, optio.</p>
@@ -525,10 +510,9 @@
                 </p>
                 <h2>Interactive demo</h2>
                 <sm-form>
-                    <sm-input placeholder="Email" type="email" error-text="please enter correct email" required animate>
-                    </sm-input>
+                    <sm-input placeholder="Email" type="email" error-text="please enter correct email" required animate></sm-input>
                     <sm-input placeholder="Password" type="password" required animate></sm-input>
-                    <sm-button variant="primary" disabled>Submit</sm-button>
+                    <sm-button variant="primary" disabled>Login</sm-button>
                 </sm-form>
                 <h2>Supported functions</h2>
                 <section class="table">
@@ -806,6 +790,10 @@
                 </p>
                 <text-field value="Double click me!"></text-field>
             </section>
+            <section id="theme_toggle_page" class="page hide-completely">
+                <h1 class="page__title">Theme toggle</h1>
+                <theme-toggle></theme-toggle>
+            </section>
         </div>
     </main>
     <template id="nav_item_template">
@@ -839,6 +827,7 @@
     <script src="dist/tags-input.js"></script>
     <script src="dist/textarea.js"></script>
     <script src="dist/text-field.js"></script>
+    <script src="dist/theme-toggle.js"></script>
     <script id="default_ui_library">
         const domRefs = {};
 
@@ -920,42 +909,6 @@
             getRef("notification_drawer").clearAll();
             notify("We are back online.", "success");
         });
-
-        if (getRef("theme_switcher")) {
-            if (localStorage.theme === "dark") {
-                nightlight();
-                getRef("theme_switcher").checked = true;
-            } else if (localStorage.theme === "light") {
-                daylight();
-                getRef("theme_switcher").checked = false;
-            }
-            else {
-                if (window.matchMedia(`(prefers-color-scheme: dark)`).matches) {
-                    nightlight();
-                    getRef("theme_switcher").checked = true;
-                } else {
-                    daylight();
-                    getRef("theme_switcher").checked = false;
-                }
-            }
-
-            function daylight() {
-                document.body.setAttribute("data-theme", "light");
-            }
-
-            function nightlight() {
-                document.body.setAttribute("data-theme", "dark");
-            }
-            getRef("theme_switcher").addEventListener("change", function (e) {
-                if (this.checked) {
-                    nightlight();
-                    localStorage.setItem("theme", "dark");
-                } else {
-                    daylight();
-                    localStorage.setItem("theme", "light");
-                }
-            });
-        }
 
         // function required for popups or modals to appear
         class Stack {
@@ -1158,7 +1111,6 @@
             renderComponentList()
             showPage(window.location.hash, { firstLoad: true })
             getRef('total_components_count').textContent = componentsList.length
-            // PR.prettyPrint()
             getComponents()
         })
         function showPage(targetPage, options = {}) {
@@ -1280,6 +1232,10 @@
             {
                 name: 'Text field',
                 pageId: 'text_field_page'
+            },
+            {
+                name: 'theme toggle',
+                pageId: 'theme_toggle_page'
             },
         ]
 

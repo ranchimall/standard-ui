@@ -7,16 +7,6 @@ smSelect.innerHTML = `
     -webkit-box-sizing: border-box;
             box-sizing: border-box;
 } 
-.icon {
-    fill: none;
-    height: 0.8rem;
-    width: 0.8rem;
-    stroke: rgba(var(--text-color), 0.7);
-    stroke-width: 6;
-    overflow: visible;
-    stroke-linecap: round;
-    stroke-linejoin: round;
-}      
 :host{
     display: -webkit-inline-box;
     display: -ms-inline-flexbox;
@@ -26,6 +16,10 @@ smSelect.innerHTML = `
     --background-color: 255, 255, 255;
     --max-height: auto;
     --min-width: 100%;
+}
+:host([disabled]) .select{
+    opacity: 0.6;
+    cursor: not-allowed;
 }
 .hide{
     display: none !important;
@@ -37,12 +31,17 @@ smSelect.innerHTML = `
     display: flex;
     -webkit-box-orient: vertical;
     -webkit-box-direction: normal;
-        -ms-flex-direction: column;
-            flex-direction: column;
+    -ms-flex-direction: column;
+    flex-direction: column;
     cursor: pointer;
     width: 100%;
     -webkit-tap-highlight-color: transparent;
 }
+.icon {
+    height: 1.5rem;
+    width: 1.5rem;
+    fill: rgba(var(--text-color), 0.7);
+}      
 .option-text{
     font-size: 0.9rem;
     overflow: hidden;
@@ -80,7 +79,7 @@ smSelect.innerHTML = `
 }
 .options{
     top: 100%;
-    margin-top: 0.5rem; 
+    margin-top: 0.2rem; 
     overflow: hidden auto;
     position: absolute;
     grid-area: options;
@@ -121,11 +120,9 @@ smSelect.innerHTML = `
 }
 </style>
 <div class="select" >
-    <div class="selection" tabindex="0">
+    <div class="selection">
         <div class="option-text"></div>
-        <svg class="icon toggle" viewBox="0 0 64 64">
-            <polyline points="63.65 15.99 32 47.66 0.35 15.99"/>
-        </svg>
+        <svg class="icon toggle" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="24" height="24"><path fill="none" d="M0 0h24v24H0z"/><path d="M12 13.172l4.95-4.95 1.414 1.414L12 16 5.636 9.636 7.05 8.222z"/></svg>
     </div>
     <div part="options" class="options hide">
         <slot></slot> 
@@ -139,9 +136,45 @@ customElements.define('sm-select', class extends HTMLElement {
         }).append(smSelect.content.cloneNode(true))
 
         this.reset = this.reset.bind(this)
+        this.open = this.open.bind(this)
+        this.collapse = this.collapse.bind(this)
+        this.toggle = this.toggle.bind(this)
+        this.handleSelectKeyDown = this.handleSelectKeyDown.bind(this)
+        this.handleOptionsKeyDown = this.handleOptionsKeyDown.bind(this)
+        this.handleOptionsKeyDown = this.handleOptionsKeyDown.bind(this)
+
+        this.availableOptions
+        this.optionList = this.shadowRoot.querySelector('.options')
+        this.chevron = this.shadowRoot.querySelector('.toggle')
+        this.selection = this.shadowRoot.querySelector('.selection'),
+            this.previousOption
+        this.isOpen = false;
+        this.slideDown = [{
+            transform: `translateY(-0.5rem)`,
+            opacity: 0
+        },
+        {
+            transform: `translateY(0)`,
+            opacity: 1
+        }
+        ]
+        this.slideUp = [{
+            transform: `translateY(0)`,
+            opacity: 1
+        },
+        {
+            transform: `translateY(-0.5rem)`,
+            opacity: 0
+        }
+        ]
+        this.animationOptions = {
+            duration: 300,
+            fill: "forwards",
+            easing: 'ease'
+        }
     }
     static get observedAttributes() {
-        return ['value']
+        return ['value', 'disabled']
     }
     get value() {
         return this.getAttribute('value')
@@ -150,94 +183,89 @@ customElements.define('sm-select', class extends HTMLElement {
         this.setAttribute('value', val)
     }
 
-    reset(){
+    reset() {
 
     }
 
+    open() {
+        this.optionList.classList.remove('hide')
+        this.optionList.animate(this.slideDown, this.animationOptions)
+        this.chevron.classList.add('rotate')
+        this.isOpen = true
+    }
     collapse() {
         this.chevron.classList.remove('rotate')
         this.optionList.animate(this.slideUp, this.animationOptions)
-        .onfinish = () => {
-            this.optionList.classList.add('hide')
-            this.open = false
+            .onfinish = () => {
+                this.optionList.classList.add('hide')
+                this.isOpen = false
+            }
+    }
+    toggle() {
+        if (!this.isOpen && !this.hasAttribute('disabled')) {
+            this.open()
+        } else {
+            this.collapse()
         }
     }
-    connectedCallback() {
-        this.availableOptions
-        this.optionList = this.shadowRoot.querySelector('.options')
-        this.chevron = this.shadowRoot.querySelector('.toggle')
-        let slot = this.shadowRoot.querySelector('.options slot'),
-            selection = this.shadowRoot.querySelector('.selection'),
-            previousOption
-        this.open = false;
-        this.slideDown = [{
-                transform: `translateY(-0.5rem)`,
-                opacity: 0
-            },
-            {
-                transform: `translateY(0)`,
-                opacity: 1
-            }
-        ]
-        this.slideUp = [{
-                transform: `translateY(0)`,
-                opacity: 1
-            },
-            {
-                transform: `translateY(-0.5rem)`,
-                opacity: 0
-            }
-        ]
-        this.animationOptions = {
-            duration: 300,
-            fill: "forwards",
-            easing: 'ease'
+    handleSelectKeyDown(e) {
+        if (e.code === 'ArrowDown' || e.code === 'ArrowRight') {
+            e.preventDefault()
+            this.availableOptions[0].focus()
         }
-        selection.addEventListener('click', e => {
-            if (!this.open) {
+        else if (e.code === 'Enter' || e.code === 'Space') {
+            if (!this.isOpen) {
                 this.optionList.classList.remove('hide')
                 this.optionList.animate(this.slideDown, this.animationOptions)
                 this.chevron.classList.add('rotate')
-                this.open = true
+                this.isOpen = true
             } else {
                 this.collapse()
             }
-        })
-        selection.addEventListener('keydown', e => {
-            if (e.code === 'ArrowDown' || e.code === 'ArrowRight') {
-                e.preventDefault()
+        }
+    }
+    handleOptionsKeyDown(e) {
+        if (e.code === 'ArrowUp' || e.code === 'ArrowRight') {
+            e.preventDefault()
+            if (document.activeElement.previousElementSibling) {
+                document.activeElement.previousElementSibling.focus()
+            } else {
+                this.availableOptions[this.availableOptions.length - 1].focus()
+            }
+        }
+        else if (e.code === 'ArrowDown' || e.code === 'ArrowLeft') {
+            e.preventDefault()
+            if (document.activeElement.nextElementSibling) {
+                document.activeElement.nextElementSibling.focus()
+            } else {
                 this.availableOptions[0].focus()
             }
-            if (e.code === 'Enter' || e.code === 'Space')
-                if (!this.open) {
-                    this.optionList.classList.remove('hide')
-                    this.optionList.animate(this.slideDown, this.animationOptions)
-                    this.chevron.classList.add('rotate')
-                    this.open = true
-                } else {
-                    this.collapse()
-                }
-        })
-        this.optionList.addEventListener('keydown', e => {
-            if (e.code === 'ArrowUp' || e.code === 'ArrowRight') {
-                e.preventDefault()
-                if (document.activeElement.previousElementSibling) {
-                    document.activeElement.previousElementSibling.focus()
-                } else {
-                    this.availableOptions[this.availableOptions.length - 1].focus()
-                }
+        }
+    }
+    connectedCallback() {
+        this.setAttribute('role', 'listbox')
+        if (!this.hasAttribute('disabled')) {
+            this.selection.setAttribute('tabindex', '0')
+        }
+        let slot = this.shadowRoot.querySelector('slot')
+        slot.addEventListener('slotchange', e => {
+            this.availableOptions = slot.assignedElements()
+            if (this.availableOptions[0]) {
+                let firstElement = this.availableOptions[0];
+                this.previousOption = firstElement;
+                firstElement.classList.add('check-selected')
+                this.setAttribute('value', firstElement.getAttribute('value'))
+                this.shadowRoot.querySelector('.option-text').textContent = firstElement.textContent
+                this.availableOptions.forEach((element, index) => {
+                    element.setAttribute('tabindex', "0");
+                })
             }
-            if (e.code === 'ArrowDown' || e.code === 'ArrowLeft') {
-                e.preventDefault()
-                if (document.activeElement.nextElementSibling) {
-                    document.activeElement.nextElementSibling.focus()
-                } else{
-                    this.availableOptions[0].focus()
-                }
-            }
-        })
+        });
+        this.selection.addEventListener('click', this.toggle)
+        this.selection.addEventListener('keydown', this.handleSelectKeyDown)
+        this.optionList.addEventListener('keydown', this.handleOptionsKeyDown)
         this.addEventListener('optionSelected', e => {
-            if (previousOption !== e.target) {
+            if (this.previousOption !== e.target) {
                 this.setAttribute('value', e.detail.value)
                 this.shadowRoot.querySelector('.option-text').textContent = e.detail.text;
                 this.dispatchEvent(new CustomEvent('change', {
@@ -247,35 +275,35 @@ customElements.define('sm-select', class extends HTMLElement {
                         value: e.detail.value
                     }
                 }))
-                if (previousOption) {
-                    previousOption.classList.remove('check-selected')
+                if (this.previousOption) {
+                    this.previousOption.classList.remove('check-selected')
                 }
-                previousOption = e.target;
+                this.previousOption = e.target;
             }
             if (!e.detail.switching)
                 this.collapse()
 
             e.target.classList.add('check-selected')
         })
-        slot.addEventListener('slotchange', e => {
-            this.availableOptions = slot.assignedElements()
-            if (this.availableOptions[0]) {
-                let firstElement = this.availableOptions[0];
-                previousOption = firstElement;
-                firstElement.classList.add('check-selected')
-                this.setAttribute('value', firstElement.getAttribute('value'))
-                this.shadowRoot.querySelector('.option-text').textContent = firstElement.textContent
-                this.availableOptions.forEach((element, index) => {
-                    element.setAttribute('data-rank', index + 1);
-                    element.setAttribute('tabindex', "0");
-                })
-            }
-        });
         document.addEventListener('mousedown', e => {
-            if (!this.contains(e.target) && this.open) {
+            if (this.isOpen && !this.contains(e.target)) {
                 this.collapse()
             }
         })
+    }
+    attributeChangedCallback(name, oldVal, newVal) {
+        if (name === "disabled") {
+            if (this.hasAttribute('disabled')) {
+                this.selection.removeAttribute('tabindex')
+            }else {
+                this.selection.setAttribute('tabindex', '0')
+            }
+        }
+    }
+    disconnectedCallback() {
+        this.selection.removeEventListener('click', this.toggle)
+        this.selection.removeEventListener('keydown', this.handleSelectKeyDown)
+        this.optionList.removeEventListener('keydown', this.handleOptionsKeyDown)
     }
 })
 
@@ -351,6 +379,8 @@ customElements.define('sm-option', class extends HTMLElement {
         this.attachShadow({
             mode: 'open'
         }).append(smOption.content.cloneNode(true))
+
+        this.sendDetails = this.sendDetails.bind(this)
     }
 
     sendDetails(switching) {
@@ -367,15 +397,14 @@ customElements.define('sm-option', class extends HTMLElement {
     }
 
     connectedCallback() {
+        this.setAttribute('role', 'option')
         let validKey = [
             'ArrowUp',
             'ArrowDown',
             'ArrowLeft',
             'ArrowRight'
         ]
-        this.addEventListener('click', e => {
-            this.sendDetails()
-        })
+        this.addEventListener('click', this.sendDetails)
         this.addEventListener('keyup', e => {
             if (e.code === 'Enter' || e.code === 'Space') {
                 e.preventDefault()
