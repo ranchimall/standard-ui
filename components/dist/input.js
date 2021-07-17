@@ -250,7 +250,6 @@ customElements.define('sm-input',
             this.focusIn = this.focusIn.bind(this)
             this.focusOut = this.focusOut.bind(this)
             this.fireEvent = this.fireEvent.bind(this)
-            this.debounce = this.debounce.bind(this)
             this.checkInput = this.checkInput.bind(this)
         }
 
@@ -338,15 +337,6 @@ customElements.define('sm-input',
                 composed: true
             });
             this.dispatchEvent(event);
-        }
-        debounce(callback, wait){
-            let timeoutId = null;
-            return (...args) => {
-                window.clearTimeout(timeoutId);
-                timeoutId = window.setTimeout(() => {
-                    callback.apply(null, args);
-                }, wait);
-            };
         }
 
         checkInput(e){

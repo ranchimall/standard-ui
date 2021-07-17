@@ -101,66 +101,77 @@ customElements.define('sm-tab-header', class extends HTMLElement {
             mode: 'open'
         }).append(smTabHeader.content.cloneNode(true))
 
+        this.prevTab
+        this.allTabs
+        this.activeTab
+
         this.indicator = this.shadowRoot.querySelector('.indicator');
         this.tabSlot = this.shadowRoot.querySelector('slot');
         this.tabHeader = this.shadowRoot.querySelector('.tab-header');
+
+        this.changeTab = this.changeTab.bind(this)
+        this.handleClick = this.handleClick.bind(this)
+        this.handlePanelChange = this.handlePanelChange.bind(this)
     }
 
-    sendDetails(element) {
+    fireEvent(index) {
         this.dispatchEvent(
-            new CustomEvent("switchtab", {
+            new CustomEvent(`switchedtab${this.target}`, {
                 bubbles: true,
                 detail: {
-                    target: this.target,
-                    rank: parseInt(element.getAttribute('rank'))
+                    index: parseInt(index)
                 }
             })
         )
     }
 
     moveIndiactor(tabDimensions) {
-        //if(this.isTab)
         this.indicator.setAttribute('style', `width: ${tabDimensions.width}px; transform: translateX(${tabDimensions.left - this.tabHeader.getBoundingClientRect().left + this.tabHeader.scrollLeft}px)`)
-        //else
-        //this.indicator.setAttribute('style', `width: calc(${tabDimensions.width}px - 1.6rem); transform: translateX(calc(${ tabDimensions.left - this.tabHeader.getBoundingClientRect().left + this.tabHeader.scrollLeft}px + 0.8rem)`)
+    }
+
+
+    changeTab(target) {
+        if (target === this.prevTab || !target.closest('sm-tab'))
+            return
+        if (this.prevTab)
+            this.prevTab.classList.remove('active')
+        target.classList.add('active')
+
+        target.scrollIntoView({
+            behavior: 'smooth',
+            block: 'nearest',
+            inline: 'center'
+        })
+        this.moveIndiactor(target.getBoundingClientRect())
+        this.prevTab = target;
+        this.activeTab = target;
+    }
+    handleClick(e) {
+        if (e.target.closest('sm-tab')) {
+            this.changeTab(e.target)
+            this.fireEvent(e.target.dataset.index)
+        }
+    }
+    
+    handlePanelChange(e) {
+        console.log(this.allTabs)
+        this.changeTab(this.allTabs[e.detail.index])
     }
 
     connectedCallback() {
         if (!this.hasAttribute('target') || this.getAttribute('target').value === '') return;
-        this.prevTab
-        this.allTabs
-        this.activeTab
-        this.isTab = false
         this.target = this.getAttribute('target')
 
-        if (this.hasAttribute('variant') && this.getAttribute('variant') === 'tab') {
-            this.isTab = true
-        }
-
         this.tabSlot.addEventListener('slotchange', () => {
-            this.tabSlot.assignedElements().forEach((tab, index) => {
-                tab.setAttribute('rank', index)
+            this.allTabs = this.tabSlot.assignedElements();
+            this.allTabs.forEach((tab, index) => {
+                tab.dataset.index = index
             })
         })
-        this.allTabs = this.tabSlot.assignedElements();
 
-        this.tabSlot.addEventListener('click', e => {
-            if (e.target === this.prevTab || !e.target.closest('sm-tab'))
-                return
-            if (this.prevTab)
-                this.prevTab.classList.remove('active')
-            e.target.classList.add('active')
+        this.addEventListener('click', this.handleClick)
+        document.addEventListener(`switchedpanel${this.target}`, this.handlePanelChange)
 
-            e.target.scrollIntoView({
-                behavior: 'smooth',
-                block: 'nearest',
-                inline: 'center'
-            })
-            this.moveIndiactor(e.target.getBoundingClientRect())
-            this.sendDetails(e.target)
-            this.prevTab = e.target;
-            this.activeTab = e.target;
-        })
         let resizeObserver = new ResizeObserver(entries => {
             entries.forEach((entry) => {
                 if (this.prevTab) {
@@ -181,7 +192,7 @@ customElements.define('sm-tab-header', class extends HTMLElement {
                         this.allTabs[0].classList.add('active')
                         let tabDimensions = this.allTabs[0].getBoundingClientRect();
                         this.moveIndiactor(tabDimensions)
-                        this.sendDetails(this.allTabs[0])
+                        this.fireEvent(0)
                         this.prevTab = this.tabSlot.assignedElements()[0];
                         this.activeTab = this.prevTab;
                     }
@@ -191,6 +202,10 @@ customElements.define('sm-tab-header', class extends HTMLElement {
             threshold: 1.0
         })
         observer.observe(this)
+    }
+    disconnectedCallback() {
+        this.removeEventListener('click', this.handleClick)
+        document.removeEventListener(`switchedpanel${this.target}`, this.handlePanelChange)
     }
 })
 
@@ -280,21 +295,27 @@ smTabPanels.innerHTML = `
     display: flex;
     width: 100%;
     height: 100%;
-    overflow: hidden auto;
+    overflow: hidden;
+    scroll-snap-type: x mandatory;
+    content-visibility: auto;
 }
-slot::slotted(.hide-completely){
-    display: none;
+::slotted(*){
+    min-width: 100%;
+    scroll-snap-align: center;
 }
-@media (hover: none){
-    .tab-header::-webkit-scrollbar-track {
-        -webkit-box-shadow: none !important;
-        background-color: transparent !important;
+@media (any-hover: none) {
+    .panel-container{
+        overflow-x: auto;
+        scrollbar-width: none;
     }
-    .tab-header::-webkit-scrollbar {
+    .container {
+        overflow-y: scroll;
+    }
+    ::-webkit-scrollbar {
+        width: 0;
         height: 0;
-        background-color: transparent;
     }
-}         
+}
 </style>
 <div part="panel-container" class="panel-container">
     <slot>Nothing to see here.</slot>
@@ -307,109 +328,56 @@ customElements.define('sm-tab-panels', class extends HTMLElement {
         this.attachShadow({
             mode: 'open'
         }).append(smTabPanels.content.cloneNode(true))
+
+        this.isTransitioning = false
+
+        this.panelContainer = this.shadowRoot.querySelector('.panel-container');
         this.panelSlot = this.shadowRoot.querySelector('slot');
+        this.handleTabChange = this.handleTabChange.bind(this)
+    }
+    handleTabChange(e) {
+        this.isTransitioning = true
+        this.panelContainer.scrollTo({
+            left: this.allPanels[e.detail.index].getBoundingClientRect().left - this.panelContainer.getBoundingClientRect().left + this.panelContainer.scrollLeft,
+            behavior: 'smooth'
+        })
+        setTimeout(() => {
+            this.isTransitioning = false
+        }, 300);
+    }
+    fireEvent(index) {
+        this.dispatchEvent(
+            new CustomEvent(`switchedpanel${this.id}`, {
+                bubbles: true,
+                detail: {
+                    index: parseInt(index)
+                }
+            })
+        )
     }
     connectedCallback() {
-
-        //animations
-        let flyInLeft = [{
-                    opacity: 0,
-                    transform: 'translateX(-1rem)'
-                },
-                {
-                    opacity: 1,
-                    transform: 'none'
-                }
-            ],
-            flyInRight = [{
-                    opacity: 0,
-                    transform: 'translateX(1rem)'
-                },
-                {
-                    opacity: 1,
-                    transform: 'none'
-                }
-            ],
-            flyOutLeft = [{
-                    opacity: 1,
-                    transform: 'none'
-                },
-                {
-                    opacity: 0,
-                    transform: 'translateX(-1rem)'
-                }
-            ],
-            flyOutRight = [{
-                    opacity: 1,
-                    transform: 'none'
-                },
-                {
-                    opacity: 0,
-                    transform: 'translateX(1rem)'
-                }
-            ],
-            animationOptions = {
-                duration: 300,
-                fill: 'forwards',
-                easing: 'ease'
-            }
-        this.prevPanel
-        this.allPanels
-        this.previousRank
-
         this.panelSlot.addEventListener('slotchange', () => {
-            this.panelSlot.assignedElements().forEach((panel) => {
-                panel.classList.add('hide-completely')
+            this.allPanels = this.panelSlot.assignedElements()
+            this.allPanels.forEach((panel, index) => {
+                panel.dataset.index = index
+                intersectionObserver.observe(panel)
             })
         })
-        this.allPanels = this.panelSlot.assignedElements()
-        this._targetBodyFlyRight = (targetBody) => {
-            targetBody.classList.remove('hide-completely')
-            targetBody.animate(flyInRight, animationOptions)
-        }
-        this._targetBodyFlyLeft = (targetBody) => {
-            targetBody.classList.remove('hide-completely')
-            targetBody.animate(flyInLeft, animationOptions)
-        }
-        document.addEventListener('switchtab', e => {
-            if (e.detail.target !== this.id)
-                return
+        document.addEventListener(`switchedtab${this.id}`, this.handleTabChange)
 
-            if (this.prevPanel) {
-                let targetBody = this.allPanels[e.detail.rank],
-                    currentBody = this.prevPanel;
-                if (this.previousRank < e.detail.rank) {
-                    if (currentBody && !targetBody)
-                        currentBody.animate(flyOutLeft, animationOptions).onfinish = () => {
-                            currentBody.classList.add('hide-completely')
-                        }
-                    else if (targetBody && !currentBody) {
-                        this._targetBodyFlyRight(targetBody)
-                    } else if (currentBody && targetBody) {
-                        currentBody.animate(flyOutLeft, animationOptions).onfinish = () => {
-                            currentBody.classList.add('hide-completely')
-                            this._targetBodyFlyRight(targetBody)
-                        }
-                    }
-                } else {
-                    if (currentBody && !targetBody)
-                        currentBody.animate(flyOutRight, animationOptions).onfinish = () => {
-                            currentBody.classList.add('hide-completely')
-                        }
-                    else if (targetBody && !currentBody) {
-                        this._targetBodyFlyLeft(targetBody)
-                    } else if (currentBody && targetBody) {
-                        currentBody.animate(flyOutRight, animationOptions).onfinish = () => {
-                            currentBody.classList.add('hide-completely')
-                            this._targetBodyFlyLeft(targetBody)
-                        }
-                    }
+        const intersectionObserver = new IntersectionObserver(entries => {
+
+            entries.forEach(entry => {
+                if (!this.isTransitioning && entry.isIntersecting) {
+                    this.fireEvent(entry.target.dataset.index), 3000
                 }
-            } else {
-                this.allPanels[e.detail.rank].classList.remove('hide-completely')
-            }
-            this.previousRank = e.detail.rank
-            this.prevPanel = this.allPanels[e.detail.rank];
+            })
+        }, {
+            threshold: 0.9
         })
+    }
+    disconnectedCallback() {
+        intersectionObserver.disconnect()
+        document.removeEventListener(`switchedtab${this.id}`, this.handleTabChange)
     }
 })

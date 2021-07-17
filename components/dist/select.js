@@ -243,7 +243,7 @@ customElements.define('sm-select', class extends HTMLElement {
     handleOptionSelection(e) {
         if (this.previousOption !== document.activeElement) {
             this.value = document.activeElement.getAttribute('value')
-            this.selectedOptionText.textContent = this.value;
+            this.selectedOptionText.textContent = document.activeElement.textContent;
             this.fireEvent()
             if (this.previousOption) {
                 this.previousOption.classList.remove('check-selected')
@@ -263,7 +263,7 @@ customElements.define('sm-select', class extends HTMLElement {
     }
     handleKeydown(e) {
         if (e.target === this) {
-            if (e.code === 'ArrowDown') {
+            if (this.isOpen && e.code === 'ArrowDown') {
                 e.preventDefault()
                 this.availableOptions[0].focus()
                 this.handleOptionSelection(e)
