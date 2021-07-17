@@ -192,8 +192,9 @@ customElements.define('sm-switch', class extends HTMLElement {
     }
 
     connectedCallback() {
-        this.addEventListener('keyup', e => {
-            if ((e.code === "Enter" || e.code === "Space") && !this.isDisabled) {
+        this.addEventListener('keydown', e => {
+            if (e.code === "Space" && !this.isDisabled) {
+                e.preventDefault()
                 this.input.click()
             }
         })

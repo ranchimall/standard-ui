@@ -142,6 +142,7 @@ customElements.define('sm-select', class extends HTMLElement {
         this.handleSelectKeyDown = this.handleSelectKeyDown.bind(this)
         this.handleOptionsKeyDown = this.handleOptionsKeyDown.bind(this)
         this.handleOptionsKeyDown = this.handleOptionsKeyDown.bind(this)
+        this.handleOptionSelected = this.handleOptionSelected.bind(this)
 
         this.availableOptions
         this.optionList = this.shadowRoot.querySelector('.options')
@@ -242,6 +243,27 @@ customElements.define('sm-select', class extends HTMLElement {
             }
         }
     }
+    handleOptionSelected(e) {
+        if (this.previousOption !== e.target) {
+            this.setAttribute('value', e.detail.value)
+            this.shadowRoot.querySelector('.option-text').textContent = e.detail.text;
+            this.dispatchEvent(new CustomEvent('change', {
+                bubbles: true,
+                composed: true,
+                detail: {
+                    value: e.detail.value
+                }
+            }))
+            if (this.previousOption) {
+                this.previousOption.classList.remove('check-selected')
+            }
+            this.previousOption = e.target;
+        }
+        if (!e.detail.switching)
+            this.collapse()
+
+        e.target.classList.add('check-selected')
+    }
     connectedCallback() {
         this.setAttribute('role', 'listbox')
         if (!this.hasAttribute('disabled')) {
@@ -264,27 +286,7 @@ customElements.define('sm-select', class extends HTMLElement {
         this.selection.addEventListener('click', this.toggle)
         this.selection.addEventListener('keydown', this.handleSelectKeyDown)
         this.optionList.addEventListener('keydown', this.handleOptionsKeyDown)
-        this.addEventListener('optionSelected', e => {
-            if (this.previousOption !== e.target) {
-                this.setAttribute('value', e.detail.value)
-                this.shadowRoot.querySelector('.option-text').textContent = e.detail.text;
-                this.dispatchEvent(new CustomEvent('change', {
-                    bubbles: true,
-                    composed: true,
-                    detail: {
-                        value: e.detail.value
-                    }
-                }))
-                if (this.previousOption) {
-                    this.previousOption.classList.remove('check-selected')
-                }
-                this.previousOption = e.target;
-            }
-            if (!e.detail.switching)
-                this.collapse()
-
-            e.target.classList.add('check-selected')
-        })
+        this.addEventListener('optionSelected', this.handleOptionSelected)
         document.addEventListener('mousedown', e => {
             if (this.isOpen && !this.contains(e.target)) {
                 this.collapse()
@@ -390,7 +392,7 @@ customElements.define('sm-option', class extends HTMLElement {
             detail: {
                 text: this.textContent,
                 value: this.getAttribute('value'),
-                switching: switching
+                switching
             }
         })
         this.dispatchEvent(optionSelected)
@@ -404,8 +406,8 @@ customElements.define('sm-option', class extends HTMLElement {
             'ArrowLeft',
             'ArrowRight'
         ]
-        this.addEventListener('click', this.sendDetails)
-        this.addEventListener('keyup', e => {
+        this.addEventListener('click', this.sendDetails(false))
+        this.addEventListener('keydown', e => {
             if (e.code === 'Enter' || e.code === 'Space') {
                 e.preventDefault()
                 this.sendDetails(false)

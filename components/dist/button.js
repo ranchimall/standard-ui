@@ -115,11 +115,19 @@ customElements.define('sm-button',
             }
         }
 
+        handleKeyDown(e) {
+            if (!this.hasAttribute('disabled') && (e.key === 'Enter' || e.code === 'Space')) {
+                e.preventDefault()
+                this.click()
+            }
+        }
+
         connectedCallback() {
             if (!this.hasAttribute('disabled')) {
                 this.setAttribute('tabindex', '0')
             }
             this.setAttribute('role', 'button')
+            this.addEventListener('keydown', this.handleKeyDown)
         }
         attributeChangedCallback(name, oldVal, newVal) {
             if (name === 'disabled') {

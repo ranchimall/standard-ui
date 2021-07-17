@@ -174,6 +174,19 @@ customElements.define('sm-popup', class extends HTMLElement {
 
         this.allowClosing = false
         this.isOpen = false
+        this.pinned = false
+        this.popupStack
+        this.offset
+        this.touchStartY = 0
+        this.touchEndY = 0
+        this.touchStartTime = 0
+        this.touchEndTime = 0
+        this.touchEndAnimataion
+
+        this.popupContainer = this.shadowRoot.querySelector('.popup-container')
+        this.popup = this.shadowRoot.querySelector('.popup')
+        this.popupBodySlot = this.shadowRoot.querySelector('.popup-body slot')
+        this.popupHeader = this.shadowRoot.querySelector('.popup-top')
 
         this.resumeScrolling = this.resumeScrolling.bind(this)
         this.show = this.show.bind(this)
@@ -184,20 +197,24 @@ customElements.define('sm-popup', class extends HTMLElement {
         this.movePopup = this.movePopup.bind(this)
     }
 
+    static get observedAttributes() {
+        return ['open'];
+    }
+
     get open() {
         return this.isOpen
     }
 
-    resumeScrolling(){
+    resumeScrolling() {
         const scrollY = document.body.style.top;
         window.scrollTo(0, parseInt(scrollY || '0') * -1);
         setTimeout(() => {
             document.body.style.overflow = 'auto';
-            document.body.style.top= 'initial'
+            document.body.style.top = 'initial'
         }, 300);
     }
 
-    show(pinned, popupStack){
+    show(pinned, popupStack) {
         if (popupStack)
             this.popupStack = popupStack
         if (this.popupStack && !this.hasAttribute('open')) {
@@ -224,10 +241,10 @@ customElements.define('sm-popup', class extends HTMLElement {
         this.popupContainer.classList.remove('hide')
         this.popup.style.transform = 'none';
         document.body.style.overflow = 'hidden';
-        document.body.style.top= `-${window.scrollY}px`
+        document.body.style.top = `-${window.scrollY}px`
         return this.popupStack
     }
-    hide(){
+    hide() {
         if (window.innerWidth < 640)
             this.popup.style.transform = 'translateY(100%)';
         else
@@ -245,17 +262,12 @@ customElements.define('sm-popup', class extends HTMLElement {
             this.resumeScrolling()
         }
 
-        if (this.inputFields.length) {
+        if (this.forms.length) {
             setTimeout(() => {
-                this.inputFields.forEach(field => {
-                    if (field.type === 'radio' || field.tagName === 'SM-CHECKBOX')
-                        field.checked = false
-                    if (field.tagName === 'SM-INPUT' || field.tagName === 'TEXTAREA'|| field.tagName === 'SM-TEXTAREA')
-                        field.value = ''
-                })
+                this.forms.forEach(form => form.reset())
             }, 300);
         }
-        setTimeout(() => {            
+        setTimeout(() => {
             this.dispatchEvent(
                 new CustomEvent("popupclosed", {
                     bubbles: true,
@@ -269,13 +281,13 @@ customElements.define('sm-popup', class extends HTMLElement {
         }, 300);
     }
 
-    handleTouchStart(e){
+    handleTouchStart(e) {
         this.touchStartY = e.changedTouches[0].clientY
         this.popup.style.transition = 'transform 0.1s'
         this.touchStartTime = e.timeStamp
     }
 
-    handleTouchMove(e){
+    handleTouchMove(e) {
         if (this.touchStartY < e.changedTouches[0].clientY) {
             this.offset = e.changedTouches[0].clientY - this.touchStartY;
             this.touchEndAnimataion = window.requestAnimationFrame(() => this.movePopup())
@@ -286,7 +298,7 @@ customElements.define('sm-popup', class extends HTMLElement {
         }*/
     }
 
-    handleTouchEnd(e){
+    handleTouchEnd(e) {
         this.touchEndTime = e.timeStamp
         cancelAnimationFrame(this.touchEndAnimataion)
         this.touchEndY = e.changedTouches[0].clientY
@@ -308,56 +320,58 @@ customElements.define('sm-popup', class extends HTMLElement {
                     this.show()
                     return
                 }
-            else
-                this.hide()
+                else
+                    this.hide()
         }
     }
 
-    movePopup(){
+    movePopup() {
         this.popup.style.transform = `translateY(${this.offset}px)`
     }
 
     connectedCallback() {
-        this.pinned = false
-        this.popupStack
-        this.popupContainer = this.shadowRoot.querySelector('.popup-container')
-        this.popup = this.shadowRoot.querySelector('.popup')
-        this.popupBodySlot = this.shadowRoot.querySelector('.popup-body slot')
-        this.offset
-        this.popupHeader = this.shadowRoot.querySelector('.popup-top')
-        this.touchStartY = 0
-        this.touchEndY = 0
-        this.touchStartTime = 0
-        this.touchEndTime = 0
-        this.touchEndAnimataion;
-        this.threshold = this.popup.getBoundingClientRect().height * 0.3
 
-        if (this.hasAttribute('open'))
-            this.show()
+        this.popupBodySlot.addEventListener('slotchange', () => {
+            this.forms = this.querySelectorAll('sm-form')
+        })
         this.popupContainer.addEventListener('mousedown', e => {
             if (e.target === this.popupContainer && !this.pinned) {
                 if (this.pinned) {
                     this.show()
-                    return
                 } else
                     this.hide()
             }
         })
 
-        this.popupBodySlot.addEventListener('slotchange', () => {
-            setTimeout(() => {
-                this.threshold = this.popup.getBoundingClientRect().height * 0.3
-            }, 200);
-            this.inputFields = this.querySelectorAll('sm-input', 'sm-checkbox', 'textarea', 'sm-textarea', 'radio')
-        })
-
-        this.popupHeader.addEventListener('touchstart', (e) => { this.handleTouchStart(e) }, {passive: true})
-        this.popupHeader.addEventListener('touchmove', (e) => {this.handleTouchMove(e)}, {passive: true})
-        this.popupHeader.addEventListener('touchend', (e) => {this.handleTouchEnd(e)}, {passive: true})
+        const resizeObserver = new ResizeObserver(entries => {
+            for (let entry of entries) {
+                if (entry.contentBoxSize) {
+                    // Firefox implements `contentBoxSize` as a single content rect, rather than an array
+                    const contentBoxSize = Array.isArray(entry.contentBoxSize) ? entry.contentBoxSize[0] : entry.contentBoxSize;
+                    this.threshold = entry.blockSize.height * 0.3
+                } else {
+                    this.threshold = entry.contentRect.height * 0.3
+                }
+            }
+        });
+        resizeObserver.observe(this)
+        
+        
+        this.popupHeader.addEventListener('touchstart', (e) => { this.handleTouchStart(e) }, { passive: true })
+        this.popupHeader.addEventListener('touchmove', (e) => { this.handleTouchMove(e) }, { passive: true })
+        this.popupHeader.addEventListener('touchend', (e) => { this.handleTouchEnd(e) }, { passive: true })
     }
     disconnectedCallback() {
-        this.popupHeader.removeEventListener('touchstart', this.handleTouchStart, {passive: true})
-        this.popupHeader.removeEventListener('touchmove', this.handleTouchMove, {passive: true})
-        this.popupHeader.removeEventListener('touchend', this.handleTouchEnd, {passive: true})
+        this.popupHeader.removeEventListener('touchstart', this.handleTouchStart, { passive: true })
+        this.popupHeader.removeEventListener('touchmove', this.handleTouchMove, { passive: true })
+        this.popupHeader.removeEventListener('touchend', this.handleTouchEnd, { passive: true })
+        resizeObserver.unobserve()
+    }
+    attributeChangedCallback(name, oldVal, newVal) {
+        if (name === 'open') {
+            if (this.hasAttribute('open')) {
+                this.show()
+            }
+        }
     }
 })

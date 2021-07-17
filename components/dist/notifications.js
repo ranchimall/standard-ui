@@ -57,6 +57,7 @@ smNotifications.innerHTML = `
         hyphens: auto;
         max-width: 100%;
         padding: 1rem;
+        align-items: center;
     }
     .icon-container:not(:empty){
         margin-right: 0.5rem;
@@ -86,7 +87,6 @@ smNotifications.innerHTML = `
         -webkit-hyphens: auto;
         hyphens: auto;
         max-width: 100%;
-        align-self: center;
     }
     .notification:last-of-type{
         margin-bottom: 0;
@@ -161,9 +161,18 @@ customElements.define('sm-notifications', class extends HTMLElement {
 
     }
 
+    randString(length) {
+        let result = '';
+        const characters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
+        for (let i = 0; i < length; i++)
+            result += characters.charAt(Math.floor(Math.random() * characters.length));
+        return result;
+    }
+
     createNotification(message, options) {
         const { pinned = false, icon = '' } = options
         const notification = document.createElement('div')
+        notification.id = this.randString(8)
         notification.classList.add('notification')
         let composition = ``
         composition += `
@@ -195,6 +204,7 @@ customElements.define('sm-notifications', class extends HTMLElement {
                 opacity: '1'
             },
         ], this.animationOptions)
+        return notification.id
     }
 
     removeNotification(notification) {

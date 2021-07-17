@@ -53,7 +53,7 @@
             <ul id="components_list" class="list"></ul>
         </hamburger-menu>
         <section id="backdrop" class="hide-completely" onclick="sideNav(false)"></section>
-        <div class="right language-html">
+        <article class="right language-html">
             <section id="overview_page" class="page">
                 <div>
                     <h5 class="color-0-8 weight-500">Total components</h5>
@@ -70,9 +70,6 @@
                         Web components to the rescue! This is the collection of web components (WC here forward) that we
                         use at RanchiMall, especially since we are a framework-less development environment so this was
                         a logical choice.
-                    </p>
-                    <p>
-                        Just download the components you like, link them with a script tag and drop it in HTML done!
                     </p>
                     <h3>Features</h3>
                     <ul class="grid gap-1">
@@ -102,10 +99,10 @@
                     <li>
                         Link the downloaded js before <span class="highlight">&lt;/body&gt;</span>
                         <pre>
-                            <code>
-                                &lt;script src=".../components.js"&gt;&lt;/script&gt;
-                            </code>
-                        </pre>
+<code>
+&lt;script src=".../components.js"&gt;&lt;/script&gt;
+</code>
+</pre>
                     </li>
                 </ol>
                 <div class="grid grid-3 gap-0-5 align-center">
@@ -192,22 +189,22 @@
                 </section>
                 <h4>How to define variant</h4>
                 <pre>
-                    <code>
-                        &lt;sm-button variant="primary"&gt;primary&lt;/sm-button&gt;
-                        &lt;sm-button variant="outlined"&gt;outlined&lt;/sm-button&gt;
-                        &lt;sm-button variant="no-outline"&gt;no-outline&lt;/sm-button&gt;
-                    </code>
-                </pre>
+<code>
+&lt;sm-button variant="primary"&gt;primary&lt;/sm-button&gt;
+&lt;sm-button variant="outlined"&gt;outlined&lt;/sm-button&gt;
+&lt;sm-button variant="no-outline"&gt;no-outline&lt;/sm-button&gt;
+</code>
+</pre>
 
                 <h2>States</h2>
                 <h4>Disabled</h4>
                 <p>To disable the button add <span class="highlight">disabled</span> attribute.</p>
                 <sm-button disabled>Disabled</sm-button>
                 <pre>
-                    <code>
-                        &lt;sm-button disabled&gt;Disabled&lt;/sm-button&gt;
-                    </code>
-                </pre>
+<code>
+&lt;sm-button disabled&gt;Disabled&lt;/sm-button&gt;
+</code>
+</pre>
                 <h2>Attributes</h2>
                 <p>All the native HTML checkbox attributes are valid</p>
                 <section class="table">
@@ -286,10 +283,10 @@
                     </div>
                 </sm-carousel>
                 <pre>
-                    <code>
-                        &lt;sm-carousel align-items="start" indicator&gt; ...carousel items... &lt;/sm-carousel&gt;
-                    </code>
-                </pre>
+<code>
+&lt;sm-carousel align-items="start" indicator&gt; ...carousel items... &lt;/sm-carousel&gt;
+</code>
+</pre>
                 <h2>Custom attributes</h2>
                 <p>These attributes cane used to customize carousel behaviour and features</p>
                 <section class="table">
@@ -363,21 +360,6 @@
                 </sm-checkbox>
 
                 <h2>States</h2>
-                <h4>Disabled</h4>
-                <p>To disable the checkbox add <span class="highlight">disabled</span> attribute.</p>
-                <sm-checkbox disabled>
-                    <div style="margin-left: 0.5rem;">
-                        Disabled checkbox
-                    </div>
-                </sm-checkbox>
-                <pre>
-                    <code>
-                        &lt;sm-checkbox  disabled&gt;
-                            &lt;div style="margin-left: 0.5rem;"&gt;Disabled checkbox&lt;/div&gt;
-                        &lt;/sm-checkbox&gt;           
-                    </code>
-                </pre>
-
                 <h4>Checked</h4>
                 <p>To make checkbox checked by default add <span class="highlight">checked</span> attribute.</p>
                 <sm-checkbox checked>
@@ -386,12 +368,27 @@
                     </div>
                 </sm-checkbox>
                 <pre>
-                    <code>
-                        &lt;sm-checkbox  checked&gt;
-                            &lt;div style="margin-left: 0.5rem;"&gt;Checked checkbox&lt;/div&gt;
-                        &lt;/sm-checkbox&gt;           
-                    </code>
-                </pre>
+<code>
+&lt;sm-checkbox  checked&gt;
+    &lt;div style="margin-left: 0.5rem;"&gt;Checked checkbox&lt;/div&gt;
+&lt;/sm-checkbox&gt;           
+</code>
+</pre>
+
+                <h4>Disabled</h4>
+                <p>To disable the checkbox add <span class="highlight">disabled</span> attribute.</p>
+                <sm-checkbox disabled>
+                    <div style="margin-left: 0.5rem;">
+                        Disabled checkbox
+                    </div>
+                </sm-checkbox>
+                <pre>
+<code>
+&lt;sm-checkbox  disabled&gt;
+    &lt;div style="margin-left: 0.5rem;"&gt;Disabled checkbox&lt;/div&gt;
+&lt;/sm-checkbox&gt;           
+</code>
+</pre>
 
                 <h2>Attributes</h2>
                 <p>All the native HTML checkbox attributes are valid</p>
@@ -403,13 +400,13 @@
                     <div class="tr">
                         <div><span class="highlight">checked</span> (boolean)</div>
                         <p>
-                            Sets checked state as default if added
+                            If present, checkbox is set to checked state as default.
                         </p>
                     </div>
                     <div class="tr">
                         <div><span class="highlight">disabled</span> (boolean)</div>
                         <p>
-                            Checkbox is disabled by default. all the interactions are disabled
+                            If present checkbox is set to disabled state. all the interactions are disabled
                         </p>
                     </div>
                     <div class="tr">
@@ -426,6 +423,12 @@
                     <div class="tr">
                         <h4 class="table__heading">Variable</h4>
                         <h4 class="table__heading">Description</h4>
+                    </div>
+                    <div class="tr">
+                        <div><span class="highlight">--border-color</span></div>
+                        <p>
+                            Defines color of un-checked checkbox border
+                        </p>
                     </div>
                     <div class="tr">
                         <div><span class="highlight">--border-radius</span></div>
@@ -459,17 +462,18 @@
             <section id="file_input_page" class="page hide-completely">
                 <h1 class="page__title">File input</h1>
                 <p>
-                    <span class="highlight">&lt;file-input&gt;</span> is essentially native <span class="highlight">&lt;input type="file"/&gt;
+                    <span class="highlight">&lt;file-input&gt;</span> is essentially native <span
+                        class="highlight">&lt;input type="file"/&gt;
                     </span> with added style. <br>
                     So every attribute supported by native file input is supported as can be used in exactly same way.
                 </p>
                 <h2>Interactive demo</h2>
                 <file-input multiple>Select multiple files</file-input>
                 <pre>
-                    <code>
-                        &lt;file-input multiple&gt;Select multiple files&lt;/file-input&gt;
-                    </code>
-                </pre>
+<code>
+&lt;file-input multiple&gt;Select multiple files&lt;/file-input&gt;
+</code>
+</pre>
                 <h2>Attributes</h2>
                 <section class="table">
                     <div class="tr">
@@ -505,12 +509,13 @@
             <section id="form_page" class="page hide-completely">
                 <h1 class="page__title">Form</h1>
                 <p>
-                    Browser support for web components form validation or form submition is not perfect. 
+                    Browser support for web components form validation or form submition is not perfect.
                     so to circumvent this problem <span class="highlight">&lt;sm-form&gt;</span> can be used.
                 </p>
                 <h2>Interactive demo</h2>
                 <sm-form>
-                    <sm-input placeholder="Email" type="email" error-text="please enter correct email" required animate></sm-input>
+                    <sm-input placeholder="Email" type="email" error-text="please enter correct email" required animate>
+                    </sm-input>
                     <sm-input placeholder="Password" type="password" required animate></sm-input>
                     <sm-button variant="primary" disabled>Login</sm-button>
                 </sm-form>
@@ -523,7 +528,8 @@
                     <div class="tr">
                         <div><span class="highlight">reset()</span></div>
                         <p>
-                            When this function is called upon form element. all the form elements (sm- form elements only) will be reset to default state.
+                            When this function is called upon form element. all the form elements (sm- form elements
+                            only) will be reset to default state.
                         </p>
                     </div>
                 </section>
@@ -543,20 +549,22 @@
                 <sm-input id="my_input" placeholder="Email" type="email" value="john@doe" animate>
                 </sm-input>
                 <pre>
-                    <code>
-                        &lt;sm-input id="my_input" placeholder="Email" type="email" value="john@doe" animate&gt;&lt;/sm-input&gt;
-                    </code>
-                </pre>
+<code>
+&lt;sm-input id="my_input" placeholder="Email" type="email" value="john@doe" animate&gt;&lt;/sm-input&gt;
+</code>
+</pre>
                 <h2>Variants</h2>
-                <p><span class="highlight">outlined</span> is only one styled variation. Default is filled which doesn't require variant specified.</p>
+                <p><span class="highlight">outlined</span> is only one styled variation. Default is filled which doesn't
+                    require variant specified.</p>
                 <sm-input placeholder="Name" variant="outlined" animate></sm-input>
                 <pre>
-                    <code>
-                        &lt;sm-input placeholder="Name" variant="outlined" animate&gt;&lt;/sm-input&gt;
-                    </code>
-                </pre>
+<code>
+&lt;sm-input placeholder="Name" variant="outlined" animate&gt;&lt;/sm-input&gt;
+</code>
+</pre>
                 <h2>Custom Attributes</h2>
-                <p>All the native HTML input attributes are valid. These are additional attributes which can be used to add more functionality</p>
+                <p>All the native HTML input attributes are valid. These are additional attributes which can be used to
+                    add more functionality</p>
                 <section class="table">
                     <div class="tr">
                         <h4 class="table__heading">Attribute</h4>
@@ -565,13 +573,14 @@
                     <div class="tr">
                         <div><span class="highlight">animate</span> (boolean)</div>
                         <p>
-                            If present, placeholder of input will be animated to occupy space above enterned text instead of vanishing.
+                            If present, placeholder of input will be animated to occupy space above enterned text
+                            instead of vanishing.
                         </p>
                     </div>
                     <div class="tr">
                         <div><span class="highlight">error-text</span> (string)</div>
                         <p>
-                            Message specified as value of this attribute will be shown if validation fails. 
+                            Message specified as value of this attribute will be shown if validation fails.
                         </p>
                     </div>
                 </section>
@@ -584,13 +593,14 @@
                     <div class="tr">
                         <div><span class="highlight">focusIn()</span></div>
                         <p>
-                            To give focus to this component use this function instead of <span class="highlight">focus()</span>
+                            To give focus to this component use this function instead of <span
+                                class="highlight">focus()</span>
                         </p>
                     </div>
                     <div class="tr">
                         <div><span class="highlight">reset()</span></div>
                         <p>
-                            When this function is called upon form element. all the form elements (sm- form elements only) will be reset to default state.
+                            When this function is called value will be set to empty string.
                         </p>
                     </div>
                 </section>
@@ -604,45 +614,134 @@
                     <div class="tr">
                         <div><span class="highlight">customValidation</span></div>
                         <p>
-                            If you want to perform custom validation on input value, set the desired validation function.  
+                            If you want to perform custom validation on input value, set the desired validation
+                            function.
                         </p>
                     </div>
                 </section>
                 <pre>
-                    <code class="language-js">
-                        /* Setting custom validation function */
-                        document.getElelementById('my_input').customValidation = myValidation
-                    </code>
-                </pre>
+<code>
+&lt;script&gt;
+    /* Setting custom validation function */
+    document.getElelementById('my_input').customValidation = myValidation
+
+    function myValidation(inputValue) {
+        /* Custom validation logic */
+        return Boolean; /* Must return Boolean ( true/ false ) */
+    }
+&lt;/script&gt;
+</code>
+</pre>
             </section>
 
             <section id="menu_page" class="page hide-completely">
                 <h1 class="page__title">Menu</h1>
-                <p>
-                    To start using SM Components
-                </p>
-                <sm-menu id="my_menu">
-                    <sm-menu-option>first option</sm-menu-option>
-                    <sm-menu-option>second option</sm-menu-option>
-                    <sm-menu-option>third option</sm-menu-option>
+                <h2>Interactive demo</h2>
+                <sm-menu>
+                    <menu-option>first option</menu-option>
+                    <menu-option>second option</menu-option>
+                    <menu-option>third option</menu-option>
                 </sm-menu>
-                <p id="insert_text"></p>
+                <pre>
+<code>
+&lt;sm-menu&gt;
+    &lt;menu-option&gt;first option&lt;/menu-option&gt;
+    &lt;menu-option&gt;second option&lt;/menu-option&gt;
+    &lt;menu-option&gt;third option&lt;/menu-option&gt;
+&lt;/sm-menu&gt;
+</code>
+</pre>
+                <h2>Custom Attributes</h2>
+                <section class="table">
+                    <div class="tr">
+                        <h4 class="table__heading">Attribute</h4>
+                        <h4 class="table__heading">Description</h4>
+                    </div>
+                    <div class="tr">
+                        <div><span class="highlight">align-options</span> (string)</div>
+                        <p>
+                            Specifies alignment of options relative to left or right edge of menu button. <br>
+                            Valid values are <span class="highlight">left</span> <span class="highlight">right</span>.
+                        </p>
+                    </div>
+                </section>
+                <h2>Supported events</h2>
+                <section class="table">
+                    <div class="tr">
+                        <h4 class="table__heading">Event</h4>
+                        <h4 class="table__heading">Description</h4>
+                    </div>
+                    <div class="tr">
+                        <div><span class="highlight">click</span></div>
+                        <p>
+                            To setup functions on click event. use standard method to add event listeners on options
+                            themselves or
+                            delegate event on menu component level.
+                        </p>
+                    </div>
+                </section>
             </section>
 
             <section id="notifications_page" class="page hide-completely">
                 <h1 class="page__title">Notifications</h1>
                 <p>
-                    To start using SM Components
+                    To start using notifications add the <span class="highlight">&lt;sm-notifications&gt;</span>
+                    at top level of markup like just below starting <span class="highlight">&lt;body&gt;</span> tag.
                 </p>
-                <h4>Example</h4>
+                <h2>Supported functions</h2>
+                <section class="table">
+                    <div class="tr">
+                        <h4 class="table__heading">Function</h4>
+                        <h4 class="table__heading">Description</h4>
+                    </div>
+                    <div class="tr">
+                        <div><span class="highlight">push()</span></div>
+                        <p>
+                            Used to display notifications with two parameters. <br>
+                            Notification text and notification options.
+                        </p>
+                    </div>
+                    <div class="tr">
+                        <div><span class="highlight">clearAll()</span></div>
+                        <p>
+                            Removes all the notifications present in notification drawer.
+                        </p>
+                    </div>
+                </section>
 
-                <sm-button onclick="notify('Lorem ipsum dolor, consectetur adipisicing elit.', 'success')">
-                    push success notification</sm-button>
-                <sm-button onclick="notify('Lorem ipsum dolor, sit amet.', 'error')">
-                    push error notification</sm-button>
-                <sm-button
-                    onclick="notify('Lorem ipsum dolor, sit amet consectetur adipisicing elit.', '', {pinned: true})">
+                <h2>Push() options</h2>
+                <section class="table">
+                    <div class="tr">
+                        <h4 class="table__heading">Property</h4>
+                        <h4 class="table__heading">Description</h4>
+                    </div>
+                    <div class="tr">
+                        <div><span class="highlight">icon</span> (svg)</div>
+                        <p>
+                            To display custom icon with notification icon option can be used.
+                        </p>
+                    </div>
+                    <div class="tr">
+                        <div><span class="highlight">pinned</span> (Boolean)</div>
+                        <p>
+                            If set <span class="highlight">true</span> notifications won't disappear after some time.
+                            they need to be dismissed by user
+                            manually.
+                        </p>
+                    </div>
+                </section>
+                <h2>Interactive demo</h2>
+                <sm-button onclick="getRef('notification_drawer').push('This is a notification', {pinned: true})">
                     push pinned notification</sm-button>
+                <pre>
+<code>
+&lt;sm-notifications id="notification_drawer"&gt;&lt;/sm-notifications&gt;
+&lt;script&gt;
+    const notificationDrawer = document.getElementById('notification_drawer')
+    notificationDrawer.push('This is a notification', { pinned: true })
+&lt;/script&gt;
+</code>
+</pre>
             </section>
 
             <section id="popup_page" class="page hide-completely">
@@ -651,27 +750,29 @@
                     Popups are used to show addition UI elements that you may want to hide at first and reveal them when
                     needed.
                 </p>
-                <sm-popup id="popup" heading="something">
-                    idhfioushdfiuh<br>
-                    idhfioushdfiuh<br>
-                    idhfioushdfiuh<br>
-                    idhfioushdfiuh<br>
-                    idhfioushdfiuh<br>
-                    idhfioushdfiuh<br>
-                    idhfioushdfiuh<br>
-                    idhfioushdfiuh<br>
-                    idhfioushdfiuh<br>
+                <sm-popup id="popup">
+                    <sm-form>
+                        <sm-input placeholder="hjdfijkgbn"></sm-input>
+                    </sm-form>
                 </sm-popup>
 
                 <sm-button variant="primary" onclick="getRef('popup').show()">show popup</sm-button>
             </section>
 
             <section id="radio_page" class="page hide-completely">
-                <h1 class="page__title">Radio</h1>
+                <h1 class="page__title">Radio button</h1>
                 <p>
-                    Popups are used to show addition UI elements that you may want to hide at first and reveal them when
-                    needed.
+                    Radio buttons are useful whenever only one option needs to be selected from mutiple options. this
+                    functionality can be
+                    achieved by assigning same name to the group of radio buttons. <br>
+                    <span class="highlight">sm-radio</span> supports all the attributes of native HTML5 radio.
                 </p>
+                <strong>
+                    linking some HTML element with <span class="highlght">sm-radio</span> using <span
+                        class="highlight">label</span> tag won't work. <br>
+                    Add the element inside the opening and closing sm-radio tag.
+                </strong>
+                <h2>Interactive demo</h2>
                 <div class="grid gap-0-5">
                     <sm-radio name="abc" value="on" checked>
                         <div class="flex">&nbsp;&nbsp;On</div>
@@ -683,16 +784,244 @@
                         <div class="flex">&nbsp;&nbsp;🤷</div>
                     </sm-radio>
                 </div>
+                <pre>
+<code>
+&lt;sm-radio name="abc" value="on" checked&gt;
+    &lt;div class="flex"&gt;&nbsp;&nbsp;On&lt;/div&gt;
+&lt;/sm-radio&gt;
+&lt;sm-radio name="abc" value="off"&gt;
+    &lt;div class="flex"&gt;&nbsp;&nbsp;Off&lt;/div&gt;
+&lt;/sm-radio&gt;
+&lt;sm-radio name="abc" value="🤷"&gt;
+    &lt;div class="flex"&gt;&nbsp;&nbsp;🤷&lt;/div&gt;
+&lt;/sm-radio&gt;          
+</code>
+</pre>
+                <h2>States</h2>
+                <h4>Checked</h4>
+                <p>To make switch turned on by default add <span class="highlight">checked</span> attribute.</p>
+                <sm-radio checked>
+                    <div style="margin-left: 0.5rem;">
+                        Checked radio button
+                    </div>
+                </sm-radio>
+                <pre>
+<code>
+&lt;sm-radio checked&gt;
+    &lt;div&gt;On switch&lt;/div&gt;
+&lt;/sm-radio&gt;           
+</code>
+</pre>
+
+                <h4>Disabled</h4>
+                <p>To disable the radio button add <span class="highlight">disabled</span> attribute.</p>
+                <sm-radio disabled>
+                    <div style="margin-left: 0.5rem;">
+                        Disabled radio button
+                    </div>
+                </sm-radio>
+                <pre>
+<code>
+&lt;sm-radio disabled&gt;
+    &lt;div&gt;Disabled switch&lt;/div&gt;
+&lt;/sm-radio&gt;           
+</code>
+</pre>
+
+                <h2>Attributes</h2>
+                <p>All the native HTML radio attributes are valid</p>
+                <section class="table">
+                    <div class="tr">
+                        <h4 class="table__heading">Attribute</h4>
+                        <h4 class="table__heading">Description</h4>
+                    </div>
+                    <div class="tr">
+                        <div><span class="highlight">checked</span> (boolean)</div>
+                        <p>
+                            If present, radio button is set to checked state as default.
+                        </p>
+                    </div>
+                    <div class="tr">
+                        <div><span class="highlight">disabled</span> (boolean)</div>
+                        <p>
+                            If present radio button is set to disabled state. all the interactions are disabled
+                        </p>
+                    </div>
+                    <div class="tr">
+                        <div><span class="highlight">name</span> (string)</div>
+                        <p>
+                            Can be used to group radio buttons with same name. only one radio button will be active in a
+                            group.
+                        </p>
+                    </div>
+                    <div class="tr">
+                        <div><span class="highlight">value</span> (string)</div>
+                        <p>
+                            Sets value of radio button which can be accessed by value property with JS
+                        </p>
+                    </div>
+                </section>
+            </section>
+
+            <section id="select_page" class="page hide-completely">
+                <h1 class="page__title">Select</h1>
+                <p>
+                    <span class="highlight">&lt;sm-select&gt;</span> is very similar to starndatd HTML5 select and it's
+                    markup stucture is
+                    also identical.
+                </p>
+                <h2>Interactive demo</h2>
+                <sm-select>
+                    <sm-option value="1">option1</sm-option>
+                    <sm-option value="2">option2</sm-option>
+                    <sm-option value="3">option3</sm-option>
+                </sm-select>
+                <pre>
+<code>
+&lt;sm-select&gt;
+    &lt;sm-option value="1"&gt;option1&lt;/sm-option&gt;
+    &lt;sm-option value="2"&gt;option2&lt;/sm-option&gt;
+    &lt;sm-option value="3"&gt;option3&lt;/sm-option&gt;
+&lt;/sm-select&gt;  
+</code>
+</pre>
+                <h2>States</h2>
+                <h4>Disabled</h4>
+                <p>To disable the select add <span class="highlight">disabled</span> attribute.</p>
+                <sm-select disabled>
+                    <sm-option value="1">option1</sm-option>
+                    <sm-option value="2">option2</sm-option>
+                    <sm-option value="3">option3</sm-option>
+                </sm-select>
+                <pre>
+<code>
+&lt;sm-select disabled&gt;
+    &lt;sm-option value="1"&gt;option1&lt;/sm-option&gt;
+    &lt;sm-option value="2"&gt;option2&lt;/sm-option&gt;
+    &lt;sm-option value="3"&gt;option3&lt;/sm-option&gt;
+&lt;/sm-select&gt;   
+</code>
+</pre>
+                <h2>Supported events</h2>
+                <p>These are the events that will be fired when component state changes</p>
+                <section class="table">
+                    <div class="tr">
+                        <h4 class="table__heading">Event</h4>
+                        <h4 class="table__heading">Description</h4>
+                    </div>
+                    <div class="tr">
+                        <div><span class="highlight">change</span></div>
+                        <p>
+                            Whenever a different options is selected by user the this event is
+                            fired. <br>
+                            You can listen to this event and access the current value with event object <span
+                                class="highlight">event.detail.value</span>
+                        </p>
+                    </div>
+                </section>
+                <pre>
+<code>
+&lt;sm-select id="my_select"&gt;
+    &lt;sm-option value="1"&gt;option1&lt;/sm-option&gt;
+    &lt;sm-option value="2"&gt;option2&lt;/sm-option&gt;
+    &lt;sm-option value="3"&gt;option3&lt;/sm-option&gt;
+&lt;/sm-select&gt;   
+&lt;script&gt;
+    const mySelect = document.getElementById('my_select')
+    mySelect.addEventListener('change', event =&gt; {
+        console.log(event.detail.value) // logs out value of selected option
+    })
+&lt;/script&gt;
+</code>
+</pre>
+            </section>
+            <section id="spinner_page" class="page hide-completely">
+                <h1 class="page__title">Spinner</h1>
+                <p>
+                    Just drop the <span class="highlight">sm-spinner</span> in markup where you want to show the spinner
+                </p>
+                <sm-spinner></sm-spinner>
+                <pre>
+<code>
+&lt;sm-spinner&gt;&lt;/sm-spinner&gt;
+</code>
+</pre>
             </section>
 
             <section id="switch_page" class="page hide-completely">
                 <h1 class="page__title">Switch</h1>
-                <p>
-                    To start using SM Components
-                </p>
-                <sm-switch id="switch"></sm-switch>
-                <sm-switch id="switch" checked></sm-switch>
-                <sm-switch id="switch" disabled></sm-switch>
+                <p><span class="highlight">sm-switch</span> supports all the attributes of native HTML5 checkbox</p>
+                <strong>
+                    linking some HTML element with <span class="highlght">sm-switch</span> using <span
+                        class="highlight">label</span> tag won't work. <br>
+                    Add the element inside the opening and closing sm-switch tag.
+                </strong>
+                <h2>Interactive demo</h2>
+                <sm-switch id="my_switch">
+                    <div slot="left">
+                        Turn the switch
+                    </div>
+                </sm-switch>
+                <h2>States</h2>
+                <h4>Checked</h4>
+                <p>To make switch turned on by default add <span class="highlight">checked</span> attribute.</p>
+                <sm-switch checked>
+                    <div slot="left">
+                        On switch
+                    </div>
+                </sm-switch>
+                <pre>
+<code>
+&lt;sm-switch checked&gt;
+    &lt;div slot="left"&gt;
+        On switch
+    &lt;/div&gt;
+&lt;/sm-switch&gt;    
+</code>
+</pre>
+                <h4>Disabled</h4>
+                <p>To disable the switch add <span class="highlight">disabled</span> attribute.</p>
+                <sm-switch disabled>
+                    <div slot="left">
+                        Disabled checkbox
+                    </div>
+                </sm-switch>
+                <pre>
+<code>
+&lt;sm-switch disabled&gt;
+    &lt;div slot="left"&gt;
+        Disabled switch
+    &lt;/div&gt;
+&lt;/sm-switch&gt;    
+</code>
+</pre>
+
+                <h2>Attributes</h2>
+                <p>All the native HTML checkbox attributes are valid</p>
+                <section class="table">
+                    <div class="tr">
+                        <h4 class="table__heading">Attribute</h4>
+                        <h4 class="table__heading">Description</h4>
+                    </div>
+                    <div class="tr">
+                        <div><span class="highlight">checked</span> (boolean)</div>
+                        <p>
+                            If present, switch is set to checked state as default.
+                        </p>
+                    </div>
+                    <div class="tr">
+                        <div><span class="highlight">disabled</span> (boolean)</div>
+                        <p>
+                            If present switch is set to disabled state. all the interactions are disabled
+                        </p>
+                    </div>
+                    <div class="tr">
+                        <div><span class="highlight">value</span> (string)</div>
+                        <p>
+                            Sets value of switch which can be accessed by value property with JS
+                        </p>
+                    </div>
+                </section>
             </section>
 
             <section id="select_page" class="page hide-completely">
@@ -711,11 +1040,14 @@
             <section id="spinner_page" class="page hide-completely">
                 <h1 class="page__title">Spinner</h1>
                 <p>
-                    <span class="highlight">&lt;sm-select&gt;</span> is very similar to starndatd HTML5 select and it's
-                    markup stucture is
-                    also identical.
+                    Just drop the <span class="highlight">sm-spinner</span> in markup where you want to show the spinner
                 </p>
                 <sm-spinner></sm-spinner>
+                <pre>
+<code>
+&lt;sm-spinner&gt;&lt;/sm-spinner&gt;
+</code>
+</pre>
             </section>
 
             <section id="strip_select_page" class="page hide-completely">
@@ -792,9 +1124,107 @@
             </section>
             <section id="theme_toggle_page" class="page hide-completely">
                 <h1 class="page__title">Theme toggle</h1>
+                <p>
+                    Use <span class="highlight">theme-toggle</span> to create light/dark theme easily with CSS
+                    variables.
+                </p>
+                <p>When this is toggled by user the component changes the custom data attribute <span
+                        class="highlight">data-theme=""</span> on HTML body tag
+                    to either <span class="highlight">light</span> or <span class="highlight">dark</span>
+                </p>
+                <p>
+                    By default theme is set to OS level preferred-color-scheme ( supported by Android, iOS, Windows and
+                    MacOS ).
+                </p>
+                <h2>Interactive demo</h2>
                 <theme-toggle></theme-toggle>
+                <h2>HTML</h2>
+                <pre>
+<code>
+&lt;theme-toggle&gt;&lt;/theme-toggle&gt;  
+</code>
+</pre>
+
+                <h2>CSS</h2>
+                <pre>
+<code>
+&lt;style&gt;
+    body ,
+    body *{
+        /* Set CSS variables according to light theme or default theme*/
+        --accent-color: #0D7377;
+        --text-color: 17, 17, 17;
+        --background-color: 255, 255, 255;
+        --danger-color: red;
+    }
+    body[data-theme='dark'],
+    body[data-theme='dark'] *{
+        /* Set CSS variables according to dark theme */
+        --accent-color: #32E0C4;
+        --text-color: 240, 240, 240;
+        --text-color-light: 170, 170, 170;
+        --background-color: 10, 10, 10;
+        --danger-color: rgb(255, 106, 106);
+    }
+    body{
+        color: rgba(var(--text-color), 1);
+        background: rgba(var(--background-color), 1);
+    }
+&lt;/style&gt;
+</code>
+</pre>
+
+
+                <h2>Styling</h2>
+                <p>CSS variables used to style this component</p>
+                <section class="table">
+                    <div class="tr">
+                        <h4 class="table__heading">Variable</h4>
+                        <h4 class="table__heading">Description</h4>
+                    </div>
+                    <div class="tr">
+                        <div><span class="highlight">--height</div>
+                        <p>
+                            Defines height of toggle button
+                        </p>
+                    </div>
+                    <div class="tr">
+                        <div><span class="highlight">--width</div>
+                        <p>
+                            Defines width of toggle button
+                        </p>
+                    </div>
+                </section>
+                <h2>Custom events</h2>
+                <p>These are the events that will be fired when component state changes</p>
+                <section class="table">
+                    <div class="tr">
+                        <h4 class="table__heading">Event</h4>
+                        <h4 class="table__heading">Description</h4>
+                    </div>
+                    <div class="tr">
+                        <div><span class="highlight">themechange</span></div>
+                        <p>
+                            Whenever theme is toggled by user the <span class="highlight">themechange</span> event is
+                            fired. <br>
+                            You can listen to this event and access the current value of toggle with event object <span
+                                class="highlight">event.detail.theme</span>
+                        </p>
+                    </div>
+                </section>
+                <pre>
+<code>
+&lt;theme-toggle id="my_theme_toggle"&gt;&lt;/theme-toggle&gt;
+&lt;script&gt;
+    const myThemeToggle = document.getElementById('my_theme_toggle')
+    myThemeToggle.addEventListener('themechange', event =&gt; {
+        console.log(event.detail.theme) // logs out current theme ( light / dark )
+    })
+&lt;/script&gt;
+</code>
+</pre>
             </section>
-        </div>
+        </article>
     </main>
     <template id="nav_item_template">
         <li>
@@ -858,7 +1288,7 @@
             }
             if (className)
                 elem.className = className
-            if(textContent)
+            if (textContent)
                 elem.textContent = textContent
             if (innerHTML)
                 elem.innerHTML = innerHTML

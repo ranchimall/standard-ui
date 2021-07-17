@@ -62,21 +62,16 @@ smCheckbox.innerHTML = `
         stroke: rgba(var(--background-color), 1);
     }
     :host([checked]) .icon {
-        stroke-width: 8; 
-        stroke: var(--accent-color);
         background: var(--accent-color);
-    }
-    :host(:not([checked])) .icon {
-        box-shadow: 0 0 0 0.1rem var(--border-color) inset;
-    }
-    
+        box-shadow: 0 0 0 0.1rem var(--accent-color) inset;
+    }    
     .icon {
         fill: none;
         height: var(--height);
         width: var(--width);
         padding: 0.1rem;
-        stroke: rgba(var(--text-color), 0.7);
-        stroke-width: 6;
+        stroke-width: 8; 
+        stroke: var(--border-color);
         overflow: visible;
         stroke-linecap: round;
         stroke-linejoin: round;
@@ -84,6 +79,7 @@ smCheckbox.innerHTML = `
         -o-transition: background 0.3s;
         transition: background 0.3s;
         border-radius: var(--border-radius);
+        box-shadow: 0 0 0 0.1rem var(--border-color) inset;
     }
 </style>
 <label class="checkbox">
@@ -104,7 +100,7 @@ customElements.define('sm-checkbox', class extends HTMLElement {
 
         this.reset = this.reset.bind(this)
         this.dispatch = this.dispatch.bind(this)
-        this.handleKeyup = this.handleKeyup.bind(this)
+        this.handleKeyDown = this.handleKeyDown.bind(this)
         this.handleClick = this.handleClick.bind(this)
     }
 
@@ -155,8 +151,9 @@ customElements.define('sm-checkbox', class extends HTMLElement {
             composed: true
         }))
     }
-    handleKeyup(e){
+    handleKeyDown(e){
         if (e.code === "Space") {
+            e.preventDefault()
             this.click()
         }
     }
@@ -172,7 +169,7 @@ customElements.define('sm-checkbox', class extends HTMLElement {
         if (!this.hasAttribute('checked')) {
             this.setAttribute('aria-checked', 'false')
         }
-        this.addEventListener('keyup', this.handleKeyup)
+        this.addEventListener('keydown', this.handleKeyDown)
         this.addEventListener('click', this.handleClick)
     }
     attributeChangedCallback(name, oldValue, newValue) {
@@ -192,7 +189,7 @@ customElements.define('sm-checkbox', class extends HTMLElement {
         }
     }
     disconnectedCallback() {
-        this.removeEventListener('keyup', this.handleKeyup)
+        this.removeEventListener('keydown', this.handleKeyDown)
         this.removeEventListener('change', this.handleClick)
     }
 })

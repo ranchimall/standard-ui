@@ -12,15 +12,15 @@ html, body{
     scroll-behavior: smooth;
 }
 body {
+    color: rgba(var(--text-color), 1);
+    background: rgba(var(--background-color), 1);
     &,
     *{
         --accent-color: #0D7377;
         --text-color: 17, 17, 17;
         --background-color: 255, 255, 255;
         --danger-color: red;
-        color: rgba(var(--text-color), 1);
     }
-    background: rgba(var(--background-color), 1);
 
 }
 body[data-theme='dark']{
@@ -276,13 +276,10 @@ ul{
 .token.prolog,
 .token.doctype,
 .token.cdata {
-	color: #AEAEAE;
+	color: #50CB93;
 }
 
-.token.punctuation {
-	color: rgb(151, 137, 238);
-}
-
+.token.punctuation,
 .token.tag{
     color: #29B6F6;
 }
@@ -314,7 +311,7 @@ ul{
 .token.atrule,
 .token.keyword,
 .token.builtin {
-	color: #cc99cd;
+	color: #FF6767;
 }
 
 .token.string,
@@ -353,7 +350,7 @@ pre{
     overflow-x: auto;
     font-size: 0.9rem;
     font-weight: 500;
-    white-space: pre-line;
+    white-space: pre;
     border-radius: 0.5rem;
     background: rgba(0,0,0, 0.9);
     line-height: 1.7;
@@ -362,10 +359,10 @@ code{
     border-radius: 0.3rem;
     font-weight: 400;
     padding: 0.2rem 0.4rem;
-    color: rgba(255, 255, 255, 0.9);
     background: rgba(var(--text-color), .1);
 }
 code *{
+    color: rgba(255, 255, 255, 0.9);
     font-family: 'Roboto Mono', monospace;
 }
 pre code{
@@ -382,9 +379,6 @@ h1,h2,h3,h4.h5{
 h2{
   margin: 3rem 0 1rem 0;
   text-transform: capitalize;
-  &:first-of-type{
-      margin-top: 1rem;
-  }  
 }
 main{
     display: grid;

@@ -13,6 +13,7 @@ hamburgerMenu.innerHTML = `
     width: 100%;
     height: 100%;
     overflow-y: auto;
+    scrollbar-width: thin;
     --accent-color: #4d2588;
     --text-color: 17, 17, 17;
     --background-color: 255, 255, 255;
@@ -70,7 +71,6 @@ hamburgerMenu.innerHTML = `
     ::-webkit-scrollbar{
         width: 0.5rem;
     }
-    
     ::-webkit-scrollbar-thumb{
         border-radius: 1rem;
         background: rgba(var(--text-color), 0.3);

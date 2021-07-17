@@ -21,12 +21,7 @@ smMenu.innerHTML = `
     fill: rgba(var(--text-color), 0.7);
     height: 2.4rem;
     width: 2.4rem;
-    padding: 0.7rem;
-    stroke: rgba(var(--text-color), 0.7);
-    stroke-width: 6;
-    overflow: visible;
-    stroke-linecap: round;
-    stroke-linejoin: round;
+    padding: 0.5rem;
     border-radius: 2rem;
     -webkit-transition: background 0.3s;
     -o-transition: background 0.3s;
@@ -90,7 +85,7 @@ smMenu.innerHTML = `
     transition: opacity 0.3s, transform 0.3s, -webkit-transform 0.3s;
     border: solid 1px rgba(var(--text-color), 0.2);
     border-radius: 0.3rem;
-    z-index: 2;
+    z-index: 1;
     -webkit-box-shadow: 0.4rem 0.8rem 1.2rem #00000030;
             box-shadow: 0.4rem 0.8rem 1.2rem #00000030;
     top: 100%;
@@ -120,12 +115,7 @@ smMenu.innerHTML = `
 </style>
 <div class="select">
     <div class="menu" tabindex="0">
-        <svg class="icon" viewBox="0 0 64 64">
-            <title>options</title>
-            <circle cx="32" cy="6" r="5.5"/>
-            <circle cx="32" cy="58" r="5.5"/>
-            <circle cx="32" cy="31.89" r="5.5"/>
-        </svg>
+        <svg class="icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="24" height="24"><path fill="none" d="M0 0h24v24H0z"/><path d="M12 3c-1.1 0-2 .9-2 2s.9 2 2 2 2-.9 2-2-.9-2-2-2zm0 14c-1.1 0-2 .9-2 2s.9 2 2 2 2-.9 2-2-.9-2-2-2zm0-7c-1.1 0-2 .9-2 2s.9 2 2 2 2-.9 2-2-.9-2-2-2z"/></svg>
     </div>
     <div class="options hide">
         <slot></slot> 
@@ -137,7 +127,16 @@ customElements.define('sm-menu', class extends HTMLElement {
         this.attachShadow({
             mode: 'open'
         }).append(smMenu.content.cloneNode(true))
+
+        this.open = false;
+        this.availableOptions
+        this.containerDimensions
+        this.optionList = this.shadowRoot.querySelector('.options')
+        this.menu = this.shadowRoot.querySelector('.menu')
+        this.icon = this.shadowRoot.querySelector('.icon')
+
         this.expand = this.expand.bind(this)
+    
     }
     static get observedAttributes() {
         return ['value']
@@ -171,26 +170,20 @@ customElements.define('sm-menu', class extends HTMLElement {
         }
     }
     connectedCallback() {
-        this.availableOptions
-        this.containerDimensions
-        this.optionList = this.shadowRoot.querySelector('.options')
-        let slot = this.shadowRoot.querySelector('.options slot'),
-            menu = this.shadowRoot.querySelector('.menu')
-        this.icon = this.shadowRoot.querySelector('.icon')
-        this.open = false;
-
+        this.setAttribute('role', 'listbox')
+        const slot = this.shadowRoot.querySelector('.options slot')
         slot.addEventListener('slotchange', e => {
             this.availableOptions = slot.assignedElements()
             this.containerDimensions = this.optionList.getBoundingClientRect()
         });
-        menu.addEventListener('click', e => {
+        this.menu.addEventListener('click', e => {
             if (!this.open) {
                 this.expand()
             } else {
                 this.collapse()
             }
         })
-        menu.addEventListener('keydown', e => {
+        this.menu.addEventListener('keydown', e => {
             if (e.code === 'ArrowDown' || e.code === 'ArrowRight') {
                 e.preventDefault()
                 this.availableOptions[0].focus()
@@ -234,8 +227,8 @@ customElements.define('sm-menu', class extends HTMLElement {
 })
 
 // option
-const smMenuOption = document.createElement('template')
-smMenuOption.innerHTML = `
+const menuOption = document.createElement('template')
+menuOption.innerHTML = `
 <style>     
 *{
     padding: 0;
@@ -247,18 +240,19 @@ smMenuOption.innerHTML = `
     display: -webkit-box;
     display: -ms-flexbox;
     display: flex;
+    --padding: 0.6rem 1.6rem;
 }
 .option{
-    opacity: 0.9;
+    display: -webkit-box;
+    display: -ms-flexbox;
+    display: flex;
     min-width: 100%;
-    padding: 0.6rem 2rem;
+    padding: var(--padding);
     cursor: pointer;
     overflow-wrap: break-word;
     white-space: nowrap;
     outline: none;
-    display: -webkit-box;
-    display: -ms-flexbox;
-    display: flex;
+    font-size: 1rem;
     user-select: none;
     -webkit-box-align: center;
         -ms-flex-align: center;
@@ -270,7 +264,6 @@ smMenuOption.innerHTML = `
 }
 @media (hover: hover){
     .option:hover{
-        opacity: 1;
         background: rgba(var(--text-color), 0.1);
     }
 }
@@ -278,15 +271,16 @@ smMenuOption.innerHTML = `
 <div class="option">
     <slot></slot> 
 </div>`;
-customElements.define('sm-menu-option', class extends HTMLElement {
+customElements.define('menu-option', class extends HTMLElement {
     constructor() {
         super()
         this.attachShadow({
             mode: 'open'
-        }).append(smMenuOption.content.cloneNode(true))
+        }).append(menuOption.content.cloneNode(true))
     }
 
     connectedCallback() {
+        this.setAttribute('role', 'option')
         this.addEventListener('keyup', e => {
             if (e.code === 'Enter' || e.code === 'Space') {
                 e.preventDefault()

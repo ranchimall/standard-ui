@@ -72,17 +72,12 @@ window.customElements.define('sm-radio', class extends HTMLElement {
         this.reset = this.reset.bind(this)
         this.dispatchChangeEvent = this.dispatchChangeEvent.bind(this)
         this.dispatchGroupEvent = this.dispatchGroupEvent.bind(this)
-        this.handleKeyup = this.handleKeyup.bind(this)
+        this.handleKeyDown = this.handleKeyDown.bind(this)
         this.handleClick = this.handleClick.bind(this)
         this.handleRadioGroup = this.handleRadioGroup.bind(this)
 
-        this.options = {
-            bubbles: true,
-            composed: true,
-            detail: {
-                value: this.value,
-            }
-        }
+        this.uniqueId
+        this.options
     }
     static get observedAttributes() {
         return ['value', 'disabled', 'checked']
@@ -133,8 +128,9 @@ window.customElements.define('sm-radio', class extends HTMLElement {
             this.dispatchEvent(new CustomEvent(`changed${this.getAttribute('name')}`, this.options))
         }
     }
-    handleKeyup(e){
+    handleKeyDown(e){
         if (e.code === "Space") {
+            e.preventDefault()
             this.handleClick()
         }
     }
@@ -146,12 +142,28 @@ window.customElements.define('sm-radio', class extends HTMLElement {
         
     }
     handleRadioGroup(e) {
-        if (e.detail.value !== this.getAttribute('value')) {
+        if (e.detail.uid !== this.uniqueId) {
             this.reset()
         }
     }
+    randString(length) {
+        let result = '';
+        const characters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
+        for (let i = 0; i < length; i++)
+            result += characters.charAt(Math.floor(Math.random() * characters.length));
+        return result;
+    }
 
     connectedCallback() {
+        this.uniqueId = this.randString(8)
+        this.options = {
+            bubbles: true,
+            composed: true,
+            detail: {
+                uid: this.uniqueId,
+                value: this.value,
+            }
+        }
         if (!this.hasAttribute('disabled')) {
             this.setAttribute('tabindex', '0')
         }
@@ -159,7 +171,7 @@ window.customElements.define('sm-radio', class extends HTMLElement {
         if (!this.hasAttribute('checked')) {
             this.setAttribute('aria-checked', 'false')
         }
-        this.addEventListener('keyup', this.handleKeyup)
+        this.addEventListener('keydown', this.handleKeyDown)
         this.addEventListener('click', this.handleClick)
         if (this.hasAttribute('name') && this.getAttribute('name').trim() !== '') {
             document.addEventListener(`changed${this.getAttribute('name')}`, this.handleRadioGroup)
@@ -182,7 +194,7 @@ window.customElements.define('sm-radio', class extends HTMLElement {
         }
     }
     disconnectedCallback() {
-        this.removeEventListener('keyup', this.handleKeyup)
+        this.removeEventListener('keydown', this.handleKeyDown)
         this.removeEventListener('change', this.handleClick)
     }
 });
