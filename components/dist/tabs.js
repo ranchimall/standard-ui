@@ -152,7 +152,6 @@ customElements.define('sm-tab-header', class extends HTMLElement {
     }
     
     handlePanelChange(e) {
-        console.log(this.allTabs)
         this.changeTab(this.allTabs[e.detail.index])
     }
 
