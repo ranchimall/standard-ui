@@ -373,7 +373,7 @@ customElements.define('sm-tab-panels', class extends HTMLElement {
                 }
             })
         }, {
-            threshold: 0.9
+            threshold: 0.6
         })
     }
     disconnectedCallback() {

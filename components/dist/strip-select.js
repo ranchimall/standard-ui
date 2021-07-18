@@ -51,7 +51,7 @@ stripSelect.innerHTML = `
         cursor: pointer;
         position: absolute;
         align-items: center;
-        background: var(--background-color);
+        background: rgba(var(--background-color), 1);
         transform: translateY(-50%);
     }
     .nav-button--right{
@@ -65,11 +65,11 @@ stripSelect.innerHTML = `
         pointer-events: none;
     }
     .cover--left{
-        background: linear-gradient(90deg, var(--background-color) 60%, transparent);
+        background: linear-gradient(90deg, rgba(var(--background-color), 1) 60%, transparent);
     }
     .cover--right{
         right: 0;
-        background: linear-gradient(90deg, transparent 0%, var(--background-color) 40%);
+        background: linear-gradient(90deg, transparent 0%, rgba(var(--background-color), 1) 40%);
     }
     .nav-button--right::before{
         background-color: red;
@@ -161,6 +161,8 @@ customElements.define('strip-select', class extends HTMLElement{
         )
     }
     connectedCallback() {
+        this.setAttribute('role', 'listbox')
+
         const slot = this.shadowRoot.querySelector('slot')
         const coverLeft = this.shadowRoot.querySelector('.cover--left')
         const coverRight = this.shadowRoot.querySelector('.cover--right')
@@ -268,9 +270,6 @@ stripOption.innerHTML = `
         --active-option-color: inherit;
         --active-option-backgroud-color: rgba(var(--text-color), .2);
     }
-    .hide{
-        display: none !important;
-    }
     .strip-option{
         display: flex;
         flex-shrink: 0;
@@ -286,11 +285,17 @@ stripOption.innerHTML = `
         color: var(--active-option-color);
         background-color: var(--active-option-backgroud-color);
     }
+    :host(:focus-within){
+        outline: none;
+    }
+    :host(:focus-within) .strip-option{
+        box-shadow: 0 0 0 0.1rem var(--accent-color) inset;
+    }
     :host(:hover:not([active])) .strip-option{
         background-color: rgba(var(--text-color), 0.06);
     }
 </style>
-<label class="strip-option" tabindex="0">
+<label class="strip-option">
     <slot></slot>
 </label>
 `
@@ -326,6 +331,8 @@ customElements.define('strip-option', class extends HTMLElement{
         }
     }
     connectedCallback() {
+        this.setAttribute('role', 'option')
+        this.setAttribute('tabindex', '0')
         this._value = this.getAttribute('value')
         this.addEventListener('click', this.fireEvent)
         this.addEventListener('keydown', this.handleKeyDown)

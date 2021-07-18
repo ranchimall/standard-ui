@@ -451,14 +451,11 @@ sm-tab-header{
 ol{
     padding: 0.6rem 1rem;
     max-width: 75ch;
-    margin-bottom: 3rem;
+    margin-bottom: 1.5rem;
     li{
         margin-bottom: 1rem;
         &:last-of-type{
             margin-bottom: 0;
-        }
-        &::first-letter{
-            text-transform: capitalize;
         }
     }
 }
@@ -501,6 +498,9 @@ strong.important{
     }
 }
 @media screen and (min-width: 640px){
+    sm-popup{
+        --width: 32rem;
+    }
     #main_header{
         padding: 1rem 1.5rem;
         grid-area: main-header;

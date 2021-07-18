@@ -453,10 +453,57 @@
 
             <section id="copy_page" class="page hide-completely">
                 <h1 class="page__title">Copy</h1>
-                <p>
-                    To start using SM Components
-                </p>
+                <h2>Interactive demo</h2>
                 <sm-copy value="copy this message"></sm-copy>
+                <pre>
+<code>
+&lt;sm-copy value="copy this message"&gt;&lt;/sm-copy&gt;        
+</code>
+</pre>
+                <h2>Attributes</h2>
+                <section class="table">
+                    <div class="tr">
+                        <h4 class="table__heading">Attribute</h4>
+                        <h4 class="table__heading">Description</h4>
+                    </div>
+                    <div class="tr">
+                        <div><span class="highlight">value</span> ( string )</div>
+                        <p>
+                            Defines content that will be copied when copy button is clicked
+                        </p>
+                    </div>
+                </section>
+                <h2>Styling</h2>
+                <p>CSS variables used to style this component</p>
+                <section class="table">
+                    <div class="tr">
+                        <h4 class="table__heading">Variable</h4>
+                        <h4 class="table__heading">Description</h4>
+                    </div>
+                    <div class="tr">
+                        <div><span class="highlight">--button-background-color</span></div>
+                        <p>
+                            Defines background color of copy button
+                        </p>
+                    </div>
+                    <div class="tr">
+                        <div><span class="highlight">--button-border-radius</span></div>
+                        <p>
+                            Defines border-radius of copy button
+                        </p>
+                    </div>
+                </section>
+                <h2>Usage</h2>
+                <pre>
+<code>
+&lt;sm-copy id="text_to_copy" value="sample text"&gt;&lt;/sm-copy&gt;
+&lt;script&gt;
+    const textToCopy = document.getElementById('text_to_copy')
+    textToCopy.value = 'Different value'; /* Setting value to be copied */
+&lt;/script&gt;          
+</code>
+</pre>
+
             </section>
 
             <section id="file_input_page" class="page hide-completely">
@@ -528,7 +575,7 @@
                     <div class="tr">
                         <div><span class="highlight">reset()</span></div>
                         <p>
-                            When this function is called upon form element. all the form elements (sm- form elements
+                            When this function is called upon form element. all the form elements (sm- form components
                             only) will be reset to default state.
                         </p>
                     </div>
@@ -616,6 +663,19 @@
                         <p>
                             If you want to perform custom validation on input value, set the desired validation
                             function.
+                        </p>
+                    </div>
+                    <div class="tr">
+                        <div><span class="highlight">disabled</span></div>
+                        <p>
+                            Set disabled state to <span class="highlight">true</span> or <span
+                                class="highlight">false</span>
+                        </p>
+                    </div>
+                    <div class="tr">
+                        <div><span class="highlight">value</span></div>
+                        <p>
+                            Sets the value of input with JS
                         </p>
                     </div>
                 </section>
@@ -750,13 +810,153 @@
                     Popups are used to show addition UI elements that you may want to hide at first and reveal them when
                     needed.
                 </p>
-                <sm-popup id="popup">
-                    <sm-form>
-                        <sm-input placeholder="hjdfijkgbn"></sm-input>
-                    </sm-form>
+                <h2>Interactive demo</h2>
+                <sm-popup id="my_popup">
+                    <h2>Title</h2>
+                    <p>Lorem ipsum, dolor sit amet consectetur adipisicing elit. Dolore tenetur natus, pariatur beatae
+                        veritatis debitis repellat laudantium corporis velit adipisci!</p>
                 </sm-popup>
+                <sm-button onclick="getRef('my_popup').show()">show popup</sm-button>
+                <pre>
+<code>
+&lt;sm-popup id="my_popup"&gt;
+&lt;!--Popup content --&gt;
+&lt;/sm-popup&gt;      
+</code>
+</pre>
+                <h2>Usage</h2>
+                <pre>
+<code>
+&lt;sm-popup id="my_popup"&gt;
+    &lt;!--Popup content --&gt;
+&lt;/sm-popup&gt;
+&lt;sm-button id="show_popup_button"&gt;Show popup&lt;/sm-button&gt;
+&lt;script&gt;
+    const myPopup = document.getElementById('my_popup')
+    document.getElementById('show_popup_button').addEventListener('click', e =&gt; {
+        myPopup.show({options});
+    })
+&lt;/script&gt;
+</code>
+</pre>
+                <h2>Custom Attributes</h2>
+                <section class="table">
+                    <div class="tr">
+                        <h4 class="table__heading">Attribute</h4>
+                        <h4 class="table__heading">Description</h4>
+                    </div>
+                    <div class="tr">
+                        <div><span class="highlight">open</span> (boolean)</div>
+                        <p>
+                            If present, popup will be in opened state by default. useful for development purpose.
+                        </p>
+                    </div>
+                </section>
+                <h2>Styling</h2>
+                <p>CSS variables used to style this component</p>
+                <section class="table">
+                    <div class="tr">
+                        <h4 class="table__heading">Variable</h4>
+                        <h4 class="table__heading">Description</h4>
+                    </div>
+                    <div class="tr">
+                        <div><span class="highlight">--backdrop-background</span></div>
+                        <p>
+                            Defines background property of popup backdrop. Any valid CSS background value is supported.
+                        </p>
+                    </div>
+                    <div class="tr">
+                        <div><span class="highlight">--border-radius</span></div>
+                        <p>
+                            Defines border-radius of popup dialog box.
+                        </p>
+                    </div>
+                    <div class="tr">
+                        <div><span class="highlight">--body-padding</span></div>
+                        <p>
+                            Defines padding of popup dialog box.
+                        </p>
+                    </div>
+                    <div class="tr">
+                        <div><span class="highlight">--height</span></div>
+                        <p>
+                            Defines height of popup dialog box.
+                        </p>
+                    </div>
+                    <div class="tr">
+                        <div><span class="highlight">--min-height</span></div>
+                        <p>
+                            Defines min-height of popup dialog box.
+                        </p>
+                    </div>
+                    <div class="tr">
+                        <div><span class="highlight">--width</span></div>
+                        <p>
+                            Defines width of popup dialog box.
+                        </p>
+                    </div>
+                    <div class="tr">
+                        <div><span class="highlight">--min-width</span></div>
+                        <p>
+                            Defines min-width of popup dialog box.
+                        </p>
+                    </div>
+                </section>
+                <h2>Supported functions</h2>
+                <section class="table">
+                    <div class="tr">
+                        <h4 class="table__heading">Function</h4>
+                        <h4 class="table__heading">Description</h4>
+                    </div>
+                    <div class="tr">
+                        <div><span class="highlight">show()</span></div>
+                        <p>
+                            Displays the hidden popup, when called upon specified popup.
+                        </p>
+                    </div>
+                    <div class="tr">
+                        <div><span class="highlight">hide()</span></div>
+                        <p>
+                            Hides the visible popup, when called upon specified popup
+                        </p>
+                    </div>
+                </section>
 
-                <sm-button variant="primary" onclick="getRef('popup').show()">show popup</sm-button>
+                <h4>Show() options</h4>
+                <section class="table">
+                    <div class="tr">
+                        <h4 class="table__heading">Property</h4>
+                        <h4 class="table__heading">Description</h4>
+                    </div>
+                    <div class="tr">
+                        <div><span class="highlight">pinned</span> ( Boolean )</div>
+                        <p>
+                            If set <span class="highlight">true</span>, opened popup won't be closed when clicked
+                            outside the popup area.
+                        </p>
+                    </div>
+                </section>
+                <h2>Custom events</h2>
+                <section class="table">
+                    <div class="tr">
+                        <h4 class="table__heading">Event</h4>
+                        <h4 class="table__heading">Description</h4>
+                    </div>
+                    <div class="tr">
+                        <div><span class="highlight">popupopned</span></div>
+                        <p>
+                            Fired when a popup is opened, to access which popup fired the event you can use
+                            <span class="highlight">event.detail.popup</span> within event listener
+                        </p>
+                    </div>
+                    <div class="tr">
+                        <div><span class="highlight">popupclosed</span></div>
+                        <p>
+                            Fired when a popup is closed, to access which popup fired the event you can use
+                            <span class="highlight">event.detail.popup</span> within event listener
+                        </p>
+                    </div>
+                </section>
             </section>
 
             <section id="radio_page" class="page hide-completely">
@@ -775,25 +975,25 @@
                 <h2>Interactive demo</h2>
                 <div class="grid gap-0-5">
                     <sm-radio name="abc" value="on" checked>
-                        <div class="flex">&nbsp;&nbsp;On</div>
+                        <div>&nbsp;&nbsp;On</div>
                     </sm-radio>
                     <sm-radio name="abc" value="off">
-                        <div class="flex">&nbsp;&nbsp;Off</div>
+                        <div>&nbsp;&nbsp;Off</div>
                     </sm-radio>
                     <sm-radio name="abc" value="🤷">
-                        <div class="flex">&nbsp;&nbsp;🤷</div>
+                        <div>&nbsp;&nbsp;🤷</div>
                     </sm-radio>
                 </div>
                 <pre>
 <code>
 &lt;sm-radio name="abc" value="on" checked&gt;
-    &lt;div class="flex"&gt;&nbsp;&nbsp;On&lt;/div&gt;
+    &lt;div&gt;&nbsp;&nbsp;On&lt;/div&gt;
 &lt;/sm-radio&gt;
 &lt;sm-radio name="abc" value="off"&gt;
-    &lt;div class="flex"&gt;&nbsp;&nbsp;Off&lt;/div&gt;
+    &lt;div&gt;&nbsp;&nbsp;Off&lt;/div&gt;
 &lt;/sm-radio&gt;
 &lt;sm-radio name="abc" value="🤷"&gt;
-    &lt;div class="flex"&gt;&nbsp;&nbsp;🤷&lt;/div&gt;
+    &lt;div&gt;&nbsp;&nbsp;🤷&lt;/div&gt;
 &lt;/sm-radio&gt;          
 </code>
 </pre>
@@ -919,6 +1119,7 @@
                         </p>
                     </div>
                 </section>
+                <h2>Usage</h2>
                 <pre>
 <code>
 &lt;sm-select id="my_select"&gt;
@@ -1039,50 +1240,413 @@
             <section id="strip_select_page" class="page hide-completely">
                 <h1 class="page__title">Strip select</h1>
                 <p>
-                    To start using SM Components
+                    This is a modern interpritation of classical HTML <span class="highlight">select</span> tag. More
+                    suitable for touch devices,
                 </p>
-                <strip-select id="browse_category_selector" multiline>
-                    <strip-option value="movie" selected>Movie</strip-option>
-                    <strip-option value="tv series">TV series</strip-option>
-                    <strip-option value="video">Video</strip-option>
-                    <strip-option value="music">Music</strip-option>
+                <h2>Interactive demo</h2>
+                <span>Sort by </span>
+                <strip-select id="sort_by">
+                    <strip-option value="relevance" selected>Relevance</strip-option>
+                    <strip-option value="popularity">Popularity</strip-option>
+                    <strip-option value="price">Price</strip-option>
+                    <strip-option value="rating">Rating</strip-option>
                 </strip-select>
+                <pre>
+<code>
+&lt;strip-select id="sort_by"&gt;
+    &lt;strip-option value="relevance" selected&gt;Relevance&lt;/strip-option&gt;
+    &lt;strip-option value="popularity"&gt;Popularity&lt;/strip-option&gt;
+    &lt;strip-option value="price"&gt;Price&lt;/strip-option&gt;
+    &lt;strip-option value="rating"&gt;Rating&lt;/strip-option&gt;
+&lt;/strip-select&gt; 
+</code>
+</pre>
+                <h2>Custom attributes</h2>
+                <section class="table">
+                    <div class="tr">
+                        <h4 class="table__heading">Attribute</h4>
+                        <h4 class="table__heading">Description</h4>
+                    </div>
+                    <div class="tr">
+                        <div><span class="highlight">multiline</span>( Boolean )</div>
+                        <p>
+                            If present, options will wrap around instead of overflowing horizontally.
+                        </p>
+                    </div>
+                </section>
+                <h2>Styling</h2>
+                <p>CSS variables used to style this component</p>
+                <section class="table">
+                    <div class="tr">
+                        <h4 class="table__heading">Variable</h4>
+                        <h4 class="table__heading">Description</h4>
+                    </div>
+                    <div class="tr">
+                        <div><span class="highlight">--gap</span></div>
+                        <p>
+                            Defines space between options. Default is "0.5rem".
+                        </p>
+                    </div>
+                </section>
+                <h2>Supported events</h2>
+                <p>These are the events that will be fired when component state changes</p>
+                <section class="table">
+                    <div class="tr">
+                        <h4 class="table__heading">Event</h4>
+                        <h4 class="table__heading">Description</h4>
+                    </div>
+                    <div class="tr">
+                        <div><span class="highlight">change</span></div>
+                        <p>
+                            Whenever a different options is selected by user the this event is
+                            fired. <br>
+                            You can listen to this event and access the current value with event object <span
+                                class="highlight">event.detail.value</span>
+                        </p>
+                    </div>
+                </section>
+                <h2>Usage</h2>
+                <pre>
+<code>
+&lt;strip-select id="sort_by"&gt;
+    &lt;strip-option value="relevance" selected&gt;Relevance&lt;/strip-option&gt;
+    &lt;strip-option value="popularity"&gt;Popularity&lt;/strip-option&gt;
+    &lt;strip-option value="price"&gt;Price&lt;/strip-option&gt;
+    &lt;strip-option value="rating"&gt;Rating&lt;/strip-option&gt;
+&lt;/strip-select&gt; 
+&lt;script&gt;
+    const sortBy = document.getElementById('sort_by')
+    sortBy.addEventListener('change', event =&gt; {
+        console.log(event.detail.value) // logs out value of selected option
+    })
+&lt;/script&gt;
+</code>
+</pre>
             </section>
 
             <section id="tabs_page" class="page hide-completely">
                 <h1 class="page__title">Tabs</h1>
                 <p>
-                    To start using SM Components
+                    This component can be used sub-page navigation.
                 </p>
-                <sm-tab-header variant="tab" target="tab1">
+                <h2>Usage</h2>
+                <pre>
+<code>
+&lt;sm-tab-header target="tab1"&gt;
+    &lt;sm-tab&gt;
+        tab name
+    &lt;/sm-tab&gt;
+    &lt;sm-tab&gt;
+        tab name
+    &lt;/sm-tab&gt;
+&lt;/sm-tab-header&gt;
+&lt;sm-tab-panels id="tab1"&gt;
+    &lt;section&gt;
+        &lt;!-- Panel content --&gt;
+    &lt;/section&gt;
+    &lt;section&gt;
+        &lt;!-- Panel content --&gt;
+    &lt;/section&gt;
+&lt;/sm-tab-panels&gt;
+</code>
+</pre>
+                <p>
+                    There are three components that together make the tabs components.
+                <ol>
+                    <li>sm-tab-header</li>
+                    <li>sm-tab</li>
+                    <li>sm-tab-panels</li>
+                </ol>
+                </p>
+
+                <h3>sm-tab-header</h3>
+                <p>This is the first half of tabs that include the tabs header and actual tab buttons.</p>
+                <pre>
+<code>
+&lt;sm-tab-header variant="tab" target="tab2"&gt;
+    &lt;sm-tab&gt;Audio&lt;/sm-tab&gt;
+    &lt;sm-tab&gt;Video&lt;/sm-tab&gt;
+&lt;/sm-tab-header&gt;
+</code>
+</pre>
+                <h2>Supported attributes</h2>
+                <section class="table">
+                    <div class="tr">
+                        <h4 class="table__heading">Attribute</h4>
+                        <h4 class="table__heading">Description</h4>
+                    </div>
+                    <div class="tr">
+                        <div><span class="highlight">variant</span> ( string )</div>
+                        <p>
+                            Specifies variant of sm-tab-header. Only value can be <span class="highlight">tab</span>
+                        </p>
+                    </div>
+                    <div class="tr">
+                        <div><span class="highlight">target</span> ( string )</div>
+                        <p>
+                            Pass in the ID of respective sm-tab-panels to link them. This is how sm-tab-header communicates with sm-tab-panel on which tab or panel should be displayed.
+                        </p>
+                    </div>
+                </section>
+                <h2>Interactive demo</h2>
+                <sm-tab-header target="tab1">
                     <sm-tab>Audio</sm-tab>
                     <sm-tab>Video</sm-tab>
                 </sm-tab-header>
                 <sm-tab-panels id="tab1">
-                    <sm-panel>
-                        gjdhnsrfijbgn<br>bdfjnbj
-                    </sm-panel>
-                    <sm-panel>
-                        jadifjoaijdiajdo
-                        dosfighjoi<br>
-                        flkmgklfmzkl<br>
-                        hbdsfhb
-                    </sm-panel>
+                    <section>
+                        <h3>Audio</h3>
+                        <p>Lorem ipsum, dolor sit amet consectetur adipisicing elit. Exercitationem esse quod quae
+                            repellat qui. Expedita fugiat voluptates beatae itaque corporis!</p>
+                    </section>
+                    <section>
+                        <h3>Video</h3>
+                        <p>Lorem ipsum, dolor sit amet consectetur adipisicing elit. Exercitationem esse quod quae
+                            repellat qui. Expedita fugiat voluptates beatae itaque corporis!</p>
+                    </section>
                 </sm-tab-panels>
+                <h2>Variants</h2>
+                <p><span class="highlight">tab</span> is the only other variant than default style.</p>
+                <sm-tab-header variant="tab" target="tab2">
+                    <sm-tab>Audio</sm-tab>
+                    <sm-tab>Video</sm-tab>
+                </sm-tab-header>
+                <sm-tab-panels id="tab2">
+                    <section>
+                        <h3>Audio</h3>
+                        <p>Lorem ipsum, dolor sit amet consectetur adipisicing elit. Exercitationem esse quod quae
+                            repellat qui. Expedita fugiat voluptates beatae itaque corporis!</p>
+                    </section>
+                    <section>
+                        <h3>Video</h3>
+                        <p>Lorem ipsum, dolor sit amet consectetur adipisicing elit. Exercitationem esse quod quae
+                            repellat qui. Expedita fugiat voluptates beatae itaque corporis!</p>
+                    </section>
+                </sm-tab-panels>
+                <pre>
+<code>
+&lt;sm-tab-header variant="tab" target="tab2"&gt;
+    &lt;sm-tab&gt;Audio&lt;/sm-tab&gt;
+    &lt;sm-tab&gt;Video&lt;/sm-tab&gt;
+&lt;/sm-tab-header&gt;
+</code>
+</pre>
             </section>
+
             <section id="tags_input_page" class="page hide-completely">
                 <h1 class="page__title">Tags input</h1>
                 <p>
-                    To start using SM Components
+                    This component has a very specific use case and that is for accepting tags.
+                    Each time user presses enter or space, a new tag is created. Only unique values are allowed.
                 </p>
+                <h2>Interactive demo</h2>
                 <tags-input placeholder="Add tags..."></tags-input>
+                <pre>
+<code>
+&lt;tags-input placeholder="Add tags..."&gt;&lt;/tags-input&gt;      
+</code>
+</pre>
+                <h2>Attributes</h2>
+                <section class="table">
+                    <div class="tr">
+                        <h4 class="table__heading">Attribute</h4>
+                        <h4 class="table__heading">Description</h4>
+                    </div>
+                    <div class="tr">
+                        <div><span class="highlight">placeholder</span> ( string )</div>
+                        <p>
+                            Define some string to let user know which kind of input is required.
+                        </p>
+                    </div>
+                    <div class="tr">
+                        <div><span class="highlight">limit</span> ( number )</div>
+                        <p>
+                            Set a limit of tags that will be accepted atmost
+                        </p>
+                    </div>
+                </section>
+                <h2>Styling</h2>
+                <p>CSS variables used to style this component</p>
+                <section class="table">
+                    <div class="tr">
+                        <h4 class="table__heading">Variable</h4>
+                        <h4 class="table__heading">Description</h4>
+                    </div>
+                    <div class="tr">
+                        <div><span class="highlight">--background</span></div>
+                        <p>
+                            Defines background of tags-input. Any valid CSS background property values are supported.
+                        </p>
+                    </div>
+                    <div class="tr">
+                        <div><span class="highlight">--border-radius</span></div>
+                        <p>
+                            Defines border-radius of tags-input
+                        </p>
+                    </div>
+                </section>
+                <h2>Supported functions</h2>
+                <section class="table">
+                    <div class="tr">
+                        <h4 class="table__heading">Function</h4>
+                        <h4 class="table__heading">Description</h4>
+                    </div>
+                    <div class="tr">
+                        <div><span class="highlight">focusIn()</span></div>
+                        <p>
+                            To give focus to this component use this function instead of <span
+                                class="highlight">focus()</span>
+                        </p>
+                    </div>
+                    <div class="tr">
+                        <div><span class="highlight">reset()</span></div>
+                        <p>
+                            When this function is called value will be set to empty string.
+                        </p>
+                    </div>
+                </section>
+                <h2>Usage</h2>
+                <pre>
+<code>
+&lt;tags-input id="get_tags" placeholder="Add tags..."&gt;&lt;/tags-input&gt;
+&lt;script&gt;
+    const getTags = document.getElementById('get_tags')
+    console.log(getTags.value); /* returns an array of string that are user input */ 
+&lt;/script&gt;      
+</code>
+</pre>
+
             </section>
+
             <section id="textarea_page" class="page hide-completely">
                 <h1 class="page__title">Textarea</h1>
-                <p>
-                    To start using SM Components
-                </p>
-                <sm-textarea placeholder="Add some text here..." rows="4"></sm-textarea>
+                <p>Textarea is suitable component where multiline input is required. you can either specify
+                    the number of lines textarea should expand or let the textarea expand according to user input until
+                    a max-height is reached.</p>
+                <h2>Interactive demo</h2>
+                <sm-textarea id="my_textarea" placeholder="Add some text here..." rows="2"></sm-textarea>
+                <pre>
+<code>
+&lt;sm-textarea id="my_textarea" placeholder="Add some text here..." rows="4"&gt;&lt;/sm-textarea&gt;
+</code>
+</pre>
+                <h2>Variants</h2>
+                <p><span class="highlight">outlined</span> is only one styled variation. Default is filled which doesn't
+                    require variant specified.</p>
+                <sm-textarea placeholder="This is a textarea" variant="outlined"></sm-textarea>
+                <pre>
+<code>
+&lt;sm-textarea placeholder="This is a textarea" variant="outlined"&gt;&lt;/sm-textarea&gt;
+</code>
+</pre>
+                <h2>Supported Attributes</h2>
+                <p>All the native HTML textarea attributes are valid.</p>
+                <section class="table">
+                    <div class="tr">
+                        <h4 class="table__heading">Attribute</h4>
+                        <h4 class="table__heading">Description</h4>
+                    </div>
+                    <div class="tr">
+                        <div><span class="highlight">disabled</span> (boolean)</div>
+                        <p>
+                            If present, all the interactions will be blocked.
+                        </p>
+                    </div>
+                    <div class="tr">
+                        <div><span class="highlight">rows</span> (number)</div>
+                        <p>
+                            Sets the number of rows textarea will be expanded by default.
+                            Default is "1".
+                        </p>
+                    </div>
+                    <div class="tr">
+                        <div><span class="highlight">value</span> (string)</div>
+                        <p>
+                            Sets the default value of textarea.
+                        </p>
+                    </div>
+                </section>
+                <h2>Styling</h2>
+                <p>CSS variables used to style this component</p>
+                <section class="table">
+                    <div class="tr">
+                        <h4 class="table__heading">Variable</h4>
+                        <h4 class="table__heading">Description</h4>
+                    </div>
+                    <div class="tr">
+                        <div><span class="highlight">--background</span></div>
+                        <p>
+                            Defines background textarea. Any valid CSS background property values are supported.
+                        </p>
+                    </div>
+                    <div class="tr">
+                        <div><span class="highlight">--border-radius</span></div>
+                        <p>
+                            Defines border-radius of textarea
+                        </p>
+                    </div>
+                    <div class="tr">
+                        <div><span class="highlight">--max-height</div>
+                        <p>
+                            Defines max-height to which textarea is allowed to expand. Default is "8rem"
+                        </p>
+                    </div>
+                </section>
+                <h2>Supported functions</h2>
+                <section class="table">
+                    <div class="tr">
+                        <h4 class="table__heading">Function</h4>
+                        <h4 class="table__heading">Description</h4>
+                    </div>
+                    <div class="tr">
+                        <div><span class="highlight">focusIn()</span></div>
+                        <p>
+                            To give focus to this component use this function instead of <span
+                                class="highlight">focus()</span>
+                        </p>
+                    </div>
+                    <div class="tr">
+                        <div><span class="highlight">reset()</span></div>
+                        <p>
+                            When this function is called value will be set to empty string.
+                        </p>
+                    </div>
+                </section>
+
+                <h2>Setters</h2>
+                <section class="table">
+                    <div class="tr">
+                        <h4 class="table__heading">Function</h4>
+                        <h4 class="table__heading">Description</h4>
+                    </div>
+                    <div class="tr">
+                        <div><span class="highlight">disabled</span></div>
+                        <p>
+                            Set disabled state to <span class="highlight">true</span> or <span
+                                class="highlight">false</span>
+                        </p>
+                    </div>
+                    <div class="tr">
+                        <div><span class="highlight">value</span></div>
+                        <p>
+                            Sets the value of textarea with JS
+                        </p>
+                    </div>
+                </section>
+                <h2>Usage</h2>
+                <pre>
+<code>
+&lt;sm-textarea placeholder="This is a textarea" id="my_textarea"&gt;&lt;/sm-textarea&gt;
+&lt;script&gt;
+    const myTextarea = document.getElelementById('my_textarea')
+    myTextarea.value = 'some string'; /* setting value of textarea */
+    
+    myTextarea.addEventListener('input', event => {
+        const value = event.target.value; /* accessing value of textarea */
+    })
+&lt;/script&gt;
+</code>
+</pre>
             </section>
             <section id="text_field_page" class="page hide-completely">
                 <h1 class="page__title">Text field</h1>
@@ -1332,7 +1896,7 @@
         async function showPopup(popup, pinned) {
             zIndex++
             getRef(popup).setAttribute('style', `z-index: ${zIndex}`)
-            popupStack = getRef(popup).show(pinned, popupStack)
+            popupStack = getRef(popup).show({ pinned, popupStack })
             return getRef(popup);
         }
 

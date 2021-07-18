@@ -20,7 +20,7 @@ smPopup.innerHTML = `
     --min-width: auto;
     --min-height: auto;
     --body-padding: 1.5rem;
-    --backdrop: rgba(0, 0, 0, 0.6);
+    --backdrop-background: rgba(0, 0, 0, 0.6);
     --border-radius: 0.8rem 0.8rem 0 0;
 }
 .popup-container{
@@ -32,7 +32,7 @@ smPopup.innerHTML = `
     left: 0;
     right: 0;
     place-items: center;
-    background: var(--backdrop);
+    background: var(--backdrop-background);
     -webkit-transition: opacity 0.3s;
     -o-transition: opacity 0.3s;
     transition: opacity 0.3s;
@@ -214,7 +214,8 @@ customElements.define('sm-popup', class extends HTMLElement {
         }, 300);
     }
 
-    show(pinned, popupStack) {
+    show(options = {}) {
+        const {pinned = false, popupStack = undefined} = options
         if (popupStack)
             this.popupStack = popupStack
         if (this.popupStack && !this.hasAttribute('open')) {
@@ -292,10 +293,6 @@ customElements.define('sm-popup', class extends HTMLElement {
             this.offset = e.changedTouches[0].clientY - this.touchStartY;
             this.touchEndAnimataion = window.requestAnimationFrame(() => this.movePopup())
         }
-        /*else {
-            this.offset = this.touchStartY - e.changedTouches[0].clientY;
-            this.popup.style.transform = `translateY(-${this.offset}px)`
-        }*/
     }
 
     handleTouchEnd(e) {

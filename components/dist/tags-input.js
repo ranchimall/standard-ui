@@ -12,6 +12,7 @@ tagsInput.innerHTML = `
     --background-color: 255, 255, 255;
     --danger-color: red;
     --border-radius: 0.3rem;
+	--background: rgba(var(--text-color), 0.06);
     }
 .hide{
     display: none !important;
@@ -25,7 +26,7 @@ tagsInput.innerHTML = `
     align-items: center;
     padding: 0.5rem 0.5rem 0 0.5rem;
     border-radius: var(--border-radius);
-    background-color: rgba(var(--text-color), 0.06);
+    background: var(--background);
   }
   .tags-wrapper:focus-within{
     box-shadow: 0 0 0 0.1rem var(--accent-color) inset !important;
@@ -106,6 +107,9 @@ customElements.define('tags-input', class extends HTMLElement {
 	}
 	get value() {
 		return [...this.tags].join()
+	}
+	focusIn() {
+		this.input.focus()
 	}
 	reset(){
 		this.input.value = ''

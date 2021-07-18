@@ -23,11 +23,10 @@ smTextarea.innerHTML = `
     --danger-color: red;
     --border-radius: 0.3rem;
     --background: rgba(var(--text-color), 0.06);
-    --padding-right: initial;
-    --padding-left: initial;
+    --padding: initial;
     --max-height: 8rem;
 }
-:host(.outlined) .textarea {
+:host([variant="outlined"]) .textarea {
     box-shadow: 0 0 0 0.1rem rgba(var(--text-color), 0.4) inset;
     background: rgba(var(--background-color), 1);
 }
@@ -43,8 +42,7 @@ smTextarea.innerHTML = `
     max-height: var(--max-height);
     background: var(--background);
     border-radius: var(--border-radius);
-    padding-left: var(--padding-left);
-    padding-right: var(--padding-right);
+    padding: var(--padding);
 }
 .textarea::after,
 textarea{
@@ -77,10 +75,6 @@ textarea{
 .textarea:focus-within:not(.readonly){
     box-shadow: 0 0 0 0.1rem var(--accent-color) inset;
 }
-.disabled{
-    pointer-events: none;
-    opacity: 0.6;
-}
 .placeholder{
     position: absolute;
     margin: 0.7rem 1rem;
@@ -90,6 +84,10 @@ textarea{
     line-height: 1.5;
     pointer-events: none;
     user-select: none;
+}
+:host([disabled]) .textarea{
+    cursor: not-allowed;
+    opacity: 0.6;
 }
 @media (any-hover: hover){
     ::-webkit-scrollbar{
@@ -122,7 +120,7 @@ customElements.define('sm-textarea',
             this.textarea = this.shadowRoot.querySelector('textarea')
             this.textareaBox = this.shadowRoot.querySelector('.textarea')
             this.placeholder = this.shadowRoot.querySelector('.placeholder')
-            this.reflectedAttributes = ['required', 'readonly', 'rows', 'minlength', 'maxlength']
+            this.reflectedAttributes = ['disabled', 'required', 'readonly', 'rows', 'minlength', 'maxlength']
         
             this.reset = this.reset.bind(this)
             this.focusIn = this.focusIn.bind(this)
@@ -130,7 +128,7 @@ customElements.define('sm-textarea',
             this.checkInput = this.checkInput.bind(this)
         }
         static get observedAttributes() {
-            return ['value', 'placeholder', 'required', 'readonly', 'rows', 'minlength', 'maxlength']
+            return ['disabled', 'value', 'placeholder', 'required', 'readonly', 'rows', 'minlength', 'maxlength']
         }
         get value() {
             return this.textarea.value
@@ -138,6 +136,16 @@ customElements.define('sm-textarea',
         set value(val) {
             this.setAttribute('value', val)
             this.fireEvent()
+        }
+        get disabled() {
+            return this.hasAttribute('disabled')
+        }
+        set disabled(val) {
+            if (val) {
+                this.setAttribute('disabled', '')   
+            } else {
+                this.removeAttribute('disabled')   
+            }
         }
         get isValid() {
             return this.textarea.checkValidity()
@@ -177,7 +185,7 @@ customElements.define('sm-textarea',
                     this.textarea.setAttribute(name, this.getAttribute(name) ? this.getAttribute(name) : '')
                 }
                 else {
-                    this.input.removeAttribute(name)
+                    this.textContent.removeAttribute(name)
                 }
             }
             else if (name === 'placeholder') {

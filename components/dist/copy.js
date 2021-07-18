@@ -23,8 +23,8 @@ smCopy.innerHTML = `
     display: grid;
     gap: 1rem;
     padding: var(--padding);
+    align-items: center;
     grid-template-columns: minmax(0, 1fr) auto;
-    align-items: flex-start;
 }
 .copy-button{
     display: inline-flex;
