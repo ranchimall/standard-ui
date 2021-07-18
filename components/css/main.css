@@ -96,7 +96,7 @@ ul {
   display: grid;
   gap: 1rem;
   padding: 1rem;
-  grid-template-columns: 12rem 1fr;
+  grid-template-columns: 11rem 1fr;
   width: 100%;
 }
 .tr:nth-of-type(odd) {
@@ -414,6 +414,7 @@ code {
   font-weight: 400;
   padding: 0.2rem 0.4rem;
   background: rgba(var(--text-color), 0.1);
+  color: rgba(255, 255, 255, 0.9);
 }
 
 code * {
@@ -563,6 +564,23 @@ strong.important {
 
 .comp-checkbox__title {
   margin-left: 0.5rem;
+}
+
+.auto-grid-2 {
+  justify-content: center;
+  justify-items: center;
+  text-align: center;
+  grid-template-columns: repeat(auto-fill, minmax(18rem, 1fr));
+}
+
+.screenshot {
+  object-fit: cover;
+  object-position: top;
+  height: 30rem;
+  width: min(16rem, 100%);
+  border-radius: 1rem;
+  justify-self: center;
+  box-shadow: 0 0.5rem 1.5rem -0.5rem rgba(0, 0, 0, 0.3), 0 0 0 0.3rem black;
 }
 
 @media screen and (max-width: 640px) {

@@ -115,7 +115,7 @@ customElements.define('text-field', class extends HTMLElement{
             this.removeAttribute('disabled')
     }
     fireEvent(value){
-        let event = new CustomEvent('contentchanged', {
+        let event = new CustomEvent('change', {
             bubbles: true,
             cancelable: true,
             composed: true,

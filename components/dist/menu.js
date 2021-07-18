@@ -6,12 +6,16 @@ smMenu.innerHTML = `
     margin: 0;
     -webkit-box-sizing: border-box;
             box-sizing: border-box;
-} 
+}
+:host{
+    display: -webkit-inline-box;
+    display: -ms-inline-flexbox;
+    display: inline-flex;
+}
 .menu{
     display: -ms-grid;
     display: grid;
     place-items: center;
-    position: relative;
     height: 2rem;
     width: 2rem;
     outline: none;
@@ -27,16 +31,6 @@ smMenu.innerHTML = `
     -o-transition: background 0.3s;
     transition: background 0.3s;
 }      
-:host{
-    display: -webkit-inline-box;
-    display: -ms-inline-flexbox;
-    display: inline-flex;
-}
-.hide{
-    opacity: 0;
-    pointer-events: none;
-    user-select: none;
-}
 .select{
     position: relative;
     display: -webkit-box;
@@ -70,42 +64,29 @@ smMenu.innerHTML = `
     min-width: -webkit-max-content;
     min-width: -moz-max-content;
     min-width: max-content;
-    -webkit-transform: translateY(-1rem);
-        -ms-transform: translateY(-1rem);
-            transform: translateY(-1rem);
     -webkit-box-orient: vertical;
     -webkit-box-direction: normal;
         -ms-flex-direction: column;
             flex-direction: column;
     background: rgba(var(--background-color), 1);
-    -webkit-transition: opacity 0.3s, -webkit-transform 0.3s;
-    transition: opacity 0.3s, -webkit-transform 0.3s;
-    -o-transition: opacity 0.3s, transform 0.3s;
-    transition: opacity 0.3s, transform 0.3s;
-    transition: opacity 0.3s, transform 0.3s, -webkit-transform 0.3s;
-    border: solid 1px rgba(var(--text-color), 0.2);
     border-radius: 0.3rem;
     z-index: 1;
-    -webkit-box-shadow: 0.4rem 0.8rem 1.2rem #00000030;
-            box-shadow: 0.4rem 0.8rem 1.2rem #00000030;
-    top: 100%;
+    -webkit-box-shadow: 0 0.5rem 1.5rem -0.5rem rgba(0,0,0,0.3);
+            box-shadow: 0 0.5rem 1.5rem -0.5rem rgba(0,0,0,0.3);
     bottom: auto;
 }
-.moveUp{
-    top: auto;
-    bottom: 100%;
-    -webkit-transform: translateY(3rem);
-        -ms-transform: translateY(3rem);
-            transform: translateY(3rem);
+.hide{
+    display: none;
 }
-.moveLeft{
-    left: auto;
-    right: 0;
-}
-.no-transformations{
-    -webkit-transform: none !important;
-        -ms-transform: none !important;
-            transform: none !important;
+@media screen and (max-width: 640px){
+    .options{
+        position: fixed;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        top: auto;
+        border-radius: 0.5rem 0.5rem 0 0;
+    }
 }
 @media (hover: hover){
     .menu:hover .icon{
@@ -128,15 +109,24 @@ customElements.define('sm-menu', class extends HTMLElement {
             mode: 'open'
         }).append(smMenu.content.cloneNode(true))
 
-        this.open = false;
+        this.isOpen = false;
         this.availableOptions
         this.containerDimensions
+        this.animOptions = {
+            duration: 200,
+            easing: 'ease'
+        }
+
         this.optionList = this.shadowRoot.querySelector('.options')
         this.menu = this.shadowRoot.querySelector('.menu')
         this.icon = this.shadowRoot.querySelector('.icon')
 
         this.expand = this.expand.bind(this)
-    
+        this.collapse = this.collapse.bind(this)
+        this.toggle = this.toggle.bind(this)
+        this.handleKeyDown = this.handleKeyDown.bind(this)
+        this.handleClickoutSide = this.handleClickoutSide.bind(this)
+
     }
     static get observedAttributes() {
         return ['value']
@@ -147,58 +137,64 @@ customElements.define('sm-menu', class extends HTMLElement {
     set value(val) {
         this.setAttribute('value', val)
     }
-    expand(){
-        if (!this.open) {
+    expand() {
+        if (!this.isOpen) {
             this.optionList.classList.remove('hide')
-            this.optionList.classList.add('no-transformations')
-            this.open = true
-            this.icon.classList.add('focused')
-            this.availableOptions.forEach(option => {
-                option.setAttribute('tabindex', '0')
-            })
+            this.optionList.animate([
+                {
+                    transform: window.innerWidth < 640 ? 'translateY(1.5rem)' : 'translateY(-1rem)',
+                    opacity: '0'
+                },
+                {
+                    transform: 'none',
+                    opacity: '1'
+                },
+            ], this.animOptions)
+                .onfinish = () => {
+                    this.isOpen = true
+                    this.icon.classList.add('focused')
+                }
         }
     }
     collapse() {
-        if (this.open) {
-            this.open = false
-            this.icon.classList.remove('focused')
-            this.optionList.classList.add('hide')
-            this.optionList.classList.remove('no-transformations')
-            this.availableOptions.forEach(option => {
-                option.removeAttribute('tabindex')
-            })
+        if (this.isOpen) {
+            this.optionList.animate([
+                {
+                    transform: 'none',
+                    opacity: '1'
+                },
+                {
+                    transform: window.innerWidth < 640 ? 'translateY(1.5rem)' : 'translateY(-1rem)',
+                    opacity: '0'
+                },
+            ], this.animOptions)
+                .onfinish = () => {
+                    this.isOpen = false
+                    this.icon.classList.remove('focused')
+                    this.optionList.classList.add('hide')
+                }
         }
     }
-    connectedCallback() {
-        this.setAttribute('role', 'listbox')
-        const slot = this.shadowRoot.querySelector('.options slot')
-        slot.addEventListener('slotchange', e => {
-            this.availableOptions = slot.assignedElements()
-            this.containerDimensions = this.optionList.getBoundingClientRect()
-        });
-        this.menu.addEventListener('click', e => {
-            if (!this.open) {
-                this.expand()
-            } else {
-                this.collapse()
-            }
-        })
-        this.menu.addEventListener('keydown', e => {
-            if (e.code === 'ArrowDown' || e.code === 'ArrowRight') {
+    toggle() {
+        if (!this.isOpen) {
+            this.expand()
+        } else {
+            this.collapse()
+        }
+    }
+    handleKeyDown(e) {
+        // If key is pressed on menu button
+        if (e.target === this) {
+            if (e.code === 'ArrowDown') {
                 e.preventDefault()
                 this.availableOptions[0].focus()
             }
-            if (e.code === 'Enter' || e.code === 'Space') {
+            else if (e.code === 'Enter' || e.code === 'Space') {
                 e.preventDefault()
-                if (!this.open) {
-                    this.expand()
-                } else {
-                    this.collapse()
-                }
+                this.toggle()
             }
-        })
-        this.optionList.addEventListener('keydown', e => {
-            if (e.code === 'ArrowUp' || e.code === 'ArrowRight') {
+        } else { // If mey is pressed over menu options
+            if (e.code === 'ArrowUp') {
                 e.preventDefault()
                 if (document.activeElement.previousElementSibling) {
                     document.activeElement.previousElementSibling.focus()
@@ -206,23 +202,41 @@ customElements.define('sm-menu', class extends HTMLElement {
                     this.availableOptions[this.availableOptions.length - 1].focus()
                 }
             }
-            if (e.code === 'ArrowDown' || e.code === 'ArrowLeft') {
+            else if (e.code === 'ArrowDown') {
                 e.preventDefault()
                 if (document.activeElement.nextElementSibling) {
                     document.activeElement.nextElementSibling.focus()
-                } else{
+                } else {
                     this.availableOptions[0].focus()
                 }
             }
-        })
-        this.optionList.addEventListener('click', e => {
-            this.collapse()
-        })
-        window.addEventListener('mousedown', e => {
-            if (!this.contains(e.target) && e.button !== 2) {
-                this.collapse()
+            else if (e.code === 'Enter' || e.code === 'Space') {
+                e.preventDefault()
+                e.target.click()
             }
-        })
+        }
+    }
+    handleClickoutSide(e) {
+        if (!this.contains(e.target) && e.button !== 2) {
+            this.collapse()
+        }
+    }
+    connectedCallback() {
+        this.setAttribute('role', 'listbox')
+        this.setAttribute('aria-label', 'dropdown menu')
+        const slot = this.shadowRoot.querySelector('.options slot')
+        slot.addEventListener('slotchange', e => {
+            this.availableOptions = e.target.assignedElements()
+            this.containerDimensions = this.optionList.getBoundingClientRect()
+        });
+        this.addEventListener('click', this.toggle)
+        this.addEventListener('keydown', this.handleKeyDown)
+        document.addEventListener('mousedown', this.handleClickoutSide)
+    }
+    disconnectedCallback() {
+        this.removeEventListener('click', this.toggle)
+        this.removeEventListener('keydown', this.handleKeyDown)
+        document.removeEventListener('mousedown', this.handleClickoutSide)
     }
 })
 
@@ -262,7 +276,10 @@ menuOption.innerHTML = `
     outline: none;
     background: rgba(var(--text-color), 0.1);
 }
-@media (hover: hover){
+@media (any-hover: hover){
+    :host{
+        --padding: 0.8rem 1.6rem;
+    }
     .option:hover{
         background: rgba(var(--text-color), 0.1);
     }

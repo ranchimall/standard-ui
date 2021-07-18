@@ -21,7 +21,8 @@
     </audio>
     <main>
         <header id="main_header" class="flex align-center space-between">
-            <button id="side_nav_button" class="interact" onclick="getRef('side_nav').open()">
+            <button id="side_nav_button" class="interact" onclick="getRef('side_nav').open()"
+                aria-label="Hamburger menu toggle button">
                 <svg class="icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="24" height="24">
                     <path fill="none" d="M0 0h24v24H0z" />
                     <path d="M16 18v2H5v-2h11zm5-7v2H3v-2h18zm-2-7v2H8V4h11z" />
@@ -284,7 +285,9 @@
                 </sm-carousel>
                 <pre>
 <code>
-&lt;sm-carousel align-items="start" indicator&gt; ...carousel items... &lt;/sm-carousel&gt;
+&lt;sm-carousel align-items="start" indicator&gt;
+    &lt;!-- carousel items --&gt;
+&lt;/sm-carousel&gt;
 </code>
 </pre>
                 <h2>Custom attributes</h2>
@@ -460,6 +463,16 @@
 &lt;sm-copy value="copy this message"&gt;&lt;/sm-copy&gt;        
 </code>
 </pre>
+                <h2>Usage</h2>
+                <pre>
+<code>
+&lt;sm-copy id="text_to_copy" value="sample text"&gt;&lt;/sm-copy&gt;
+&lt;script&gt;
+    const textToCopy = document.getElementById('text_to_copy')
+    textToCopy.value = 'Different value'; /* Setting value to be copied */
+&lt;/script&gt;          
+</code>
+</pre>
                 <h2>Attributes</h2>
                 <section class="table">
                     <div class="tr">
@@ -493,17 +506,19 @@
                         </p>
                     </div>
                 </section>
-                <h2>Usage</h2>
-                <pre>
-<code>
-&lt;sm-copy id="text_to_copy" value="sample text"&gt;&lt;/sm-copy&gt;
-&lt;script&gt;
-    const textToCopy = document.getElementById('text_to_copy')
-    textToCopy.value = 'Different value'; /* Setting value to be copied */
-&lt;/script&gt;          
-</code>
-</pre>
-
+                <h2>Supported events</h2>
+                <section class="table">
+                    <div class="tr">
+                        <h4 class="table__heading">Event</h4>
+                        <h4 class="table__heading">Description</h4>
+                    </div>
+                    <div class="tr">
+                        <div><span class="highlight">copy</span></div>
+                        <p>
+                            Fired when text is copied by user.
+                        </p>
+                    </div>
+                </section>
             </section>
 
             <section id="file_input_page" class="page hide-completely">
@@ -581,14 +596,61 @@
                     </div>
                 </section>
                 <h2>Nested element behaviour</h2>
-                <p>
-
-                </p>
+                <section class="table">
+                    <div class="tr">
+                        <h4 class="table__heading">Element</h4>
+                        <h4 class="table__heading">behaviour</h4>
+                    </div>
+                    <div class="tr">
+                        <div>
+                            sm-button 
+                            <span class="highlight">variant="primary"</span>
+                            or
+                            <span class="highlight">type="submit"</span>
+                        </div>
+                        <p>
+                            Whenever enter is pressed inside an active <span class="highlight">sm-input</span>, this will fire click event. <br>
+                            This will also change state depending opon validation conditions.
+                        </p>
+                    </div>
+                    <div class="tr">
+                        <div>
+                            sm-button 
+                            <span class="highlight">type="reset"</span>
+                        </div>
+                        <p>
+                            When clicked, the whole form will reset.
+                        </p>
+                    </div>
+                </section>
             </section>
             <section id="hamburger_menu_page" class="page hide-completely">
                 <h1 class="page__title">Hamburger menu</h1>
-                <hamburger-menu>
-                </hamburger-menu>
+                <section class="grid auto-grid-2 gap-3">
+                    <div class="grid gap-1">
+                        <img class="screenshot" src="assets/ham-menu-closed.png" alt="Hamburger menu closed">
+                        <h4>Hamburger menu closed</h4>
+                    </div>
+                    <div class="grid gap-1">
+                        <img class="screenshot" src="assets/ham-menu-open.png" alt="Hamburger menu opened">
+                        <h4>Hamburger menu open</h4>
+                    </div>
+                </section>
+                <h2>Usage</h2>
+                <pre>
+<code>
+&lt;hamburger-menu id="navigation_drawer"&gt;
+    <!-- Navigation links -->
+&lt;/hamburger-menu&gt;
+&lt;script&gt;
+    const navigationDrawer = document.getElementById('navigation_drawer')
+    const navigationDrawerButton = document.getElementById('navigation_drawer_button')
+    navigationDrawerButton.addEventListner('click', e => {
+        navigationDrawer.open(); // Will open hamburger menu on mobile devices when hidden  
+    })
+    &lt;/script&gt;
+</code>
+</pre>
             </section>
             <section id="input_page" class="page hide-completely">
                 <h1 class="page__title">Input</h1>
@@ -628,6 +690,50 @@
                         <div><span class="highlight">error-text</span> (string)</div>
                         <p>
                             Message specified as value of this attribute will be shown if validation fails.
+                        </p>
+                    </div>
+                </section>
+                <h2>Styling</h2>
+                <p>CSS variables used to style this component</p>
+                <section class="table">
+                    <div class="tr">
+                        <h4 class="table__heading">Variable</h4>
+                        <h4 class="table__heading">Description</h4>
+                    </div>
+                    <div class="tr">
+                        <div><span class="highlight">--background</span></div>
+                        <p>
+                            Defines background property of input. Any valid CSS background values are supported.
+                        </p>
+                    </div>
+                    <div class="tr">
+                        <div><span class="highlight">--border-radius</div>
+                        <p>
+                            Sets border-radius of input.
+                        </p>
+                    </div>
+                    <div class="tr">
+                        <div><span class="highlight">--icon-gap</div>
+                        <p>
+                            Sets space between input icon and input box. Default is "0.5rem"
+                        </p>
+                    </div>
+                    <div class="tr">
+                        <div><span class="highlight">--font-size</div>
+                        <p>
+                            Sets font size of input text. Default is "1rem".
+                        </p>
+                    </div>
+                    <div class="tr">
+                        <div><span class="highlight">--padding</div>
+                        <p>
+                            Sets padding around whole input box including icon.
+                        </p>
+                    </div>
+                    <div class="tr">
+                        <div><span class="highlight">--width</div>
+                        <p>
+                            Sets width of input box.
                         </p>
                     </div>
                 </section>
@@ -1085,6 +1191,22 @@
 &lt;/sm-select&gt;  
 </code>
 </pre>
+                <h2>Usage</h2>
+                <pre>
+<code>
+&lt;sm-select id="my_select"&gt;
+    &lt;sm-option value="1"&gt;option1&lt;/sm-option&gt;
+    &lt;sm-option value="2"&gt;option2&lt;/sm-option&gt;
+    &lt;sm-option value="3"&gt;option3&lt;/sm-option&gt;
+&lt;/sm-select&gt;   
+&lt;script&gt;
+    const mySelect = document.getElementById('my_select')
+    mySelect.addEventListener('change', event =&gt; {
+        console.log(event.detail.value) // logs out value of selected option
+    })
+&lt;/script&gt;
+</code>
+</pre>
                 <h2>States</h2>
                 <h4>Disabled</h4>
                 <p>To disable the select add <span class="highlight">disabled</span> attribute.</p>
@@ -1096,9 +1218,7 @@
                 <pre>
 <code>
 &lt;sm-select disabled&gt;
-    &lt;sm-option value="1"&gt;option1&lt;/sm-option&gt;
-    &lt;sm-option value="2"&gt;option2&lt;/sm-option&gt;
-    &lt;sm-option value="3"&gt;option3&lt;/sm-option&gt;
+    &lt;!-- Options --&gt;
 &lt;/sm-select&gt;   
 </code>
 </pre>
@@ -1119,22 +1239,6 @@
                         </p>
                     </div>
                 </section>
-                <h2>Usage</h2>
-                <pre>
-<code>
-&lt;sm-select id="my_select"&gt;
-    &lt;sm-option value="1"&gt;option1&lt;/sm-option&gt;
-    &lt;sm-option value="2"&gt;option2&lt;/sm-option&gt;
-    &lt;sm-option value="3"&gt;option3&lt;/sm-option&gt;
-&lt;/sm-select&gt;   
-&lt;script&gt;
-    const mySelect = document.getElementById('my_select')
-    mySelect.addEventListener('change', event =&gt; {
-        console.log(event.detail.value) // logs out value of selected option
-    })
-&lt;/script&gt;
-</code>
-</pre>
             </section>
             <section id="spinner_page" class="page hide-completely">
                 <h1 class="page__title">Spinner</h1>
@@ -1268,7 +1372,7 @@
                         <h4 class="table__heading">Description</h4>
                     </div>
                     <div class="tr">
-                        <div><span class="highlight">multiline</span>( Boolean )</div>
+                        <div><span class="highlight">multiline</span> ( Boolean )</div>
                         <p>
                             If present, options will wrap around instead of overflowing horizontally.
                         </p>
@@ -1384,7 +1488,8 @@
                     <div class="tr">
                         <div><span class="highlight">target</span> ( string )</div>
                         <p>
-                            Pass in the ID of respective sm-tab-panels to link them. This is how sm-tab-header communicates with sm-tab-panel on which tab or panel should be displayed.
+                            Pass in the ID of respective sm-tab-panels to link them. This is how sm-tab-header
+                            communicates with sm-tab-panel on which tab or panel should be displayed.
                         </p>
                     </div>
                 </section>
@@ -1651,9 +1756,57 @@
             <section id="text_field_page" class="page hide-completely">
                 <h1 class="page__title">Text field</h1>
                 <p>
-                    To start using SM Components
+                    This component can be used in scenarios where you need to display a name or something that user
+                    should be able to edit directly
+                    in-place instead of going to other UI element.
                 </p>
-                <text-field value="Double click me!"></text-field>
+                <h2>Interactive demo</h2>
+                <text-field value="John doe"></text-field>
+                <h2>Usage</h2>
+                <pre>
+<code>
+&lt;text-field id="name_field" value="John doe"&gt;&lt;/text-field&gt;
+&lt;script&gt;
+    const nameField = document.getElementById('name_field')
+    nameField.addEventListener('change', event =&gt; {
+        console.log(event.detail.value) // logs out new value set by user
+        console.log(nameField.value) // Accessing value directly with getter
+    })
+&lt;/script&gt;
+</code>
+</pre>
+                <h2>Custom attributes</h2>
+                <section class="table">
+                    <div class="tr">
+                        <h4 class="table__heading">Attribute</h4>
+                        <h4 class="table__heading">Description</h4>
+                    </div>
+                    <div class="tr">
+                        <div><span class="highlight">disabled</span> ( Boolean )</div>
+                        <p>
+                            If present, text can't be edited.
+                        </p>
+                    </div>
+                    <div class="tr">
+                        <div><span class="highlight">value</span> ( string )</div>
+                        <p>
+                            Set initial text that can be edited by user.
+                        </p>
+                    </div>
+                </section>
+                <h2>Supported events</h2>
+                <section class="table">
+                    <div class="tr">
+                        <h4 class="table__heading">Event</h4>
+                        <h4 class="table__heading">Description</h4>
+                    </div>
+                    <div class="tr">
+                        <div><span class="highlight">change</span></div>
+                        <p>
+                            Fired when text changes are saved by user.
+                        </p>
+                    </div>
+                </section>
             </section>
             <section id="theme_toggle_page" class="page hide-completely">
                 <h1 class="page__title">Theme toggle</h1>
@@ -1757,7 +1910,7 @@
 </code>
 </pre>
             </section>
-        </article>
+        </article>  
     </main>
     <template id="nav_item_template">
         <li>

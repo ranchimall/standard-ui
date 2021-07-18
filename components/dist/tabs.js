@@ -14,6 +14,7 @@ smTabHeader.innerHTML = `
         --accent-color: #4d2588;
         --text-color: 17, 17, 17;
         --background-color: 255, 255, 255;
+        --tab-indicator-border-radius: 0.3rem;
     }
     .tabs{
         position: relative;
@@ -50,10 +51,7 @@ smTabHeader.innerHTML = `
     }
     :host([variant="tab"]) .indicator{
         height: 100%;
-        border-radius: 0.3rem;
-    }
-    :host(.round) .indicator{
-        border-radius: 3rem;
+        border-radius: var(--tab-indicator-border-radius);
     }
     :host([variant="tab"]) .tab-header{
         border-bottom: none; 

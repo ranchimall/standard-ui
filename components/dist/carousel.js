@@ -23,6 +23,10 @@ smCarousel.innerHTML = `
     --nav-box-shadow: 0 0.2rem 0.2rem #00000020, 0 0.5rem 1rem #00000040;
     --indicator-top: auto;
     --indicator-bottom: -1.5rem;
+    --indicator-height: 0.2rem;
+    --indicator-width: 0.4rem;
+    --indicator-border-radius: 0.4rem;
+    --indicators-gap: 0.5rem;
     --active-indicator-color: var(--accent-color);
 }
 .carousel__button{
@@ -39,7 +43,7 @@ smCarousel.innerHTML = `
     -webkit-box-shadow: var(--nav-box-shadow);
             box-shadow:  var(--nav-box-shadow); 
     -webkit-tap-highlight-color: transparent;
-    transition: transform 0.3s;
+    transition: transform 0.3s, opacity 0.3s;
     z-index: 1;
     border-radius: 3rem;
     padding: 0.5rem;
@@ -96,22 +100,24 @@ button:focus-visible{
         -ms-flex-pack: center;
             justify-content: center;
     position: absolute;
+    padding: 0.5rem 0;
     top: var(--indicator-top);
     bottom: var(--indicator-bottom);
-    gap: 0.5rem;
+    gap: var(--indicators-gap);
     width: 100%;
 }
-.dot{
+.indicator{
     position: relative;
-    padding: 0.2rem;
+    height: var(--indicator-height);
+    width: var(--indicator-width);
     background: rgba(var(--text-color), 0.3);
-    border-radius: 1rem;
+    border-radius: var(--indicator-border-radius);
     -webkit-transition: 0.2s;
     -o-transition: 0.2s;
     transition: 0.2s;
     cursor: pointer;
 }
-.dot.active{
+.indicator.active{
     -webkit-transform: scale(1.5);
         -ms-transform: scale(1.5);
             transform: scale(1.5);
@@ -133,8 +139,23 @@ slot::slotted(*){
     .carousel{
         overflow: hidden;
     }
+    .carousel__button{
+        opacity: 0.8;
+    }
+    :host(:hover) .carousel__button{
+        opacity: 1;
+    }
     .left,.right{
         display: none;
+    }
+    .indicators{
+        transition: gap 0.3s;
+    }
+    .indicators:hover{
+        gap: calc(var(--indicators-gap) * 2);
+    }
+    .indicators:hover .indicator{
+        transform: scale(2);
     }
 }
 @media (hover: none){
@@ -252,15 +273,15 @@ customElements.define('sm-carousel', class extends HTMLElement {
     }
 
     createIndicator(index) {
-        let dot = document.createElement('div')
-        dot.classList.add('dot')
-        dot.dataset.rank = index
-        return dot
+        let indicator = document.createElement('div')
+        indicator.classList.add('indicator')
+        indicator.dataset.rank = index
+        return indicator
     }
 
     handleIndicatorClick(e) {
-        if (e.target.closest('.dot')) {
-            const slideNum = parseInt(e.target.closest('.dot').dataset.rank)
+        if (e.target.closest('.indicator')) {
+            const slideNum = parseInt(e.target.closest('.indicator').dataset.rank)
             if (this.activeSlideNum !== slideNum) {
                 this.showSlide(slideNum)
             }

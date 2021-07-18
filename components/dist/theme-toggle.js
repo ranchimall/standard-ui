@@ -99,11 +99,13 @@ class ThemeToggle extends HTMLElement {
     daylight() {
         this.hasTheme = 'light'
         document.body.dataset.theme = 'light'
+        this.setAttribute('aria-checked', 'false')
     }
-
+    
     nightlight() {
         this.hasTheme = 'dark'
         document.body.dataset.theme = 'dark'
+        this.setAttribute('aria-checked', 'true')
     }
 
     toggleState() {
