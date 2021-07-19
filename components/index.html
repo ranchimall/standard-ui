@@ -5,6 +5,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>SM Components</title>
+    <meta name="description" content="SM-Components. collection of web components">
     <link rel="stylesheet" href="css/main.min.css">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -53,7 +54,6 @@
             <h4>Components</h4>
             <ul id="components_list" class="list"></ul>
         </hamburger-menu>
-        <section id="backdrop" class="hide-completely" onclick="sideNav(false)"></section>
         <article class="right language-html">
             <section id="overview_page" class="page">
                 <div>
@@ -648,7 +648,7 @@
     navigationDrawerButton.addEventListner('click', e => {
         navigationDrawer.open(); // Will open hamburger menu on mobile devices when hidden  
     })
-    &lt;/script&gt;
+&lt;/script&gt;
 </code>
 </pre>
             </section>
@@ -1328,18 +1328,6 @@
                     </div>
                 </section>
             </section>
-            <section id="spinner_page" class="page hide-completely">
-                <h1 class="page__title">Spinner</h1>
-                <p>
-                    Just drop the <span class="highlight">sm-spinner</span> in markup where you want to show the spinner
-                </p>
-                <sm-spinner></sm-spinner>
-                <pre>
-<code>
-&lt;sm-spinner&gt;&lt;/sm-spinner&gt;
-</code>
-</pre>
-            </section>
 
             <section id="strip_select_page" class="page hide-completely">
                 <h1 class="page__title">Strip select</h1>
@@ -1923,9 +1911,10 @@
         </sm-checkbox>
     </template>
     <script src="assets/prism.js"></script>
-    <script src="components.js"></script>
+    <script src="components.min.js"></script>
     <script id="default_ui_library">
         const domRefs = {};
+        const appPages = ["overview_page", "quick_start_page", "global_styling_page", "button_page", "carousel_page", "checkbox_page", "copy_page", "file_input_page", "form_page", "hamburger_menu_page", "input_page", "menu_page", "notifications_page", "popup_page", "radio_page", "select_page", "spinner_page", "switch_page", "strip_select_page", "tabs_page", "tags_input_page", "textarea_page", "text_field_page", "theme_toggle_page"]
 
         function getRef(elementId) {
             if (!domRefs.hasOwnProperty(elementId)) {
@@ -2218,6 +2207,7 @@
             else {
                 pageId = targetPage.includes('#') ? targetPage.split('#')[1] : targetPage
             }
+            if(!appPages.includes(pageId)) return
             document.querySelector('.page:not(.hide-completely)').classList.add('hide-completely')
             document.querySelector('.list__item--active').classList.remove('list__item--active')
             getRef(pageId).classList.remove('hide-completely')
