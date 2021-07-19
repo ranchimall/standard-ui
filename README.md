@@ -1,6 +1,7 @@
-# Standard Visual Design System
+# Standard UI
 
-### How to use Standard Visual Design System - A summary: Pick a layout you need, add components.js to it, then use notification sounds if your project has sound based notification
+### How to use Standard UI - A summary:
+Pick a layout you need, add components.js to it, then use notification sounds if your project has sound based notification
 
 #### To start, pick one layout among different layouts we have provided in Layouts folder. Every layout is like approved stand-alone HTML visual template on which UI functionality needs to be added. Then add components.js from Standard UI Components folder. This will give access to functional visual elements in your layout template page. Then you can add the rest of functionality
 
