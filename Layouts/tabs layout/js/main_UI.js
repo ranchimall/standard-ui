@@ -1,7 +1,8 @@
 // Global variables
+const appPages = ['dashboard', 'settings'];
 const domRefs = {};
-const appPages = ['home']
-
+let timerId;
+const currentYear = new Date().getFullYear();
 
 //Checks for internet connection status
 if (!navigator.onLine)
@@ -43,8 +44,8 @@ function getRef(elementId) {
 }
 
 // returns dom with specified element
-function createElement(tagName, obj) {
-    const { className, textContent, innerHTML, attributes = {} } = obj
+function createElement(tagName, options) {
+    const { className, textContent, innerHTML, attributes = {} } = options
     const elem = document.createElement(tagName)
     for (let attribute in attributes) {
         elem.setAttribute(attribute, attributes[attribute])
@@ -70,7 +71,6 @@ const debounce = (callback, wait) => {
 }
 
 // Limits the rate of function execution
-let timerId;
 function throttle(func, delay) {
     // If setTimeout is already scheduled, no need to do anything
     if (timerId) {
@@ -87,7 +87,6 @@ function throttle(func, delay) {
     }, delay);
 }
 
-// function required for popups or modals to appear
 class Stack {
     constructor() {
         this.items = [];
@@ -97,21 +96,20 @@ class Stack {
     }
     pop() {
         if (this.items.length == 0)
-            return "Underflow";
+        return "Underflow";
         return this.items.pop();
     }
     peek() {
         return this.items[this.items.length - 1];
     }
 }
-let popupStack = new Stack(),
-    zIndex = 10;
 
-async function showPopup(popup, pinned) {
+// function required for popups or modals to appear
+function showPopup(popupId, pinned) {
     zIndex++
-    getRef(popup).setAttribute('style', `z-index: ${zIndex}`)
-    popupStack = getRef(popup).show({ pinned, popupStack })
-    return getRef(popup);
+    getRef(popupId).setAttribute('style', `z-index: ${zIndex}`)
+    popupStack = getRef(popupId).show({ pinned, popupStack })
+    return getRef(popupId);
 }
 
 // hides the popup or modal 
@@ -122,7 +120,7 @@ function hidePopup() {
 }
 
 // displays a popup for asking permission. Use this instead of JS confirm
-let getConfirmation = (title, message, cancelText = 'Cancel', confirmText = 'OK') => {
+const getConfirmation = (title, message, cancelText = 'Cancel', confirmText = 'OK') => {
     return new Promise(resolve => {
         showPopup('confirmation_popup', true)
         getRef('confirm_title').textContent = title;
@@ -143,19 +141,19 @@ let getConfirmation = (title, message, cancelText = 'Cancel', confirmText = 'OK'
 }
 
 // displays a popup for asking user input. Use this instead of JS prompt
-async function getPromptInput(title, message = '', showText = true, trueBtn = "Ok", falseBtn = "Cancel") {
+async function getPromptInput(title, message = '', isPassword = true, cancelText = 'Cancel', confirmText = 'OK') {
     showPopup('prompt_popup', true)
     getRef('prompt_title').textContent = title;
     let input = getRef('prompt_input');
     input.setAttribute("placeholder", message)
     let buttons = getRef('prompt_popup').querySelectorAll("sm-button");
-    if (showText)
+    if (isPassword)
         input.setAttribute("type", "text")
     else
         input.setAttribute("type", "password")
     input.focusIn()
-    buttons[0].textContent = falseBtn;
-    buttons[1].textContent = trueBtn;
+    buttons[0].textContent = cancelText;
+    buttons[1].textContent = confirmText;
     return new Promise((resolve, reject) => {
         buttons[0].onclick = () => {
             hidePopup()
@@ -171,8 +169,7 @@ async function getPromptInput(title, message = '', showText = true, trueBtn = "O
 
 //Function for displaying toast notifications. pass in error for mode param if you want to show an error.
 function notify(message, mode, options = {}) {
-    const { pinned = false, sound } = options
-    if (mode === "error") console.error(message);
+    const { pinned = false, sound = false } = options
     let icon
     switch (mode) {
         case 'success':
@@ -189,7 +186,6 @@ function notify(message, mode, options = {}) {
     }
 }
 
-const currentYear = new Date().getFullYear();
 function getFormatedTime(time, relative) {
     try {
         if (String(time).indexOf("_")) time = String(time).split("_")[0];
@@ -268,7 +264,8 @@ function createRipple(event, target) {
     };
 }
 
-function showPage(targetPage) {
+function showPage(targetPage, options = {}) {
+    const { firstLoad, hashChange } = options
     let pageId
     if (targetPage === '') {
         pageId = 'overview_page'
@@ -278,5 +275,31 @@ function showPage(targetPage) {
     }
     if(!appPages.includes(pageId)) return
     document.querySelector('.page:not(.hide-completely)').classList.add('hide-completely')
+    document.querySelector('.nav-list__item--active').classList.remove('nav-list__item--active')
     getRef(pageId).classList.remove('hide-completely')
+    getRef(pageId).animate([
+        {
+            opacity: 0,
+            transform: 'translateX(-1rem)'
+        },
+        {
+            opacity: 1,
+            transform: 'none'
+        },
+    ],
+        {
+            duration: 300,
+            easing: 'ease'
+        })
+    const targetListItem = document.querySelector(`.nav-list__item[href="#${pageId}"]`)
+    targetListItem.classList.add('nav-list__item--active')
+    if (firstLoad && window.innerWidth > 640 && targetListItem.getBoundingClientRect().top > getRef('side_nav').getBoundingClientRect().height) {
+        getRef('side_nav').scrollTo({
+            top: (targetListItem.getBoundingClientRect().top - getRef('side_nav').getBoundingClientRect().top + getRef('side_nav').scrollTop),
+            behavior: 'smooth'
+        })
+    }
+    if (hashChange && window.innerWidth < 640) {
+        getRef('side_nav').close()
+    }
 }

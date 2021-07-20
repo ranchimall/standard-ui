@@ -143,10 +143,10 @@ class ThemeToggle extends HTMLElement {
     connectedCallback() {
         this.setAttribute('role', 'switch')
         this.setAttribute('aria-label', 'theme toggle')
-        if (localStorage.theme === "dark") {
+        if (localStorage.getItem(`${window.location.hostname}-theme`) === "dark") {
             this.nightlight();
             this.setAttribute('checked', '')
-        } else if (localStorage.theme === "light") {
+        } else if (localStorage.getItem(`${window.location.hostname}-theme`) === "light") {
             this.daylight();
             this.removeAttribute('checked')
         }
@@ -174,10 +174,10 @@ class ThemeToggle extends HTMLElement {
         if (name === 'checked') {
             if (this.hasAttribute('checked')) {
                 this.nightlight();
-                localStorage.setItem("theme", "dark");
+                localStorage.setItem(`${window.location.hostname}-theme`, "dark");
             } else {
                 this.daylight();
-                localStorage.setItem("theme", "light");
+                localStorage.setItem(`${window.location.hostname}-theme`, "light");
             }
         }
     }

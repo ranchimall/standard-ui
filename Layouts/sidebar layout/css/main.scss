@@ -321,13 +321,13 @@ main{
     flex-direction: column;
     padding-bottom: 3rem;
 }    
-.list{
+.nav-list{
     list-style: none;
     display: flex;
     flex-direction: column;
     margin-bottom: 0.8rem;
 }
-.list__item{
+.nav-list__item{
     display: flex;
     padding: 0.8rem 1.5rem;
     text-transform: capitalize;
@@ -394,7 +394,7 @@ main{
             background: rgba(var(--text-color), 0.5);
         }
     }
-    .list__item:hover{
+    .nav-list__item:hover{
         background: rgba(var(--text-color), .1);
         cursor: pointer;
     }
