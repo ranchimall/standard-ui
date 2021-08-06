@@ -1,5 +1,5 @@
 // Global variables
-const appPages = ['dashboard', 'settings'];
+const appPages = ['dashboard', 'updates', 'settings'];
 const domRefs = {};
 let timerId;
 const currentYear = new Date().getFullYear();

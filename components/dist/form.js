@@ -7,6 +7,7 @@ smForm.innerHTML = `
         box-sizing: border-box;
     }
     :host{
+        display: flex;
         --gap: 1rem;
         width: 100%;
     }
@@ -60,23 +61,13 @@ customElements.define('sm-form', class extends HTMLElement {
 		}
 	}
 	handleKeydown(e) {
-		if (e.key === 'Enter') {
+		if (e.key === 'Enter' && e.target.tagName !== 'SM-TEXTAREA' ) {
 			if (this.allRequiredValid) {
 				this.submitButton.click()
 			}
-/* 			else {
-				this.requiredElements.find(elem => !elem.isValid)
-					.animate([
-						{ transform: 'translateX(-1rem)' },
-						{ transform: 'translateX(1rem)' },
-						{ transform: 'translateX(-0.5rem)' },
-						{ transform: 'translateX(0.5rem)' },
-						{ transform: 'translateX(0)' },
-					], {
-						duration: 300,
-						easing: 'ease'
-					})
-			} */
+			else {
+			    this.requiredElements.find(elem => !elem.isValid).vibrate()
+			}
 		}
 	}
 	reset() {

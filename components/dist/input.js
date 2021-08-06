@@ -190,7 +190,7 @@ input{
     text-align: left;
     font-size: 0.9rem;
     align-items: center;
-    padding: 0.8rem 1rem;
+    padding: 0.8rem 0;
     color: rgba(var(--text-color), 0.8);
 }
 .success{
@@ -240,6 +240,7 @@ customElements.define('sm-input',
             this.clearBtn = this.shadowRoot.querySelector('.clear')
             this.label = this.shadowRoot.querySelector('.label')
             this.feedbackText = this.shadowRoot.querySelector('.feedback-text')
+            this.outerContainer = this.shadowRoot.querySelector('.outer-container')
             this._helperText
             this._errorText
             this.isRequired = false
@@ -251,6 +252,7 @@ customElements.define('sm-input',
             this.focusOut = this.focusOut.bind(this)
             this.fireEvent = this.fireEvent.bind(this)
             this.checkInput = this.checkInput.bind(this)
+            this.vibrate = this.vibrate.bind(this)
         }
 
         static get observedAttributes() {
@@ -283,15 +285,6 @@ customElements.define('sm-input',
             this.setAttribute('type', val)
         }
 
-        get isValid() {
-            const _isValid = this.input.checkValidity()
-            let _customValid = true
-            if (this.customValidation) {
-                _customValid = this.validationFunction(this.input.value)
-            }
-            return (_isValid && _customValid)
-        }
-
         get validity() {
             return this.input.validity
         }
@@ -310,6 +303,7 @@ customElements.define('sm-input',
             }
         }
         set customValidation(val) {
+            
             this.validationFunction = val
         }
         set errorText(val) {
@@ -317,6 +311,30 @@ customElements.define('sm-input',
         }
         set helperText(val) {
             this._helperText = val
+        }
+        get isValid() {
+            if (this.input.value !== '') {
+                const _isValid = this.input.checkValidity()
+                let _customValid = true
+                if (this.validationFunction) {
+                    _customValid = Boolean(this.validationFunction(this.input.value))
+                }
+                if (_isValid && _customValid) {
+                    this.feedbackText.classList.remove('error')
+                    this.feedbackText.classList.add('success')
+                    this.feedbackText.textContent = ''
+                } else {
+                    if (this._errorText) {
+                        this.feedbackText.classList.add('error')
+                        this.feedbackText.classList.remove('success')
+                        this.feedbackText.innerHTML = `
+                            <svg class="status-icon status-icon--error" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="24" height="24"><path fill="none" d="M0 0h24v24H0z"/><path d="M12 22C6.477 22 2 17.523 2 12S6.477 2 12 2s10 4.477 10 10-4.477 10-10 10zm-1-7v2h2v-2h-2zm0-8v6h2V7h-2z"/></svg>
+                        ${this._errorText}
+                        `
+                    }
+                }
+                return (_isValid && _customValid)
+            }
         }
         reset(){
             this.value = ''
@@ -341,27 +359,13 @@ customElements.define('sm-input',
 
         checkInput(e){
             if (!this.hasAttribute('readonly')) {
-                if (this.input.value !== '') {
+                if (this.input.value.trim() !== '') {
                     this.clearBtn.classList.remove('hide')
                 } else {
                     this.clearBtn.classList.add('hide')
                     if (this.isRequired) {
                         this.feedbackText.textContent = '* required'
                     }
-                }
-                if (!this.isValid) {
-                    if (this._errorText) {
-                        this.feedbackText.classList.add('error')
-                        this.feedbackText.classList.remove('success')
-                        this.feedbackText.innerHTML = `
-                            <svg class="status-icon status-icon--error" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="24" height="24"><path fill="none" d="M0 0h24v24H0z"/><path d="M12 22C6.477 22 2 17.523 2 12S6.477 2 12 2s10 4.477 10 10-4.477 10-10 10zm-1-7v2h2v-2h-2zm0-8v6h2V7h-2z"/></svg>
-                        ${this._errorText}
-                        `
-                    }
-                } else {
-                    this.feedbackText.classList.remove('error')
-                    this.feedbackText.classList.add('success')
-                    this.feedbackText.textContent = ''
                 }
             }
             if (!this.hasAttribute('placeholder') || this.getAttribute('placeholder').trim() === '') return;
@@ -377,10 +381,23 @@ customElements.define('sm-input',
                     this.label.classList.remove('hide')
             }
         }
+        vibrate() {
+            this.outerContainer.animate([
+                { transform: 'translateX(-1rem)' },
+                { transform: 'translateX(1rem)' },
+                { transform: 'translateX(-0.5rem)' },
+                { transform: 'translateX(0.5rem)' },
+                { transform: 'translateX(0)' },
+            ], {
+                duration: 300,
+                easing: 'ease'
+            })
+        }
 
 
         connectedCallback() {
             this.animate = this.hasAttribute('animate')
+            this.setAttribute('role', 'textbox')
             this.input.addEventListener('input', this.checkInput)
             this.clearBtn.addEventListener('click', this.reset)
         }
@@ -415,7 +432,14 @@ customElements.define('sm-input',
                 }
                 else if (name === 'required') {
                     this.isRequired = this.hasAttribute('required')
-                    this.feedbackText.textContent = '* required'
+                    if (this.isRequired) {
+                        this.feedbackText.textContent = '* required'
+                        this.setAttribute('aria-required', 'true')
+                    }
+                    else {
+                        this.feedbackText.textContent = ''
+                        this.setAttribute('aria-required', 'false')    
+                    }
                 }
                 else if (name === 'readonly') {
                     if (this.hasAttribute('readonly')) {

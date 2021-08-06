@@ -14,6 +14,8 @@ smTabHeader.innerHTML = `
         --accent-color: #4d2588;
         --text-color: 17, 17, 17;
         --background-color: 255, 255, 255;
+        --gap: 1rem;
+        --justify-content: flex-start;
         --tab-indicator-border-radius: 0.3rem;
     }
     .tabs{
@@ -26,10 +28,8 @@ smTabHeader.innerHTML = `
         display: -ms-grid;
         display: grid;
         grid-auto-flow: column;
-        -webkit-box-pack: start;
-            -ms-flex-pack: start;
-                justify-content: flex-start;
-        gap: 1rem;
+        justify-content: var(--justify-content);
+        gap: var(--gap);
         position: relative;
         overflow: auto hidden;
         max-width: 100%;
@@ -73,7 +73,7 @@ smTabHeader.innerHTML = `
         color: var(--accent-color);
         opacity: 1;
     }
-    @media (hover: none){
+    @media (any-hover: none){
         .tab-header::-webkit-scrollbar-track {
             -webkit-box-shadow: none !important;
             background-color: transparent !important;
@@ -81,6 +81,11 @@ smTabHeader.innerHTML = `
         .tab-header::-webkit-scrollbar {
             height: 0;
             background-color: transparent;
+        }
+    }         
+    @media (any-hover: hover){
+        .tab-header{
+            overflow: hidden;
         }
     }         
 </style>
@@ -110,6 +115,7 @@ customElements.define('sm-tab-header', class extends HTMLElement {
         this.changeTab = this.changeTab.bind(this)
         this.handleClick = this.handleClick.bind(this)
         this.handlePanelChange = this.handlePanelChange.bind(this)
+        this.moveIndiactor = this.moveIndiactor.bind(this)
     }
 
     fireEvent(index) {
@@ -135,10 +141,9 @@ customElements.define('sm-tab-header', class extends HTMLElement {
             this.prevTab.classList.remove('active')
         target.classList.add('active')
 
-        target.scrollIntoView({
+        this.tabHeader.scrollTo({
             behavior: 'smooth',
-            block: 'nearest',
-            inline: 'center'
+            left: target.getBoundingClientRect().left - this.tabHeader.getBoundingClientRect().left + this.tabHeader.scrollLeft
         })
         this.moveIndiactor(target.getBoundingClientRect())
         this.prevTab = target;
@@ -222,6 +227,7 @@ smTab.innerHTML = `
         display: -ms-inline-flexbox;
         display: inline-flex;
         z-index: 1;
+        --padding: 0.8rem 1rem;
     }
     .tab{
         position: relative;
@@ -235,7 +241,7 @@ smTab.innerHTML = `
         cursor: pointer;
         -webkit-tap-highlight-color: transparent;
         white-space: nowrap;
-        padding: 0.4rem 0.8rem;
+        padding: var(--padding);
         font-weight: 500;
         word-spacing: 0.1rem;
         text-align: center;
@@ -329,7 +335,6 @@ customElements.define('sm-tab-panels', class extends HTMLElement {
         this.isTransitioning = false
 
         this.panelContainer = this.shadowRoot.querySelector('.panel-container');
-        this.panelSlot = this.shadowRoot.querySelector('slot');
         this.handleTabChange = this.handleTabChange.bind(this)
     }
     handleTabChange(e) {
@@ -353,8 +358,9 @@ customElements.define('sm-tab-panels', class extends HTMLElement {
         )
     }
     connectedCallback() {
-        this.panelSlot.addEventListener('slotchange', () => {
-            this.allPanels = this.panelSlot.assignedElements()
+        const slot = this.shadowRoot.querySelector('slot');
+        slot.addEventListener('slotchange', (e) => {
+            this.allPanels = e.target.assignedElements()
             this.allPanels.forEach((panel, index) => {
                 panel.dataset.index = index
                 intersectionObserver.observe(panel)
@@ -366,7 +372,7 @@ customElements.define('sm-tab-panels', class extends HTMLElement {
 
             entries.forEach(entry => {
                 if (!this.isTransitioning && entry.isIntersecting) {
-                    this.fireEvent(entry.target.dataset.index), 3000
+                    this.fireEvent(entry.target.dataset.index)
                 }
             })
         }, {

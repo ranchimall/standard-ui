@@ -12,6 +12,7 @@ stripSelect.innerHTML = `
         --text-color: 17, 17, 17;
         --background-color: 255, 255, 255;
         --gap: 0.5rem;
+        padding: 1rem 0;
     }
     .hide{
         display: none !important;
@@ -23,7 +24,6 @@ stripSelect.innerHTML = `
         position: relative;
         display: flex;
         align-items: center;
-        padding: 1rem 0;
     }
     .strip-select{
         position: relative;
@@ -64,13 +64,6 @@ stripSelect.innerHTML = `
         height: 100%;
         pointer-events: none;
     }
-    .cover--left{
-        background: linear-gradient(90deg, rgba(var(--background-color), 1) 60%, transparent);
-    }
-    .cover--right{
-        right: 0;
-        background: linear-gradient(90deg, transparent 0%, rgba(var(--background-color), 1) 40%);
-    }
     .nav-button--right::before{
         background-color: red;
     }
@@ -89,6 +82,13 @@ stripSelect.innerHTML = `
         .cover{
             width: 2rem;
         }
+        .cover--left{
+            background: linear-gradient(90deg, rgba(var(--background-color), 1), transparent);
+        }
+        .cover--right{
+            right: 0;
+            background: linear-gradient(90deg, transparent, rgba(var(--background-color), 1));
+        }
     }
     @media (hover: hover){
         ::-webkit-scrollbar-track {
@@ -100,6 +100,13 @@ stripSelect.innerHTML = `
         }
         .strip-select{
             overflow: hidden;
+        }
+        .cover--left{
+            background: linear-gradient(90deg, rgba(var(--background-color), 1) 60%, transparent);
+        }
+        .cover--right{
+            right: 0;
+            background: linear-gradient(90deg, transparent 0%, rgba(var(--background-color), 1) 40%);
         }
     }
 </style>
@@ -118,7 +125,7 @@ stripSelect.innerHTML = `
 </section>
 
 `
-customElements.define('strip-select', class extends HTMLElement{
+customElements.define('strip-select', class extends HTMLElement {
     constructor() {
         super()
         this.attachShadow({
@@ -136,20 +143,20 @@ customElements.define('strip-select', class extends HTMLElement{
     get value() {
         return this._value
     }
-    scrollLeft(){
+    scrollLeft() {
         this.stripSelect.scrollBy({
             left: -this.scrollDistance,
             behavior: 'smooth'
         })
     }
 
-    scrollRight(){
+    scrollRight() {
         this.stripSelect.scrollBy({
             left: this.scrollDistance,
             behavior: 'smooth'
         })
     }
-    fireEvent(){
+    fireEvent() {
         this.dispatchEvent(
             new CustomEvent("change", {
                 bubbles: true,
@@ -193,14 +200,14 @@ customElements.define('strip-select', class extends HTMLElement{
         })
         const resObs = new ResizeObserver(entries => {
             entries.forEach(entry => {
-                if(entry.contentBoxSize) {
+                if (entry.contentBoxSize) {
                     // Firefox implements `contentBoxSize` as a single content rect, rather than an array
                     const contentBoxSize = Array.isArray(entry.contentBoxSize) ? entry.contentBoxSize[0] : entry.contentBoxSize;
-                    
+
                     this.scrollDistance = contentBoxSize.inlineSize * 0.6
                 } else {
                     this.scrollDistance = entry.contentRect.width * 0.6
-                  }
+                }
             })
         })
         resObs.observe(this)
@@ -225,10 +232,10 @@ customElements.define('strip-select', class extends HTMLElement{
                 }
             })
         },
-        {
-            threshold: 0.9,
-            root: this
-        })
+            {
+                threshold: 0.9,
+                root: this
+            })
         const lastOptionObserver = new IntersectionObserver(entries => {
             entries.forEach(entry => {
                 if (entry.isIntersecting) {
@@ -241,16 +248,16 @@ customElements.define('strip-select', class extends HTMLElement{
                 }
             })
         },
-        {
-            threshold: 0.9,
-            root: this
-        })
+            {
+                threshold: 0.9,
+                root: this
+            })
         navButtonLeft.addEventListener('click', this.scrollLeft)
         navButtonRight.addEventListener('click', this.scrollRight)
     }
     disconnectedCallback() {
         navButtonLeft.removeEventListener('click', this.scrollLeft)
-        navButtonRight.removeEventListener('click', this.scrollRight)    
+        navButtonRight.removeEventListener('click', this.scrollRight)
     }
 })
 
@@ -299,7 +306,7 @@ stripOption.innerHTML = `
     <slot></slot>
 </label>
 `
-customElements.define('strip-option', class extends HTMLElement{
+customElements.define('strip-option', class extends HTMLElement {
     constructor() {
         super()
         this.attachShadow({
@@ -307,14 +314,14 @@ customElements.define('strip-option', class extends HTMLElement{
         }).append(stripOption.content.cloneNode(true))
         this._value
         this.radioButton = this.shadowRoot.querySelector('input')
-        
+
         this.fireEvent = this.fireEvent.bind(this)
         this.handleKeyDown = this.handleKeyDown.bind(this)
     }
     get value() {
         return this._value
     }
-    fireEvent(){
+    fireEvent() {
         this.dispatchEvent(
             new CustomEvent("option-clicked", {
                 bubbles: true,
@@ -325,7 +332,7 @@ customElements.define('strip-option', class extends HTMLElement{
             })
         )
     }
-    handleKeyDown(e){
+    handleKeyDown(e) {
         if (e.key === 'Enter' || e.key === 'Space') {
             this.fireEvent()
         }

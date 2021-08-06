@@ -327,7 +327,6 @@ customElements.define('sm-popup', class extends HTMLElement {
     }
 
     connectedCallback() {
-
         this.popupBodySlot.addEventListener('slotchange', () => {
             this.forms = this.querySelectorAll('sm-form')
         })
@@ -345,7 +344,7 @@ customElements.define('sm-popup', class extends HTMLElement {
                 if (entry.contentBoxSize) {
                     // Firefox implements `contentBoxSize` as a single content rect, rather than an array
                     const contentBoxSize = Array.isArray(entry.contentBoxSize) ? entry.contentBoxSize[0] : entry.contentBoxSize;
-                    this.threshold = entry.blockSize.height * 0.3
+                    this.threshold = contentBoxSize.blockSize.height * 0.3
                 } else {
                     this.threshold = entry.contentRect.height * 0.3
                 }

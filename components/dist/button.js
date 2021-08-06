@@ -30,8 +30,12 @@ smButton.innerHTML = `
     color: var(--accent-color);
 }
 :host([variant='no-outline']) .button{
-    background: rgba(var(--background-color), 1); 
+    background: inherit; 
     color: var(--accent-color);
+}
+:host([disabled]){
+    pointer-events: none;
+    cursor: not-allowed;
 }
 .button {
     position: relative;
@@ -62,6 +66,7 @@ smButton.innerHTML = `
     align-items: center;
 }
 :host([disabled]) .button{
+    pointer-events: none;
     cursor: not-allowed;
     opacity: 0.6;
     color: rgba(var(--text-color), 1);

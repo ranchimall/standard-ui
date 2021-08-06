@@ -84,7 +84,6 @@ smCheckbox.innerHTML = `
 </style>
 <label class="checkbox">
     <svg class="icon" viewBox="0 0 64 64">
-        <title>checkbox</title>
         <path class="checkmark" d="M50.52,19.56,26,44.08,13.48,31.56" />
     </svg>
     <slot></slot>

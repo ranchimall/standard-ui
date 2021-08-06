@@ -21,10 +21,14 @@ smCopy.innerHTML = `
 }
 .copy{
     display: grid;
-    gap: 1rem;
+    gap: 0.5rem;
     padding: var(--padding);
     align-items: center;
     grid-template-columns: minmax(0, 1fr) auto;
+}
+.copy-content{
+    overflow-wrap: break-word;
+    word-wrap: break-word;
 }
 .copy-button{
     display: inline-flex;
