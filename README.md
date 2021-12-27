@@ -4,7 +4,7 @@
 Suppose you want to start a web project. Instead of doing the UI from scratch, you want to start with pre-built UI which is responsive, which takes care of good fonts, which has nice visual elements. We have frameworks like bootstraps available, but they do not provide inbuilt default page layout. RanchiMall Standard UI solves that problem. It provides out of box page layouts, and also provides native web components. A normal developer who is not good at UI skills will find the most of UI work already done in Standard UI, and the developer has to just customize. This reduces development time by a large degree. 
 
 ### How to use Standard UI
-1. Pick your layout from Layouts folder
+1. Pick your layout from Layouts folder https://github.com/ranchimall/standard-ui/tree/master/Layouts
 2. Add the aditional components. Read about it at https://ranchimall.github.io/standard-ui/components/
 3. Blockchain based standard operations is already available. Read about it at https://github.com/ranchimall/Standard_Operations
 4. Start building code
