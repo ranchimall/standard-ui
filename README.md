@@ -49,13 +49,13 @@ These are the components we provide
 * Radio button
 * Switch
 * Select
-Spinner
-Strip select
-Tabs
-Tags input
-Textarea
-Text-Field
-Theme toggle
+* Spinner
+* Strip select
+* Tabs
+* Tags input
+* Textarea
+* Text-Field
+* Theme toggle
 
 ### Get a hands-on experience and documentation at [our components website](https://ranchimall.github.io/standard-ui/components/). 
 
