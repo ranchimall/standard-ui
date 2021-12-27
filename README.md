@@ -19,7 +19,7 @@ This layout comes with a sidebar of menu items on the desktop size screen which 
 A layout suitable for long-form content with mainly one page like landing pages or articles. This is the simplest layout of the bunch. Every landing page consists of many sections, each of which can be populated as per the functionality
 
 #### Side-bar layout
-This layout is similar to boxes layout such that it also has a sidebar when on a bigger screen estate. the main difference can be seen on smaller screens. The side-bar is hidden by default which acts as classic hamburger menu on small screen devices which can be accessed by hamburger icon in the header. This should be used when the nmber of pages is more than 5 
+This layout is similar to boxes layout such that it also has a sidebar when on a bigger screen estate. the main difference can be seen on smaller screens. The side-bar is hidden by default which acts as classic hamburger menu on small screen devices which can be accessed by hamburger icon in the header. This should be used when the nmber of pages is more than 5. Our components explanation page uses Sidebar layout https://ranchimall.github.io/standard-ui/components/ 
 
 #### Tabs layout
 This layout is more suitable for small screen devices with a limited number of main screens that can be traversed with swipe gestures, Example of the type of apps that uses this layout would be messaging apps like WhatsApp.
