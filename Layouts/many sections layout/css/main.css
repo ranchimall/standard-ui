@@ -5,6 +5,7 @@ Suppose you want to customize button from component, just add
 sm-button {
 --background : #CCC;
 }
+*/
 
 * {
   padding: 0;
