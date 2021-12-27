@@ -8,7 +8,7 @@ There are several pre-built layouts in **layouts** folder. Pick any one of them 
 
 ## Layouts Available
 
-###Box Layout also known as bottom-navbar layout
+### Box Layout also known as bottom-navbar layout
 This layout comes with a sidebar of menu items on the desktop size screen which converts into the bottom navbar on mobile. It should be used when there are less than 5 main pages in the app for quick access on small screen
 
 #### What's included in layouts by default?
