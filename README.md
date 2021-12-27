@@ -6,10 +6,13 @@ Suppose you want to start a web project. Instead of doing the UI from scratch, y
 ### How to use Standard UI
 There are several pre-built layouts in **layouts** folder. Pick any one of them that's more suitable for your particular project.
 
-## Layouts Available
+### Layouts Available
 
-### Box Layout also known as bottom-navbar layout
+#### Box Layout also known as bottom-navbar layout
 This layout comes with a sidebar of menu items on the desktop size screen which converts into the bottom navbar on mobile. It should be used when there are less than 5 main pages in the app for quick access on small screen
+
+#### Many sections layout- 
+A layout suitable for long-form content with mainly one page like landing pages or articles. This is the simplest layout of the bunch. Every landing page consists of many sections, each of which can be populated as per the functionality
 
 #### What's included in layouts by default?
 - Components ( sm-button, sm-input, sm-notifications, sm-popup, theme-toggle and optional components specific to respective layout )
