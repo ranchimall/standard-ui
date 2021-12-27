@@ -18,6 +18,9 @@ This layout comes with a sidebar of menu items on the desktop size screen which 
 #### Many sections layout 
 A layout suitable for long-form content with mainly one page like landing pages or articles. This is the simplest layout of the bunch. Every landing page consists of many sections, each of which can be populated as per the functionality
 
+#### Side-bar layout
+This layout is similar to boxes layout such that it also has a sidebar when on a bigger screen estate. the main difference can be seen on smaller screens. The side-bar is hidden by default which acts as classic hamburger menu on small screen devices which can be accessed by hamburger icon in the header. This should be used when the nmber of pages is more than 5 
+
 #### What's included in layouts by default?
 - Components ( sm-button, sm-input, sm-notifications, sm-popup, theme-toggle and optional components specific to respective layout )
 - Main_UI.js - A JS library that includes utility functions and some common functionality.
