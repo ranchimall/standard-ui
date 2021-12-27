@@ -1,7 +1,7 @@
 # Standard UI
 
 ### What is Standard UI
-Suppose you want to start a web project. You want to start with baseline the UI which is responsive, which takes care of good fonts, which has nice visual elements. We have frameworks like bootstraps available, but they do not provide inbuilt default page layout. RanchiMall Standard UI solves that problem. It provides out of box page layouts, and also native web components. A normal developer who is not good at UI skills will find the UI basics already done in Standard UI, and the developer has to just customize.  
+Suppose you want to start a web project. Instead of doing the UI from scratch, you want to start with pre-built UI which is responsive, which takes care of good fonts, which has nice visual elements. We have frameworks like bootstraps available, but they do not provide inbuilt default page layout. RanchiMall Standard UI solves that problem. It provides out of box page layouts, and also provides native web components. A normal developer who is not good at UI skills will find the most of UI work already done in Standard UI, and the developer has to just customize. This reduces development time by a large degree. 
 
 ### How to use Standard UI
 There are several pre-built layouts in **layouts** folder. Pick any one of them that's more suitable for your particular project.
