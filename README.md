@@ -32,7 +32,7 @@ This layout is more suitable for small screen devices with a limited number of m
 Now that we know what's included in layouts, let's dig a little deeper and know exact functionality of each of these.
 
 ## Components
-Components are HTML tag in themselves. These HTML tags have added functionality and design elements than what out of box browser HTML tags provide. Like <sm-textarea></sm-textarea> is a component which has been created by extending functionality of <textarea></textarea>. 
+Components are HTML tag in themselves. These HTML tags have added functionality and design elements than what out of box browser HTML tags provide. Like `<sm-textarea></sm-textarea>` is a component which has been created by extending functionality of `<textarea></textarea>`. 
 
 These are the components we provide
 * Button
