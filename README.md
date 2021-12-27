@@ -60,14 +60,30 @@ These are the components we provide
 These are the building blocks of modern web development process. We are a frameworkless environment so we decided to go with **native Web Components** as a way to create reusable components. There are lot of these already created and ready to use.
 
 ### How to additionally style layouts and components
-Components are full functionality with accompanied Javascript and CSS. Usually in-the-box CSS of Standard UI is good enough for most cases. You can add your own CSS in main.css of individual layout file. You can only modify the CSS of components if you define CSS variables. By applying normal style against component HTML tag in main.css file, the component style will not change, as it is encapuslated in the definition of component. CSS variables are global variables applied  
-
+Components are full functional with accompanied HTML, Javascript and CSS. Usually in-the-box CSS of Standard UI is good enough for most cases. You can add your own CSS in main.css of individual layout file. You can only modify the CSS of components if you define CSS variables in main.css file. By applying normal style against component HTML tag in main.css file, the component style will not change, as it is encapuslated in the definition of component. 
 
 ### Get a hands-on experience and documentation at [our components website](https://ranchimall.github.io/standard-ui/components/). 
 
 ## main_UI.js
-This is a collection of utility and commonly used functions that will help ease the development process.
+This is a collection of utility and commonly used functions that will help ease the development process. 
 
+* getRef - shortens document.getElementById('sample') to getRef('sample')
+
+* createElement - shortens `var x = document.createElement('div'); x.innerHTML = "My Text";` to `createElement('div',{innerHTML:"My Text"});`
+
+* debounce - introduces a defined delay when the same function is executed again `debounce(functionToBeExecuted, 2000)` will not interfere with the first execution of funtionToBeExecuted. But it will slow down the second execution onwards of funtionToBeExecuted
+
+* showPopUp - This will expose and open a popup if the ID is provided `showPopUp("ID_of_popUp");`
+
+* getConfirmation - This will remove the need for user confirmation for things like signout, and they can be programatically confirmed. It replaces the functionality of `confirm` function in Javascript to allow style customization of system confirm message, and change ok/cancel texts
+
+* getPromptInput - This allows customization of inbuilt Javascript `prompt` and enables styling on it. It also adds ability to change ok text, and allows to create custom return value other than true and false.
+
+* notify - It is replacement of `alert` function in Javascript because when alert is active, everything else becomes inaccessible. With notify, everything is accessible even if notify is active. Furthermore with notify, we can modify the looks, we can specify icons for different kinds of notifications. By default every notification goes away in 5 seconds. But it can be made persistent.
+
+* showPage - Upon a certain user action, any subpage can be displayed by providing the ID of the page. This function is used by our code.Suppose there is a hashchange, and we want to show another page upon that hashchange, the ssytem will use showPage
+  
+`
 ### Global variables
 
 |   Variable | Description |
@@ -79,6 +95,7 @@ This is a collection of utility and commonly used functions that will help ease 
 
 ### getRef()
 Use this function instead of `document.getElementById()`. It provides reference memoization for repeatedly used DOM references. This negates the need to store DOM references at top of script or inside global variables.
+
 #### Parameters
 `getRef(elementId)`
 This function has only one parameter.
