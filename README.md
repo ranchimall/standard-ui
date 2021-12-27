@@ -5,8 +5,8 @@ Suppose you want to start a web project. Instead of doing the UI from scratch, y
 
 ### How to use Standard UI
 1. Pick your layout from Layouts folder https://github.com/ranchimall/standard-ui/tree/master/Layouts
-2. Add the additional components by selecting the components you need, downloading the js file and adding it into your project. Select and download components from here https://ranchimall.github.io/standard-ui/components/
-3. You also need Standard Operations for Cryptographic, blockchain and cloud operations. They aer included  by default in each of the layout. But you need to read about it to understand @ https://github.com/ranchimall/Standard_Operations
+2. Add the additional components by selecting the components you need, downloading the js file and adding it into your project. Select and download components from https://ranchimall.github.io/standard-ui/components/
+3. You also need Standard Operations for Cryptographic, blockchain and cloud operations. They are included by default in each of the layouts. But you need to read about it to understand @ https://github.com/ranchimall/Standard_Operations
 4. Start building code
 
 
@@ -32,7 +32,7 @@ This layout is more suitable for small screen devices with a limited number of m
 Now that we know what's included in layouts, let's dig a little deeper and know exact functionality of each of these.
 
 ## Components
-These are the building blocks of modern web development process. We are a frameworkless environment so we decided to go with **native Web Components** as a way to create reusable components. There are lot of these already created and ready to use.
+Components are HTML tag in themselves. These HTML tags have added functionality and design elements than what out of box browser HTML tags provide. Like <sm-textarea></sm-textarea> is a component which has been created by extending functionality of <textarea></textarea>. 
 
 These are the components we provide
 * Button
@@ -56,6 +56,12 @@ These are the components we provide
 * Textarea
 * Text-Field
 * Theme toggle
+
+These are the building blocks of modern web development process. We are a frameworkless environment so we decided to go with **native Web Components** as a way to create reusable components. There are lot of these already created and ready to use.
+
+### How to additionally style layouts and components
+Components are full functionality with accompanied Javascript and CSS. Usually in-the-box CSS of Standard UI is good enough for most cases. You can add your own CSS in main.css of individual layout file. You can only modify the CSS of components if you define CSS variables. By applying normal style against component HTML tag in main.css file, the component style will not change, as it is encapuslated in the definition of component. CSS variables are global variables applied  
+
 
 ### Get a hands-on experience and documentation at [our components website](https://ranchimall.github.io/standard-ui/components/). 
 
