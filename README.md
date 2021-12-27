@@ -5,8 +5,8 @@ Suppose you want to start a web project. Instead of doing the UI from scratch, y
 
 ### How to use Standard UI
 1. Pick your layout from Layouts folder https://github.com/ranchimall/standard-ui/tree/master/Layouts
-2. Add the aditional components. Read about it at https://ranchimall.github.io/standard-ui/components/
-3. Blockchain based standard operations is already available. Read about it at https://github.com/ranchimall/Standard_Operations
+2. Add the additional components by selecting the components you need, downloading the js file and adding it into your project. Select and download components from here https://ranchimall.github.io/standard-ui/components/
+3. You also need Standard Operations for Cryptographic, blockchain and cloud operations. They aer included  by default in each of the layout. But you need to read about it to understand @ https://github.com/ranchimall/Standard_Operations
 4. Start building code
 
 
