@@ -15,7 +15,7 @@ Suppose you want to start a web project. Instead of doing the UI from scratch, y
 #### Box Layout also known as bottom-navbar layout
 This layout comes with a sidebar of menu items on the desktop size screen which converts into the bottom navbar on mobile. It should be used when there are less than 5 main pages in the app for quick access on small screen
 
-#### Many sections layout- 
+#### Many sections layout 
 A layout suitable for long-form content with mainly one page like landing pages or articles. This is the simplest layout of the bunch. Every landing page consists of many sections, each of which can be populated as per the functionality
 
 #### What's included in layouts by default?
