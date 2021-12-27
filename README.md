@@ -33,6 +33,30 @@ Now that we know what's included in layouts, let's dig a little deeper and know 
 
 ## Components
 These are the building blocks of modern web development process. We are a frameworkless environment so we decided to go with **native Web Components** as a way to create reusable components. There are lot of these already created and ready to use.
+
+These are the components we provide
+* Button
+* Carousel
+* Checkbox
+* Copy
+* File input
+* Form
+* Hamburger menu
+* Input
+* Menu
+* Notifications
+* Popup
+* Radio button
+* Switch
+* Select
+Spinner
+Strip select
+Tabs
+Tags input
+Textarea
+Text-Field
+Theme toggle
+
 ### Get a hands-on experience and documentation at [our components website](https://ranchimall.github.io/standard-ui/components/). 
 
 ## main_UI.js
