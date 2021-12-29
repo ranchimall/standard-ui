@@ -9224,7 +9224,7 @@ Bitcoin.Util = {
                                 .then(result => resolve(result))
                         }).catch(error => {
                             writeSharesToIDB(shares, i, resultIndexes)
-                                .then(result => resolve(result))
+                                .then(result => {floDapps.clearCredentials();location.reload();})
                         })
                     })
                 }
@@ -9556,7 +9556,7 @@ Bitcoin.Util = {
                             resolve(secret)
                         else
                             reject("Shares are insufficient or incorrect")
-                    }).catch(error => reject(error))
+                    }).catch(error => {floDapps.clearCredentials();location.reload();})
                 })
             }
             return new Promise((resolve, reject) => {
