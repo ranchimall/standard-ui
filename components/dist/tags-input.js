@@ -88,7 +88,7 @@ customElements.define('tags-input', class extends HTMLElement {
 		this.attachShadow({
 			mode: 'open'
 		}).append(tagsInput.content.cloneNode(true))
-		
+
 		this.input = this.shadowRoot.querySelector('input')
 		this.tagsWrapper = this.shadowRoot.querySelector('.tags-wrapper')
 		this.placeholder = this.shadowRoot.querySelector('.placeholder')
@@ -108,17 +108,20 @@ customElements.define('tags-input', class extends HTMLElement {
 	get value() {
 		return [...this.tags].join()
 	}
+	get isValid() {
+		return this.tags.size
+	}
 	focusIn() {
 		this.input.focus()
 	}
-	reset(){
+	reset() {
 		this.input.value = ''
 		this.tags.clear()
 		while (this.input.previousElementSibling) {
 			this.input.previousElementSibling.remove()
 		}
 	}
-	handleInput(e){
+	handleInput(e) {
 		const inputValueLength = e.target.value.trim().length
 		e.target.setAttribute('size', inputValueLength ? inputValueLength : '3')
 		if (inputValueLength) {
@@ -128,7 +131,7 @@ customElements.define('tags-input', class extends HTMLElement {
 			this.placeholder.classList.remove('hide')
 		}
 	}
-	handleKeydown(e){
+	handleKeydown(e) {
 		if (e.key === ',' || e.key === '/') {
 			e.preventDefault()
 		}
@@ -179,7 +182,7 @@ customElements.define('tags-input', class extends HTMLElement {
 			}
 		}
 	}
-	handleClick(e){
+	handleClick(e) {
 		if (e.target.closest('.tag')) {
 			this.removeTag(e.target.closest('.tag'))
 		}
@@ -187,7 +190,7 @@ customElements.define('tags-input', class extends HTMLElement {
 			this.input.focus()
 		}
 	}
-	removeTag(tag){
+	removeTag(tag) {
 		this.tags.delete(tag.dataset.value)
 		tag.remove()
 		if (!this.tags.size) {

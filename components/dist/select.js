@@ -21,9 +21,6 @@ smSelect.innerHTML = `
     opacity: 0.6;
     cursor: not-allowed;
 }
-.hide{
-    display: none !important;
-}
 .select{
     position: relative;
     display: -webkit-box;
@@ -38,16 +35,18 @@ smSelect.innerHTML = `
     -webkit-tap-highlight-color: transparent;
 }
 .icon {
-    height: 1.5rem;
-    width: 1.5rem;
+    height: 1.2rem;
+    width: 1.2rem;
+    margin-left: 0.5rem;
     fill: rgba(var(--text-color), 0.7);
 }      
 .selected-option-text{
-    font-size: 0.9rem;
+    font-size: inherit;
     overflow: hidden;
     -o-text-overflow: ellipsis;
        text-overflow: ellipsis;
     white-space: nowrap;
+    font-weight: 500;
 }
 .selection{
     border-radius: 0.3rem;
@@ -56,20 +55,18 @@ smSelect.innerHTML = `
     -ms-grid-columns: 1fr auto;
     grid-template-columns: 1fr auto;
         grid-template-areas: 'heading heading' '. .';
-    padding: 0.4rem 1rem;
+    padding: 0.4rem 0.8rem;
     background: rgba(var(--text-color), 0.06);
     border: solid 1px rgba(var(--text-color), 0.2);
     -webkit-box-align: center;
         -ms-flex-align: center;
             align-items: center;
     outline: none;
+    z-index: 2;
 }
 .selection:focus{
     -webkit-box-shadow: 0 0 0 0.1rem var(--accent-color);
             box-shadow: 0 0 0 0.1rem var(--accent-color) 
-}
-.icon{
-    margin-left: 1rem;
 }
 :host([align-select="left"]) .options{
     left: 0;
@@ -79,6 +76,7 @@ smSelect.innerHTML = `
 }
 .options{
     top: 100%;
+    padding: var(--options-padding, 0.3rem);
     margin-top: 0.2rem; 
     overflow: hidden auto;
     position: absolute;
@@ -94,8 +92,8 @@ smSelect.innerHTML = `
     max-height: var(--max-height);
     background: rgba(var(--background-color), 1);
     border: solid 1px rgba(var(--text-color), 0.2);
-    border-radius: 0.3rem;
-    z-index: 2;
+    border-radius: var(--border-radius, 0.5rem);
+    z-index: 1;
     -webkit-box-shadow: 0.4rem 0.8rem 1.2rem #00000030;
             box-shadow: 0.4rem 0.8rem 1.2rem #00000030;
 }
@@ -103,6 +101,9 @@ smSelect.innerHTML = `
     -webkit-transform: rotate(180deg);
         -ms-transform: rotate(180deg);
             transform: rotate(180deg)
+}
+.hide{
+    display: none;
 }
 @media (any-hover: hover){
     ::-webkit-scrollbar{
@@ -119,7 +120,7 @@ smSelect.innerHTML = `
     }
 }
 </style>
-<div class="select" >
+<div class="select">
     <div class="selection">
         <div class="selected-option-text"></div>
         <svg class="icon toggle" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="24" height="24"><path fill="none" d="M0 0h24v24H0z"/><path d="M12 13.172l4.95-4.95 1.414 1.414L12 16 5.636 9.636 7.05 8.222z"/></svg>
@@ -135,6 +136,7 @@ customElements.define('sm-select', class extends HTMLElement {
             mode: 'open'
         }).append(smSelect.content.cloneNode(true))
 
+        this.focusIn = this.focusIn.bind(this)
         this.reset = this.reset.bind(this)
         this.open = this.open.bind(this)
         this.collapse = this.collapse.bind(this)
@@ -147,6 +149,7 @@ customElements.define('sm-select', class extends HTMLElement {
         this.availableOptions
         this.previousOption
         this.isOpen = false;
+        this.label = ''
         this.slideDown = [{
             transform: `translateY(-0.5rem)`,
             opacity: 0
@@ -177,7 +180,7 @@ customElements.define('sm-select', class extends HTMLElement {
         this.selectedOptionText = this.shadowRoot.querySelector('.selected-option-text')
     }
     static get observedAttributes() {
-        return ['value', 'disabled']
+        return ['disabled', 'label']
     }
     get value() {
         return this.getAttribute('value')
@@ -194,12 +197,16 @@ customElements.define('sm-select', class extends HTMLElement {
             }
             firstElement.classList.add('check-selected')
             this.value = firstElement.getAttribute('value')
-            this.selectedOptionText.textContent = firstElement.textContent
+            this.selectedOptionText.textContent = `${this.label}${firstElement.textContent}`
             this.previousOption = firstElement;
             if (fire) {
                 this.fireEvent()
             }
         }
+    }
+
+    focusIn() {
+        this.selection.focus()
     }
 
     open() {
@@ -255,7 +262,7 @@ customElements.define('sm-select', class extends HTMLElement {
     handleOptionSelection(e) {
         if (this.previousOption !== document.activeElement) {
             this.value = document.activeElement.getAttribute('value')
-            this.selectedOptionText.textContent = document.activeElement.textContent;
+            this.selectedOptionText.textContent = `${this.label}${document.activeElement.textContent}`;
             this.fireEvent()
             if (this.previousOption) {
                 this.previousOption.classList.remove('check-selected')
@@ -325,6 +332,8 @@ customElements.define('sm-select', class extends HTMLElement {
             } else {
                 this.selection.setAttribute('tabindex', '0')
             }
+        } else if (name === 'label') {
+            this.label = this.hasAttribute('label') ? `${this.getAttribute('label')} ` : ''
         }
     }
 })
@@ -349,14 +358,16 @@ smOption.innerHTML = `
     -webkit-box-align: center;
         -ms-flex-align: center;
             align-items: center;
-    min-width: 100%;
+    min-width: max-content;
+    width: 100%;
     gap: 0.5rem;
     grid-template-columns: max-content minmax(0, 1fr);
-    padding: 0.8rem 1.2rem;
+    padding: var(--padding, 0.6rem 1rem);
     cursor: pointer;
-    overflow-wrap: break-word;
+    white-space: nowrap;
     outline: none;
     user-select: none;
+    border-radius: var(--border-radius, 0.3rem);
 }
 :host(:focus){
     outline: none;

@@ -73,11 +73,13 @@ smButton.innerHTML = `
     background-color: rgba(var(--text-color), 0.3);
 }
 @media (hover: hover){
-    :host(:not([disabled])) .button:hover{
+    :host(:not([disabled])) .button:hover,
+    :host(:focus-within:not([disabled])) .button{
         -webkit-box-shadow: 0 0.1rem 0.1rem rgba(0, 0, 0, 0.1), 0 0.2rem 0.8rem rgba(0, 0, 0, 0.12);
-                box-shadow: 0 0.1rem 0.1rem rgba(0, 0, 0, 0.1), 0 0.2rem 0.8rem rgba(0, 0, 0, 0.12);
+        box-shadow: 0 0.1rem 0.1rem rgba(0, 0, 0, 0.1), 0 0.2rem 0.8rem rgba(0, 0, 0, 0.12);
     }
-    :host([variant='outlined']) .button:hover{
+    :host([variant='outlined']:not([disabled])) .button:hover,
+    :host(:focus-within[variant='outlined']:not([disabled])) .button:hover{
         -webkit-box-shadow: 0 0 0 1px rgba(var(--text-color), 0.2) inset, 0 0.1rem 0.1rem rgba(0, 0, 0, 0.1), 0 0.4rem 0.8rem rgba(0, 0, 0, 0.12);
                 box-shadow: 0 0 0 1px rgba(var(--text-color), 0.2) inset, 0 0.1rem 0.1rem rgba(0, 0, 0, 0.1), 0 0.4rem 0.8rem rgba(0, 0, 0, 0.12);
     }
@@ -99,49 +101,52 @@ smButton.innerHTML = `
 customElements.define('sm-button',
     class extends HTMLElement {
         constructor() {
-            super()
+            super();
             this.attachShadow({
                 mode: 'open'
-            }).append(smButton.content.cloneNode(true))
+            }).append(smButton.content.cloneNode(true));
         }
         static get observedAttributes() {
             return ['disabled'];
         }
 
         get disabled() {
-            return this.hasAttribute('disabled')
+            return this.hasAttribute('disabled');
         }
 
         set disabled(value) {
             if (value) {
-                this.setAttribute('disabled', '')
-            }else {
-                this.removeAttribute('disabled')
+                this.setAttribute('disabled', '');
+            } else {
+                this.removeAttribute('disabled');
             }
+        }
+        focusIn() {
+            this.focus();
         }
 
         handleKeyDown(e) {
             if (!this.hasAttribute('disabled') && (e.key === 'Enter' || e.code === 'Space')) {
-                e.preventDefault()
-                this.click()
+                e.preventDefault();
+                this.click();
             }
         }
 
         connectedCallback() {
             if (!this.hasAttribute('disabled')) {
-                this.setAttribute('tabindex', '0')
+                this.setAttribute('tabindex', '0');
             }
-            this.setAttribute('role', 'button')
-            this.addEventListener('keydown', this.handleKeyDown)
+            this.setAttribute('role', 'button');
+            this.addEventListener('keydown', this.handleKeyDown);
         }
-        attributeChangedCallback(name, oldVal, newVal) {
+        attributeChangedCallback(name) {
             if (name === 'disabled') {
-                this.removeAttribute('tabindex')
-                this.setAttribute('aria-disabled', 'true')
-            }
-            else {
-                this.setAttribute('tabindex', '0')
-                this.setAttribute('aria-disabled', 'false')
+                if (this.hasAttribute('disabled')) {
+                    this.removeAttribute('tabindex');
+                } else {
+                    this.setAttribute('tabindex', '0');
+                }
+                this.setAttribute('aria-disabled', this.hasAttribute('disabled'));
             }
         }
     })

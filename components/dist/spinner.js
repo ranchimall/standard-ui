@@ -1,4 +1,4 @@
-const spinner = document.createElement('template')
+const spinner = document.createElement('template');
 spinner.innerHTML = `
 <style>     
 *{
@@ -9,10 +9,12 @@ spinner.innerHTML = `
 }
 :host{
     --accent-color: #4d2588;
+    --height: 1.6rem;
+    --width: 1.6rem;
 }
 .loader {
-    height: 1.6rem;
-    width: 1.6rem;
+    height: var(--height);
+    width: var(--weight);
     stroke-width: 8;
     overflow: visible;
     stroke: var(--accent-color);
@@ -38,14 +40,13 @@ spinner.innerHTML = `
 </style>
 <svg viewBox="0 0 64 64" class="loader"><circle cx="32" cy="32" r="32" /></svg>
 
-`
-class SquareLoader extends HTMLElement {
+`;
+class SpinnerLoader extends HTMLElement {
     constructor() {
         super();
         this.attachShadow({
             mode: 'open'
-        }).append(spinner.content.cloneNode(true))
+        }).append(spinner.content.cloneNode(true));
     }
 }
-
-window.customElements.define('sm-spinner', SquareLoader);
+window.customElements.define('sm-spinner', SpinnerLoader);

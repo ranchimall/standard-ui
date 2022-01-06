@@ -1,4 +1,4 @@
-const stripSelect = document.createElement('template')
+const stripSelect = document.createElement('template');
 stripSelect.innerHTML = `
 <style>
     *{
@@ -11,7 +11,6 @@ stripSelect.innerHTML = `
         --accent-color: #4d2588;
         --text-color: 17, 17, 17;
         --background-color: 255, 255, 255;
-        --gap: 0.5rem;
         padding: 1rem 0;
     }
     .hide{
@@ -31,13 +30,13 @@ stripSelect.innerHTML = `
     :host([multiline]) .strip-select{
         display: flex;
         flex-wrap: wrap;
-        gap: 0.5rem;
+        gap: var(--gap, 0.5rem);
         overflow: auto hidden;
     }
     :host(:not([multiline])) .strip-select{
         display: grid;
         grid-auto-flow: column;
-        gap: var(--gap);
+        gap: var(--gap, 0.5rem);
         max-width: 100%;   
         align-items: center;
         overflow: auto hidden;
@@ -73,6 +72,9 @@ stripSelect.innerHTML = `
         fill: rgba(var(--text-color), .8);
     }
     @media (hover: none){
+        ::-webkit-scrollbar {
+            height: 0;
+        }
         .nav-button{
             display: none;
         }
@@ -124,37 +126,37 @@ stripSelect.innerHTML = `
     <div class="cover cover--right hide"></div>
 </section>
 
-`
+`;
 customElements.define('strip-select', class extends HTMLElement {
     constructor() {
-        super()
+        super();
         this.attachShadow({
             mode: 'open'
-        }).append(stripSelect.content.cloneNode(true))
-        this.stripSelect = this.shadowRoot.querySelector('.strip-select')
-        this.slottedOptions
-        this._value
-        this.scrollDistance
+        }).append(stripSelect.content.cloneNode(true));
+        this.stripSelect = this.shadowRoot.querySelector('.strip-select');
+        this.slottedOptions = undefined;
+        this._value = undefined;
+        this.scrollDistance = 0;
 
-        this.scrollLeft = this.scrollLeft.bind(this)
-        this.scrollRight = this.scrollRight.bind(this)
-        this.fireEvent = this.fireEvent.bind(this)
+        this.scrollLeft = this.scrollLeft.bind(this);
+        this.scrollRight = this.scrollRight.bind(this);
+        this.fireEvent = this.fireEvent.bind(this);
     }
     get value() {
-        return this._value
+        return this._value;
     }
     scrollLeft() {
         this.stripSelect.scrollBy({
             left: -this.scrollDistance,
             behavior: 'smooth'
-        })
+        });
     }
 
     scrollRight() {
         this.stripSelect.scrollBy({
             left: this.scrollDistance,
             behavior: 'smooth'
-        })
+        });
     }
     fireEvent() {
         this.dispatchEvent(
@@ -165,104 +167,104 @@ customElements.define('strip-select', class extends HTMLElement {
                     value: this._value
                 }
             })
-        )
+        );
     }
     connectedCallback() {
-        this.setAttribute('role', 'listbox')
+        this.setAttribute('role', 'listbox');
 
-        const slot = this.shadowRoot.querySelector('slot')
-        const coverLeft = this.shadowRoot.querySelector('.cover--left')
-        const coverRight = this.shadowRoot.querySelector('.cover--right')
-        const navButtonLeft = this.shadowRoot.querySelector('.nav-button--left')
-        const navButtonRight = this.shadowRoot.querySelector('.nav-button--right')
+        const slot = this.shadowRoot.querySelector('slot');
+        const coverLeft = this.shadowRoot.querySelector('.cover--left');
+        const coverRight = this.shadowRoot.querySelector('.cover--right');
+        const navButtonLeft = this.shadowRoot.querySelector('.nav-button--left');
+        const navButtonRight = this.shadowRoot.querySelector('.nav-button--right');
         slot.addEventListener('slotchange', e => {
-            const assignedElements = slot.assignedElements()
+            const assignedElements = slot.assignedElements();
             assignedElements.forEach(elem => {
                 if (elem.hasAttribute('selected')) {
-                    elem.setAttribute('active', '')
-                    this._value = elem.value
+                    elem.setAttribute('active', '');
+                    this._value = elem.value;
                 }
-            })
+            });
             if (!this.hasAttribute('multiline')) {
                 if (assignedElements.length > 0) {
-                    firstOptionObserver.observe(slot.assignedElements()[0])
-                    lastOptionObserver.observe(slot.assignedElements()[slot.assignedElements().length - 1])
+                    firstOptionObserver.observe(slot.assignedElements()[0]);
+                    lastOptionObserver.observe(slot.assignedElements()[slot.assignedElements().length - 1]);
                 }
                 else {
-                    navButtonLeft.classList.add('hide')
-                    navButtonRight.classList.add('hide')
-                    coverLeft.classList.add('hide')
-                    coverRight.classList.add('hide')
-                    firstOptionObserver.disconnect()
-                    lastOptionObserver.disconnect()
+                    navButtonLeft.classList.add('hide');
+                    navButtonRight.classList.add('hide');
+                    coverLeft.classList.add('hide');
+                    coverRight.classList.add('hide');
+                    firstOptionObserver.disconnect();
+                    lastOptionObserver.disconnect();
                 }
             }
-        })
+        });
         const resObs = new ResizeObserver(entries => {
             entries.forEach(entry => {
                 if (entry.contentBoxSize) {
                     // Firefox implements `contentBoxSize` as a single content rect, rather than an array
                     const contentBoxSize = Array.isArray(entry.contentBoxSize) ? entry.contentBoxSize[0] : entry.contentBoxSize;
 
-                    this.scrollDistance = contentBoxSize.inlineSize * 0.6
+                    this.scrollDistance = contentBoxSize.inlineSize * 0.6;
                 } else {
-                    this.scrollDistance = entry.contentRect.width * 0.6
+                    this.scrollDistance = entry.contentRect.width * 0.6;
                 }
-            })
-        })
-        resObs.observe(this)
+            });
+        });
+        resObs.observe(this);
         this.stripSelect.addEventListener('option-clicked', e => {
             if (this._value !== e.target.value) {
-                this._value = e.target.value
-                slot.assignedElements().forEach(elem => elem.removeAttribute('active'))
-                e.target.setAttribute('active', '')
-                e.target.scrollIntoView({ behavior: "smooth", block: "nearest", inline: "center" })
-                this.fireEvent()
+                this._value = e.target.value;
+                slot.assignedElements().forEach(elem => elem.removeAttribute('active'));
+                e.target.setAttribute('active', '');
+                e.target.scrollIntoView({ behavior: "smooth", block: "nearest", inline: "center" });
+                this.fireEvent();
             }
-        })
+        });
         const firstOptionObserver = new IntersectionObserver(entries => {
             entries.forEach(entry => {
                 if (entry.isIntersecting) {
-                    navButtonLeft.classList.add('hide')
-                    coverLeft.classList.add('hide')
+                    navButtonLeft.classList.add('hide');
+                    coverLeft.classList.add('hide');
                 }
                 else {
-                    navButtonLeft.classList.remove('hide')
-                    coverLeft.classList.remove('hide')
+                    navButtonLeft.classList.remove('hide');
+                    coverLeft.classList.remove('hide');
                 }
-            })
+            });
         },
             {
                 threshold: 0.9,
                 root: this
-            })
+            });
         const lastOptionObserver = new IntersectionObserver(entries => {
             entries.forEach(entry => {
                 if (entry.isIntersecting) {
-                    navButtonRight.classList.add('hide')
-                    coverRight.classList.add('hide')
+                    navButtonRight.classList.add('hide');
+                    coverRight.classList.add('hide');
                 }
                 else {
-                    navButtonRight.classList.remove('hide')
-                    coverRight.classList.remove('hide')
+                    navButtonRight.classList.remove('hide');
+                    coverRight.classList.remove('hide');
                 }
-            })
+            });
         },
             {
                 threshold: 0.9,
                 root: this
-            })
-        navButtonLeft.addEventListener('click', this.scrollLeft)
-        navButtonRight.addEventListener('click', this.scrollRight)
+            });
+        navButtonLeft.addEventListener('click', this.scrollLeft);
+        navButtonRight.addEventListener('click', this.scrollRight);
     }
     disconnectedCallback() {
-        navButtonLeft.removeEventListener('click', this.scrollLeft)
-        navButtonRight.removeEventListener('click', this.scrollRight)
+        navButtonLeft.removeEventListener('click', this.scrollLeft);
+        navButtonRight.removeEventListener('click', this.scrollRight);
     }
-})
+});
 
 //Strip option
-const stripOption = document.createElement('template')
+const stripOption = document.createElement('template');
 stripOption.innerHTML = `
 <style>
     *{
@@ -272,25 +274,21 @@ stripOption.innerHTML = `
                 box-sizing: border-box;
     }  
     :host{
-        --border-radius: 2rem;
         --background-color: inherit;
-        --active-option-color: inherit;
-        --active-option-backgroud-color: rgba(var(--text-color), .2);
     }
     .strip-option{
         display: flex;
         flex-shrink: 0;
         cursor: pointer;
         white-space: nowrap;
-        padding: 0.5rem 0.8rem;
+        padding: var(--padding, 0.4rem 0.6rem);
         transition: background 0.3s;
-        border-radius: var(--border-radius);
-        box-shadow: 0 0 0 1px rgba(var(--text-color), .2) inset;
+        border-radius: var(--border-radius, 2rem);
         -webkit-tap-highlight-color: transparent;
     }
     :host([active]) .strip-option{
-        color: var(--active-option-color);
-        background-color: var(--active-option-backgroud-color);
+        color: var(--active-option-color, inherit);
+        background-color: var(--active-background-color, rgba(var(--text-color), 0.06));
     }
     :host(:focus-within){
         outline: none;
@@ -305,21 +303,21 @@ stripOption.innerHTML = `
 <label class="strip-option">
     <slot></slot>
 </label>
-`
+`;
 customElements.define('strip-option', class extends HTMLElement {
     constructor() {
-        super()
+        super();
         this.attachShadow({
             mode: 'open'
-        }).append(stripOption.content.cloneNode(true))
-        this._value
-        this.radioButton = this.shadowRoot.querySelector('input')
+        }).append(stripOption.content.cloneNode(true));
+        this._value = undefined;
+        this.radioButton = this.shadowRoot.querySelector('input');
 
-        this.fireEvent = this.fireEvent.bind(this)
-        this.handleKeyDown = this.handleKeyDown.bind(this)
+        this.fireEvent = this.fireEvent.bind(this);
+        this.handleKeyDown = this.handleKeyDown.bind(this);
     }
     get value() {
-        return this._value
+        return this._value;
     }
     fireEvent() {
         this.dispatchEvent(
@@ -330,22 +328,22 @@ customElements.define('strip-option', class extends HTMLElement {
                     value: this._value
                 }
             })
-        )
+        );
     }
     handleKeyDown(e) {
         if (e.key === 'Enter' || e.key === 'Space') {
-            this.fireEvent()
+            this.fireEvent();
         }
     }
     connectedCallback() {
-        this.setAttribute('role', 'option')
-        this.setAttribute('tabindex', '0')
-        this._value = this.getAttribute('value')
-        this.addEventListener('click', this.fireEvent)
-        this.addEventListener('keydown', this.handleKeyDown)
+        this.setAttribute('role', 'option');
+        this.setAttribute('tabindex', '0');
+        this._value = this.getAttribute('value');
+        this.addEventListener('click', this.fireEvent);
+        this.addEventListener('keydown', this.handleKeyDown);
     }
     disconnectedCallback() {
-        this.removeEventListener('click', this.fireEvent)
-        this.removeEventListener('keydown', this.handleKeyDown)
+        this.removeEventListener('click', this.fireEvent);
+        this.removeEventListener('keydown', this.handleKeyDown);
     }
-})
+});

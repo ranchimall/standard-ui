@@ -43,7 +43,6 @@ border: none;
     --success-color: #00C853;
     --danger-color: red;
     --width: 100%;
-    --font-size: 1rem;
     --icon-gap: 0.5rem;
     --border-radius: 0.3rem;
     --padding: 0.7rem 1rem;
@@ -105,9 +104,9 @@ border: none;
     opacity: 0.6;
 }
 .label {
+    font-size: inherit;
     opacity: .7;
     font-weight: 400;
-    font-size: var(--font-size);
     position: absolute;
     top: 0;
     -webkit-transition: -webkit-transform 0.3s;
@@ -145,7 +144,7 @@ border: none;
             flex: 1;
 }    
 input{
-    font-size: var(--font-size);
+    font-size: inherit;
     border: none;
     background: transparent;
     outline: none;
@@ -166,7 +165,7 @@ input{
     color: var(--accent-color)
 }
 :host([variant="outlined"]) .input {
-    box-shadow: 0 0 0 0.1rem rgba(var(--text-color), 0.4) inset;
+    box-shadow: 0 0 0 0.1rem var(--border-color, rgba(var(--text-color), 0.4)) inset;
     background: rgba(var(--background-color), 1);
 }
 :host([variant="outlined"]) .label {
@@ -230,125 +229,131 @@ customElements.define('sm-input',
     class extends HTMLElement {
 
         constructor() {
-            super()
+            super();
             this.attachShadow({
                 mode: 'open'
-            }).append(smInput.content.cloneNode(true))
+            }).append(smInput.content.cloneNode(true));
 
-            this.inputParent = this.shadowRoot.querySelector('.input')
-            this.input = this.shadowRoot.querySelector('input')
-            this.clearBtn = this.shadowRoot.querySelector('.clear')
-            this.label = this.shadowRoot.querySelector('.label')
-            this.feedbackText = this.shadowRoot.querySelector('.feedback-text')
-            this.outerContainer = this.shadowRoot.querySelector('.outer-container')
-            this._helperText
-            this._errorText
-            this.isRequired = false
-            this.validationFunction
-            this.reflectedAttributes = ['value', 'required', 'disabled', 'type', 'inputmode', 'readonly', 'min', 'max', 'pattern', 'minlength', 'maxlength', 'step']
-        
-            this.reset = this.reset.bind(this)
-            this.focusIn = this.focusIn.bind(this)
-            this.focusOut = this.focusOut.bind(this)
-            this.fireEvent = this.fireEvent.bind(this)
-            this.checkInput = this.checkInput.bind(this)
-            this.vibrate = this.vibrate.bind(this)
+            this.inputParent = this.shadowRoot.querySelector('.input');
+            this.input = this.shadowRoot.querySelector('input');
+            this.clearBtn = this.shadowRoot.querySelector('.clear');
+            this.label = this.shadowRoot.querySelector('.label');
+            this.feedbackText = this.shadowRoot.querySelector('.feedback-text');
+            this.outerContainer = this.shadowRoot.querySelector('.outer-container');
+            this._helperText = '';
+            this._errorText = '';
+            this.isRequired = false;
+            this.hideRequired = false;
+            this.validationFunction = undefined;
+            this.reflectedAttributes = ['value', 'required', 'disabled', 'type', 'inputmode', 'readonly', 'min', 'max', 'pattern', 'minlength', 'maxlength', 'step'];
+
+            this.reset = this.reset.bind(this);
+            this.focusIn = this.focusIn.bind(this);
+            this.focusOut = this.focusOut.bind(this);
+            this.fireEvent = this.fireEvent.bind(this);
+            this.checkInput = this.checkInput.bind(this);
+            this.vibrate = this.vibrate.bind(this);
         }
 
         static get observedAttributes() {
-            return ['value', 'placeholder', 'required', 'disabled', 'type', 'inputmode', 'readonly', 'min', 'max', 'pattern', 'minlength', 'maxlength', 'step', 'helper-text', 'error-text']
+            return ['value', 'placeholder', 'required', 'disabled', 'type', 'inputmode', 'readonly', 'min', 'max', 'pattern', 'minlength', 'maxlength', 'step', 'helper-text', 'error-text', 'hiderequired'];
         }
 
         get value() {
-            return this.input.value
+            return this.input.value;
         }
 
         set value(val) {
             this.input.value = val;
-            this.checkInput()
-            this.fireEvent()
+            this.checkInput();
+            this.fireEvent();
         }
 
         get placeholder() {
-            return this.getAttribute('placeholder')
+            return this.getAttribute('placeholder');
         }
 
         set placeholder(val) {
-            this.setAttribute('placeholder', val)
+            this.setAttribute('placeholder', val);
         }
 
         get type() {
-            return this.getAttribute('type')
+            return this.getAttribute('type');
         }
 
         set type(val) {
-            this.setAttribute('type', val)
+            this.setAttribute('type', val);
         }
 
         get validity() {
-            return this.input.validity
+            return this.input.validity;
         }
 
+        get disabled() {
+            return this.hasAttribute('disabled');
+        }
         set disabled(value) {
             if (value)
-                this.inputParent.classList.add('disabled')
+                this.inputParent.classList.add('disabled');
             else
-                this.inputParent.classList.remove('disabled')
+                this.inputParent.classList.remove('disabled');
+        }
+        get readOnly() {
+            return this.hasAttribute('readonly');
         }
         set readOnly(value) {
             if (value) {
-                this.setAttribute('readonly', '')
+                this.setAttribute('readonly', '');
             } else {
-                this.removeAttribute('readonly')
+                this.removeAttribute('readonly');
             }
         }
         set customValidation(val) {
-            
-            this.validationFunction = val
+            this.validationFunction = val;
         }
         set errorText(val) {
-            this._errorText = val
+            this._errorText = val;
         }
         set helperText(val) {
-            this._helperText = val
+            this._helperText = val;
         }
         get isValid() {
             if (this.input.value !== '') {
-                const _isValid = this.input.checkValidity()
-                let _customValid = true
+                const _isValid = this.input.checkValidity();
+                let _customValid = true;
                 if (this.validationFunction) {
-                    _customValid = Boolean(this.validationFunction(this.input.value))
+                    _customValid = Boolean(this.validationFunction(this.input.value));
                 }
                 if (_isValid && _customValid) {
-                    this.feedbackText.classList.remove('error')
-                    this.feedbackText.classList.add('success')
-                    this.feedbackText.textContent = ''
+                    this.feedbackText.classList.remove('error');
+                    this.feedbackText.classList.add('success');
+                    this.feedbackText.textContent = '';
                 } else {
                     if (this._errorText) {
-                        this.feedbackText.classList.add('error')
-                        this.feedbackText.classList.remove('success')
+                        this.feedbackText.classList.add('error');
+                        this.feedbackText.classList.remove('success');
                         this.feedbackText.innerHTML = `
                             <svg class="status-icon status-icon--error" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="24" height="24"><path fill="none" d="M0 0h24v24H0z"/><path d="M12 22C6.477 22 2 17.523 2 12S6.477 2 12 2s10 4.477 10 10-4.477 10-10 10zm-1-7v2h2v-2h-2zm0-8v6h2V7h-2z"/></svg>
                         ${this._errorText}
-                        `
+                        `;
                     }
                 }
-                return (_isValid && _customValid)
+                return (_isValid && _customValid);
             }
         }
-        reset(){
-            this.value = ''
+        reset() {
+            this.value = '';
         }
 
-        focusIn(){
-            this.input.focus()
+        focusIn() {
+            this.input.focus();
         }
 
-        focusOut(){
-            this.input.blur()
+        focusOut() {
+            this.input.blur();
         }
 
-        fireEvent(){
+        fireEvent() {
             let event = new Event('input', {
                 bubbles: true,
                 cancelable: true,
@@ -357,28 +362,28 @@ customElements.define('sm-input',
             this.dispatchEvent(event);
         }
 
-        checkInput(e){
+        checkInput(e) {
             if (!this.hasAttribute('readonly')) {
                 if (this.input.value.trim() !== '') {
-                    this.clearBtn.classList.remove('hide')
+                    this.clearBtn.classList.remove('hide');
                 } else {
-                    this.clearBtn.classList.add('hide')
-                    if (this.isRequired) {
-                        this.feedbackText.textContent = '* required'
+                    this.clearBtn.classList.add('hide');
+                    if (this.isRequired && !this.hideRequired) {
+                        this.feedbackText.textContent = '*required';
                     }
                 }
             }
             if (!this.hasAttribute('placeholder') || this.getAttribute('placeholder').trim() === '') return;
             if (this.input.value !== '') {
                 if (this.animate)
-                    this.inputParent.classList.add('animate-label')
+                    this.inputParent.classList.add('animate-label');
                 else
-                    this.label.classList.add('hide')
+                    this.label.classList.add('hide');
             } else {
                 if (this.animate)
-                    this.inputParent.classList.remove('animate-label')
+                    this.inputParent.classList.remove('animate-label');
                 else
-                    this.label.classList.remove('hide')
+                    this.label.classList.remove('hide');
             }
         }
         vibrate() {
@@ -391,25 +396,25 @@ customElements.define('sm-input',
             ], {
                 duration: 300,
                 easing: 'ease'
-            })
+            });
         }
 
 
         connectedCallback() {
-            this.animate = this.hasAttribute('animate')
-            this.setAttribute('role', 'textbox')
-            this.input.addEventListener('input', this.checkInput)
-            this.clearBtn.addEventListener('click', this.reset)
+            this.animate = this.hasAttribute('animate');
+            this.setAttribute('role', 'textbox');
+            this.input.addEventListener('input', this.checkInput);
+            this.clearBtn.addEventListener('click', this.reset);
         }
-        
+
         attributeChangedCallback(name, oldValue, newValue) {
             if (oldValue !== newValue) {
                 if (this.reflectedAttributes.includes(name)) {
                     if (this.hasAttribute(name)) {
-                        this.input.setAttribute(name, this.getAttribute(name) ? this.getAttribute(name) : '')
+                        this.input.setAttribute(name, this.getAttribute(name) ? this.getAttribute(name) : '');
                     }
                     else {
-                        this.input.removeAttribute(name)
+                        this.input.removeAttribute(name);
                     }
                 }
                 if (name === 'placeholder') {
@@ -417,49 +422,55 @@ customElements.define('sm-input',
                     this.setAttribute('aria-label', newValue);
                 }
                 else if (this.hasAttribute('value')) {
-                    this.checkInput()
+                    this.checkInput();
                 }
                 else if (name === 'type') {
                     if (this.hasAttribute('type') && this.getAttribute('type') === 'number') {
-                        this.input.setAttribute('inputmode', 'numeric')
+                        this.input.setAttribute('inputmode', 'numeric');
                     }
                 }
                 else if (name === 'helper-text') {
-                    this._helperText = this.getAttribute('helper-text')
+                    this._helperText = this.getAttribute('helper-text');
                 }
                 else if (name === 'error-text') {
-                    this._errorText = this.getAttribute('error-text')
+                    this._errorText = this.getAttribute('error-text');
                 }
                 else if (name === 'required') {
-                    this.isRequired = this.hasAttribute('required')
+                    this.isRequired = this.hasAttribute('required');
+                    if (this.isRequired && !this.hideRequired) {
+                        this.feedbackText.textContent = '';
+                    } else {
+                        this.feedbackText.textContent = '*required';
+                    }
                     if (this.isRequired) {
-                        this.feedbackText.textContent = '* required'
-                        this.setAttribute('aria-required', 'true')
+                        this.setAttribute('aria-required', 'true');
                     }
                     else {
-                        this.feedbackText.textContent = ''
-                        this.setAttribute('aria-required', 'false')    
+                        this.setAttribute('aria-required', 'false');
                     }
+                }
+                else if (name === 'hiderequired') {
+                    this.hideRequired = this.hasAttribute('hiderequired')
                 }
                 else if (name === 'readonly') {
                     if (this.hasAttribute('readonly')) {
-                        this.inputParent.classList.add('readonly')
+                        this.inputParent.classList.add('readonly');
                     } else {
-                        this.inputParent.classList.remove('readonly')
+                        this.inputParent.classList.remove('readonly');
                     }
                 }
                 else if (name === 'disabled') {
                     if (this.hasAttribute('disabled')) {
-                        this.inputParent.classList.add('disabled')
+                        this.inputParent.classList.add('disabled');
                     }
                     else {
-                        this.inputParent.classList.remove('disabled')
+                        this.inputParent.classList.remove('disabled');
                     }
                 }
             }
         }
         disconnectedCallback() {
-            this.input.removeEventListener('input', this.checkInput)
-            this.clearBtn.removeEventListener('click', this.reset)
+            this.input.removeEventListener('input', this.checkInput);
+            this.clearBtn.removeEventListener('click', this.reset);
         }
     })

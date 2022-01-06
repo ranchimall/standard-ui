@@ -28,10 +28,6 @@ smSwitch.innerHTML = `
         cursor: pointer;
         -webkit-tap-highlight-color: transparent;
     }
-    :host(:not([disabled])) label:focus-visible{
-        -webkit-box-shadow: 0 0 0 0.1rem var(--accent-color);
-            box-shadow: 0 0 0 0.1rem var(--accent-color);
-    }
     :host([disabled]) {
         cursor: not-allowed;
         opacity: 0.6;
@@ -71,15 +67,12 @@ smSwitch.innerHTML = `
         border-radius: 1rem;
     }
     
-    .switch:active .button::after,
-    .switch:focus .button::after{
-        opacity: 1
-    }
-    .switch:focus-visible .button::after{
-        opacity: 1
+    label:active .thumb::after,
+    label:focus-within .thumb::after{
+        opacity: 1;
     }
     
-    .button::after{
+    .thumb::after{
         content: '';
         display: -webkit-box;
         display: -ms-flexbox;
@@ -95,7 +88,7 @@ smSwitch.innerHTML = `
         transition: opacity 0.3s;
     }
     
-    .button {
+    .thumb {
         position: relative;
         display: -webkit-inline-box;
         display: -ms-inline-flexbox;
@@ -119,7 +112,7 @@ smSwitch.innerHTML = `
         border: solid 0.3rem white;
     }
     
-    input:checked ~ .button {
+    input:checked ~ .thumb {
         -webkit-transform: translateX(100%);
             -ms-transform: translateX(100%);
                 transform: translateX(100%);
@@ -134,7 +127,7 @@ smSwitch.innerHTML = `
     <div part="switch" class="switch">
         <input type="checkbox">
         <div class="track"></div>
-        <div class="button"></div>
+        <div class="thumb"></div>
     </div>
     <slot name="right"></slot>
 </label>`
@@ -181,12 +174,16 @@ customElements.define('sm-switch', class extends HTMLElement {
         }
     }
 
-    dispatch(){
+    reset() {
+
+    }
+
+    dispatch() {
         this.dispatchEvent(new CustomEvent('change', {
             bubbles: true,
             composed: true,
             detail: {
-                value: this.isChecked 
+                value: this.isChecked
             }
         }))
     }
@@ -210,21 +207,21 @@ customElements.define('sm-switch', class extends HTMLElement {
         if (oldValue !== newValue) {
             if (name === 'disabled') {
                 if (this.hasAttribute('disabled')) {
-                    this.disabled = true                
+                    this.disabled = true
                 }
                 else {
-                    this.disabled = false                
+                    this.disabled = false
                 }
             }
             else if (name === 'checked') {
                 if (this.hasAttribute('checked')) {
                     this.isChecked = true
-                    this.input.checked = true            
+                    this.input.checked = true
                 }
                 else {
                     this.isChecked = false
-                    this.input.checked = false               
-                } 
+                    this.input.checked = false
+                }
             }
         }
     }

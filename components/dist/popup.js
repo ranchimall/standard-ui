@@ -1,4 +1,22 @@
-const smPopup = document.createElement('template')
+class Stack {
+    constructor() {
+        this.items = [];
+    }
+    push(element) {
+        this.items.push(element);
+    }
+    pop() {
+        if (this.items.length == 0)
+            return "Underflow";
+        return this.items.pop();
+    }
+    peek() {
+        return this.items[this.items.length - 1];
+    }
+}
+const popupStack = new Stack();
+
+const smPopup = document.createElement('template');
 smPopup.innerHTML = `
 <style>
 *{
@@ -19,7 +37,6 @@ smPopup.innerHTML = `
     --height: auto;
     --min-width: auto;
     --min-height: auto;
-    --body-padding: 1.5rem;
     --backdrop-background: rgba(0, 0, 0, 0.6);
     --border-radius: 0.8rem 0.8rem 0 0;
 }
@@ -32,16 +49,24 @@ smPopup.innerHTML = `
     left: 0;
     right: 0;
     place-items: center;
-    background: var(--backdrop-background);
-    -webkit-transition: opacity 0.3s;
-    -o-transition: opacity 0.3s;
-    transition: opacity 0.3s;
     z-index: 10;
     touch-action: none;
 }
 :host(.stacked) .popup{
     -webkit-transform: scale(0.9) translateY(-2rem) !important;
             transform: scale(0.9) translateY(-2rem) !important;
+}
+.background{
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    pointer-events: none;
+    background: var(--backdrop-background);
+    -webkit-transition: opacity 0.3s;
+    -o-transition: opacity 0.3s;
+    transition: opacity 0.3s;
 }
 .popup{
     display: -webkit-box;
@@ -62,17 +87,9 @@ smPopup.innerHTML = `
     min-height: var(--min-height);
     max-height: 90vh;
     border-radius: var(--border-radius);
-    -webkit-transform: scale(1) translateY(100%);
-            transform: scale(1) translateY(100%);
-    -webkit-transition: -webkit-transform 0.3s;
-    transition: -webkit-transform 0.3s;
-    -o-transition: transform 0.3s;
-    transition: transform 0.3s, -webkit-transform 0.3s;
-    transition: transform 0.3s;
     background: rgba(var(--background-color), 1);
     -webkit-box-shadow: 0 -1rem 2rem #00000020;
             box-shadow: 0 -1rem 2rem #00000020;
-    content-visibility: auto;
 }
 .container-header{
     display: -webkit-box;
@@ -99,17 +116,15 @@ smPopup.innerHTML = `
         -ms-flex: 1;
             flex: 1;
     width: 100%;
-    padding: var(--body-padding);
+    padding: var(--body-padding, 1.5rem);
     overflow-y: auto;
 }
 .hide{
-    opacity: 0;
-    pointer-events: none;
-    visiblity: none;
+    display:none;
 }
 @media screen and (min-width: 640px){
     :host{
-        --border-radius: 0.4rem;
+        --border-radius: 0.5rem;
     }
     .popup{
         -ms-flex-item-align: center;
@@ -117,8 +132,6 @@ smPopup.innerHTML = `
             align-self: center;
         border-radius: var(--border-radius);
         height: var(--height);
-        -webkit-transform: scale(1) translateY(3rem);
-                transform: scale(1) translateY(3rem);
         -webkit-box-shadow: 0 3rem 2rem -0.5rem #00000040;
                 box-shadow: 0 3rem 2rem -0.5rem #00000040;
     }
@@ -153,7 +166,8 @@ smPopup.innerHTML = `
     }
 }
 </style>
-<div part="background" class="popup-container hide" role="dialog">
+<div class="popup-container hide" role="dialog">
+    <div part="background" class="background"></div>
     <div part="popup" class="popup">
         <div part="popup-header" class="popup-top">
             <div class="handle"></div>
@@ -167,34 +181,38 @@ smPopup.innerHTML = `
 `;
 customElements.define('sm-popup', class extends HTMLElement {
     constructor() {
-        super()
+        super();
         this.attachShadow({
             mode: 'open'
-        }).append(smPopup.content.cloneNode(true))
+        }).append(smPopup.content.cloneNode(true));
 
-        this.allowClosing = false
-        this.isOpen = false
-        this.pinned = false
-        this.popupStack
-        this.offset
-        this.touchStartY = 0
-        this.touchEndY = 0
-        this.touchStartTime = 0
-        this.touchEndTime = 0
-        this.touchEndAnimataion
+        this.allowClosing = false;
+        this.isOpen = false;
+        this.pinned = false;
+        this.offset = 0;
+        this.touchStartY = 0;
+        this.touchEndY = 0;
+        this.touchStartTime = 0;
+        this.touchEndTime = 0;
+        this.touchEndAnimation = undefined;
+        this.focusable
+        this.autoFocus
+        this.mutationObserver
 
-        this.popupContainer = this.shadowRoot.querySelector('.popup-container')
-        this.popup = this.shadowRoot.querySelector('.popup')
-        this.popupBodySlot = this.shadowRoot.querySelector('.popup-body slot')
-        this.popupHeader = this.shadowRoot.querySelector('.popup-top')
+        this.popupContainer = this.shadowRoot.querySelector('.popup-container');
+        this.backdrop = this.shadowRoot.querySelector('.background');
+        this.popup = this.shadowRoot.querySelector('.popup');
+        this.popupBodySlot = this.shadowRoot.querySelector('.popup-body slot');
+        this.popupHeader = this.shadowRoot.querySelector('.popup-top');
 
-        this.resumeScrolling = this.resumeScrolling.bind(this)
-        this.show = this.show.bind(this)
-        this.hide = this.hide.bind(this)
-        this.handleTouchStart = this.handleTouchStart.bind(this)
-        this.handleTouchMove = this.handleTouchMove.bind(this)
-        this.handleTouchEnd = this.handleTouchEnd.bind(this)
-        this.movePopup = this.movePopup.bind(this)
+        this.resumeScrolling = this.resumeScrolling.bind(this);
+        this.setStateOpen = this.setStateOpen.bind(this);
+        this.show = this.show.bind(this);
+        this.hide = this.hide.bind(this);
+        this.handleTouchStart = this.handleTouchStart.bind(this);
+        this.handleTouchMove = this.handleTouchMove.bind(this);
+        this.handleTouchEnd = this.handleTouchEnd.bind(this);
+        this.detectFocus = this.detectFocus.bind(this);
     }
 
     static get observedAttributes() {
@@ -202,172 +220,254 @@ customElements.define('sm-popup', class extends HTMLElement {
     }
 
     get open() {
-        return this.isOpen
+        return this.isOpen;
+    }
+
+    animateTo(element, keyframes, options) {
+        const anime = element.animate(keyframes, { ...options, fill: 'both' })
+        anime.finished.then(() => {
+            anime.commitStyles()
+            anime.cancel()
+        })
+        return anime
     }
 
     resumeScrolling() {
         const scrollY = document.body.style.top;
         window.scrollTo(0, parseInt(scrollY || '0') * -1);
-        setTimeout(() => {
-            document.body.style.overflow = 'auto';
-            document.body.style.top = 'initial'
-        }, 300);
+        document.body.style.overflow = 'auto';
+        document.body.style.top = 'initial';
+    }
+
+    setStateOpen() {
+        if (!this.isOpen || this.offset) {
+            const animOptions = {
+                duration: 300,
+                easing: 'ease'
+            }
+            const initialAnimation = (window.innerWidth > 640) ? 'scale(1.1)' : `translateY(${this.offset ? `${this.offset}px` : '100%'})`
+            this.animateTo(this.popup, [
+                {
+                    opacity: this.offset ? 1 : 0,
+                    transform: initialAnimation
+                },
+                {
+                    opacity: 1,
+                    transform: 'none'
+                },
+            ], animOptions)
+
+        }
     }
 
     show(options = {}) {
-        const {pinned = false, popupStack = undefined} = options
-        if (popupStack)
-            this.popupStack = popupStack
-        if (this.popupStack && !this.hasAttribute('open')) {
-            this.popupStack.push({
-                popup: this,
-                permission: pinned
-            })
-            if (this.popupStack.items.length > 1) {
-                this.popupStack.items[this.popupStack.items.length - 2].popup.classList.add('stacked')
+        const { pinned = false } = options;
+        if (!this.isOpen) {
+            const animOptions = {
+                duration: 300,
+                easing: 'ease'
             }
+            if (popupStack) {
+                popupStack.push({
+                    popup: this,
+                    permission: pinned
+                });
+                if (popupStack.items.length > 1) {
+                    this.animateTo(popupStack.items[popupStack.items.length - 2].popup.shadowRoot.querySelector('.popup'), [
+                        { transform: 'none' },
+                        { transform: 'translateY(-1.5rem) scale(0.9)' },
+                    ], animOptions)
+                }
+            }
+            this.popupContainer.classList.remove('hide');
+            if (!this.offset)
+                this.backdrop.animate([
+                    { opacity: 0 },
+                    { opacity: 1 },
+                ], animOptions)
+            this.setStateOpen()
             this.dispatchEvent(
                 new CustomEvent("popupopened", {
                     bubbles: true,
                     detail: {
                         popup: this,
-                        popupStack: this.popupStack
                     }
                 })
-            )
-            this.setAttribute('open', '')
-            this.pinned = pinned
-            this.isOpen = true
+            );
+            this.pinned = pinned;
+            this.isOpen = true;
+            document.body.style.overflow = 'hidden';
+            document.body.style.top = `-${window.scrollY}px`;
+            const elementToFocus = this.autoFocus || this.focusable[0];
+            elementToFocus.tagName.includes('SM-') ? elementToFocus.focusIn() : elementToFocus.focus();
+            if (!this.hasAttribute('open'))
+                this.setAttribute('open', '');
         }
-        this.popupContainer.classList.remove('hide')
-        this.popup.style.transform = 'none';
-        document.body.style.overflow = 'hidden';
-        document.body.style.top = `-${window.scrollY}px`
-        return this.popupStack
     }
     hide() {
-        if (window.innerWidth < 640)
-            this.popup.style.transform = 'translateY(100%)';
-        else
-            this.popup.style.transform = 'translateY(3rem)';
-        this.popupContainer.classList.add('hide')
-        this.removeAttribute('open')
-        if (typeof this.popupStack !== 'undefined') {
-            this.popupStack.pop()
-            if (this.popupStack.items.length) {
-                this.popupStack.items[this.popupStack.items.length - 1].popup.classList.remove('stacked')
-            } else {
-                this.resumeScrolling()
-            }
-        } else {
-            this.resumeScrolling()
+        const animOptions = {
+            duration: 150,
+            easing: 'ease'
         }
+        this.backdrop.animate([
+            { opacity: 1 },
+            { opacity: 0 }
+        ], animOptions)
+        this.animateTo(this.popup, [
+            {
+                opacity: 1,
+                transform: (window.innerWidth > 640) ? 'none' : `translateY(${this.offset ? `${this.offset}px` : '0'})`
+            },
+            {
+                opacity: 0,
+                transform: (window.innerWidth > 640) ? 'scale(1.1)' : 'translateY(100%)'
+            },
+        ], animOptions).finished
+            .finally(() => {
+                this.popupContainer.classList.add('hide');
+                this.popup.style = ''
+                this.removeAttribute('open');
+                if (typeof popupStack !== 'undefined') {
+                    popupStack.pop();
+                    if (popupStack.items.length) {
+                        this.animateTo(popupStack.items[popupStack.items.length - 1].popup.shadowRoot.querySelector('.popup'), [
+                            { transform: 'translateY(-1.5rem) scale(0.9)' },
+                            { transform: 'none' },
+                        ], animOptions)
 
-        if (this.forms.length) {
-            setTimeout(() => {
-                this.forms.forEach(form => form.reset())
-            }, 300);
-        }
-        setTimeout(() => {
-            this.dispatchEvent(
-                new CustomEvent("popupclosed", {
-                    bubbles: true,
-                    detail: {
-                        popup: this,
-                        popupStack: this.popupStack
+                    } else {
+                        this.resumeScrolling();
                     }
-                })
-            )
-            this.isOpen = false
-        }, 300);
+                } else {
+                    this.resumeScrolling();
+                }
+
+                if (this.forms.length) {
+                    this.forms.forEach(form => form.reset());
+                }
+                this.dispatchEvent(
+                    new CustomEvent("popupclosed", {
+                        bubbles: true,
+                        detail: {
+                            popup: this,
+                        }
+                    })
+                );
+                this.isOpen = false;
+            })
     }
 
     handleTouchStart(e) {
-        this.touchStartY = e.changedTouches[0].clientY
-        this.popup.style.transition = 'transform 0.1s'
-        this.touchStartTime = e.timeStamp
+        this.offset = 0
+        this.popupHeader.addEventListener('touchmove', this.handleTouchMove, { passive: true });
+        this.popupHeader.addEventListener('touchend', this.handleTouchEnd, { passive: true });
+        this.touchStartY = e.changedTouches[0].clientY;
+        this.touchStartTime = e.timeStamp;
     }
 
     handleTouchMove(e) {
         if (this.touchStartY < e.changedTouches[0].clientY) {
             this.offset = e.changedTouches[0].clientY - this.touchStartY;
-            this.touchEndAnimataion = window.requestAnimationFrame(() => this.movePopup())
+            this.touchEndAnimation = window.requestAnimationFrame(() => {
+                this.popup.style.transform = `translateY(${this.offset}px)`;
+            });
         }
     }
 
     handleTouchEnd(e) {
-        this.touchEndTime = e.timeStamp
-        cancelAnimationFrame(this.touchEndAnimataion)
-        this.touchEndY = e.changedTouches[0].clientY
-        this.popup.style.transition = 'transform 0.3s'
-        this.threshold = this.popup.getBoundingClientRect().height * 0.3
+        this.touchEndTime = e.timeStamp;
+        cancelAnimationFrame(this.touchEndAnimation);
+        this.touchEndY = e.changedTouches[0].clientY;
+        this.threshold = this.popup.getBoundingClientRect().height * 0.3;
         if (this.touchEndTime - this.touchStartTime > 200) {
             if (this.touchEndY - this.touchStartY > this.threshold) {
                 if (this.pinned) {
-                    this.show()
-                    return
+                    this.setStateOpen();
+                    return;
                 } else
-                    this.hide()
+                    this.hide();
             } else {
-                this.show()
+                this.setStateOpen();
             }
         } else {
             if (this.touchEndY > this.touchStartY)
                 if (this.pinned) {
-                    this.show()
-                    return
+                    this.setStateOpen();
+                    return;
                 }
                 else
-                    this.hide()
+                    this.hide();
+        }
+        this.popupHeader.removeEventListener('touchmove', this.handleTouchMove, { passive: true });
+        this.popupHeader.removeEventListener('touchend', this.handleTouchEnd, { passive: true });
+    }
+
+
+    detectFocus(e) {
+        if (e.code === 'Tab') {
+            const lastElement = this.focusable[this.focusable.length - 1];
+            const firstElement = this.focusable[0];
+            if (e.shiftKey && document.activeElement === firstElement) {
+                e.preventDefault();
+                lastElement.tagName.includes('SM-') ? lastElement.focusIn() : lastElement.focus();
+            } else if (!e.shiftKey && document.activeElement === lastElement) {
+                e.preventDefault();
+                firstElement.tagName.includes('SM-') ? firstElement.focusIn() : firstElement.focus();
+            }
         }
     }
 
-    movePopup() {
-        this.popup.style.transform = `translateY(${this.offset}px)`
+    updateFocusableList() {
+        this.focusable = this.querySelectorAll('sm-button:not([disabled]), button:not([disabled]), [href], sm-input, input, sm-select, select, sm-checkbox, sm-textarea, textarea, [tabindex]:not([tabindex="-1"])')
+        this.autoFocus = this.querySelector('[autofocus]')
     }
 
     connectedCallback() {
         this.popupBodySlot.addEventListener('slotchange', () => {
-            this.forms = this.querySelectorAll('sm-form')
-        })
+            this.forms = this.querySelectorAll('sm-form');
+            this.updateFocusableList()
+        });
         this.popupContainer.addEventListener('mousedown', e => {
             if (e.target === this.popupContainer && !this.pinned) {
                 if (this.pinned) {
-                    this.show()
+                    this.setStateOpen();
                 } else
-                    this.hide()
+                    this.hide();
             }
-        })
+        });
 
         const resizeObserver = new ResizeObserver(entries => {
             for (let entry of entries) {
                 if (entry.contentBoxSize) {
                     // Firefox implements `contentBoxSize` as a single content rect, rather than an array
                     const contentBoxSize = Array.isArray(entry.contentBoxSize) ? entry.contentBoxSize[0] : entry.contentBoxSize;
-                    this.threshold = contentBoxSize.blockSize.height * 0.3
+                    this.threshold = contentBoxSize.blockSize.height * 0.3;
                 } else {
-                    this.threshold = entry.contentRect.height * 0.3
+                    this.threshold = entry.contentRect.height * 0.3;
                 }
             }
         });
-        resizeObserver.observe(this)
-        
-        
-        this.popupHeader.addEventListener('touchstart', (e) => { this.handleTouchStart(e) }, { passive: true })
-        this.popupHeader.addEventListener('touchmove', (e) => { this.handleTouchMove(e) }, { passive: true })
-        this.popupHeader.addEventListener('touchend', (e) => { this.handleTouchEnd(e) }, { passive: true })
+        resizeObserver.observe(this);
+
+        this.mutationObserver = new MutationObserver(entries => {
+            this.updateFocusableList()
+        })
+        this.mutationObserver.observe(this, { attributes: true, childList: true, subtree: true })
+
+        this.addEventListener('keydown', this.detectFocus);
+        this.popupHeader.addEventListener('touchstart', this.handleTouchStart, { passive: true });
     }
     disconnectedCallback() {
-        this.popupHeader.removeEventListener('touchstart', this.handleTouchStart, { passive: true })
-        this.popupHeader.removeEventListener('touchmove', this.handleTouchMove, { passive: true })
-        this.popupHeader.removeEventListener('touchend', this.handleTouchEnd, { passive: true })
-        resizeObserver.unobserve()
+        this.removeEventListener('keydown', this.detectFocus);
+        resizeObserver.unobserve();
+        this.mutationObserver.disconnect()
+        this.popupHeader.removeEventListener('touchstart', this.handleTouchStart, { passive: true });
     }
-    attributeChangedCallback(name, oldVal, newVal) {
+    attributeChangedCallback(name) {
         if (name === 'open') {
             if (this.hasAttribute('open')) {
-                this.show()
+                this.show();
             }
         }
     }
-})
+});

@@ -11,6 +11,7 @@ smMenu.innerHTML = `
     display: -webkit-inline-box;
     display: -ms-inline-flexbox;
     display: inline-flex;
+
 }
 .menu{
     display: -ms-grid;
@@ -55,7 +56,8 @@ smMenu.innerHTML = `
     right: 0;
 }
 .options{
-    padding: 0.5rem 0;
+    top: 100%;
+    padding: 0.3rem;
     overflow: hidden auto;
     position: absolute;
     display: -webkit-box;
@@ -68,8 +70,8 @@ smMenu.innerHTML = `
     -webkit-box-direction: normal;
         -ms-flex-direction: column;
             flex-direction: column;
-    background: rgba(var(--background-color), 1);
-    border-radius: 0.3rem;
+    background: var(--background, rgba(var(--background-color), 1));
+    border-radius: var(--border-radius, 0.5rem);
     z-index: 1;
     -webkit-box-shadow: 0 0.5rem 1.5rem -0.5rem rgba(0,0,0,0.3);
             box-shadow: 0 0.5rem 1.5rem -0.5rem rgba(0,0,0,0.3);
@@ -96,7 +98,7 @@ smMenu.innerHTML = `
 </style>
 <div class="select">
     <div class="menu" tabindex="0">
-        <svg class="icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="24" height="24"><path fill="none" d="M0 0h24v24H0z"/><path d="M12 3c-1.1 0-2 .9-2 2s.9 2 2 2 2-.9 2-2-.9-2-2-2zm0 14c-1.1 0-2 .9-2 2s.9 2 2 2 2-.9 2-2-.9-2-2-2zm0-7c-1.1 0-2 .9-2 2s.9 2 2 2 2-.9 2-2-.9-2-2-2z"/></svg>
+        <svg class="icon" xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 0 24 24" width="24px" fill="#000000"><path d="M0 0h24v24H0V0z" fill="none"/><path d="M12 8c1.1 0 2-.9 2-2s-.9-2-2-2-2 .9-2 2 .9 2 2 2zm0 2c-1.1 0-2 .9-2 2s.9 2 2 2 2-.9 2-2-.9-2-2-2zm0 6c-1.1 0-2 .9-2 2s.9 2 2 2 2-.9 2-2-.9-2-2-2z"/></svg>
     </div>
     <div class="options hide">
         <slot></slot> 
@@ -125,7 +127,7 @@ customElements.define('sm-menu', class extends HTMLElement {
         this.collapse = this.collapse.bind(this)
         this.toggle = this.toggle.bind(this)
         this.handleKeyDown = this.handleKeyDown.bind(this)
-        this.handleClickoutSide = this.handleClickoutSide.bind(this)
+        this.handleClickOutside = this.handleClickOutside.bind(this)
 
     }
     static get observedAttributes() {
@@ -193,7 +195,7 @@ customElements.define('sm-menu', class extends HTMLElement {
                 e.preventDefault()
                 this.toggle()
             }
-        } else { // If mey is pressed over menu options
+        } else { // If key is pressed over menu options
             if (e.code === 'ArrowUp') {
                 e.preventDefault()
                 if (document.activeElement.previousElementSibling) {
@@ -216,7 +218,7 @@ customElements.define('sm-menu', class extends HTMLElement {
             }
         }
     }
-    handleClickoutSide(e) {
+    handleClickOutside(e) {
         if (!this.contains(e.target) && e.button !== 2) {
             this.collapse()
         }
@@ -231,12 +233,12 @@ customElements.define('sm-menu', class extends HTMLElement {
         });
         this.addEventListener('click', this.toggle)
         this.addEventListener('keydown', this.handleKeyDown)
-        document.addEventListener('mousedown', this.handleClickoutSide)
+        document.addEventListener('mousedown', this.handleClickOutside)
     }
     disconnectedCallback() {
         this.removeEventListener('click', this.toggle)
         this.removeEventListener('keydown', this.handleKeyDown)
-        document.removeEventListener('mousedown', this.handleClickoutSide)
+        document.removeEventListener('mousedown', this.handleClickOutside)
     }
 })
 
@@ -254,20 +256,19 @@ menuOption.innerHTML = `
     display: -webkit-box;
     display: -ms-flexbox;
     display: flex;
-    --padding: 0.6rem 1.6rem;
 }
 .option{
     display: -webkit-box;
     display: -ms-flexbox;
     display: flex;
     min-width: 100%;
-    padding: var(--padding);
+    padding: var(--padding, 0.6rem 1rem);
     cursor: pointer;
     overflow-wrap: break-word;
     white-space: nowrap;
     outline: none;
-    font-size: 1rem;
     user-select: none;
+    border-radius: 0.3rem;
     -webkit-box-align: center;
         -ms-flex-align: center;
             align-items: center;
@@ -277,8 +278,8 @@ menuOption.innerHTML = `
     background: rgba(var(--text-color), 0.1);
 }
 @media (any-hover: hover){
-    :host{
-        --padding: 0.8rem 1.6rem;
+    .option{
+        transition: background-color 0.2s;
     }
     .option:hover{
         background: rgba(var(--text-color), 0.1);
@@ -298,6 +299,7 @@ customElements.define('menu-option', class extends HTMLElement {
 
     connectedCallback() {
         this.setAttribute('role', 'option')
+        this.setAttribute('tabindex', '0')
         this.addEventListener('keyup', e => {
             if (e.code === 'Enter' || e.code === 'Space') {
                 e.preventDefault()

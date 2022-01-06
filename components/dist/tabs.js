@@ -155,7 +155,7 @@ customElements.define('sm-tab-header', class extends HTMLElement {
             this.fireEvent(e.target.dataset.index)
         }
     }
-    
+
     handlePanelChange(e) {
         this.changeTab(this.allTabs[e.detail.index])
     }

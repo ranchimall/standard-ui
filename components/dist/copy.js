@@ -1,4 +1,4 @@
-const smCopy = document.createElement('template')
+const smCopy = document.createElement('template');
 smCopy.innerHTML = `
 <style>     
 *{
@@ -8,9 +8,8 @@ smCopy.innerHTML = `
             box-sizing: border-box;
 }       
 :host{
-    display: -webkit-inline-box;
-    display: -ms-inline-flexbox;
-    display: inline-flex;
+    display: -webkit-box;
+    display: flex;
     --accent-color: #4d2588;
     --text-color: 17, 17, 17;
     --background-color: 255, 255, 255;
@@ -21,14 +20,20 @@ smCopy.innerHTML = `
 }
 .copy{
     display: grid;
+    width: 100%;
     gap: 0.5rem;
     padding: var(--padding);
     align-items: center;
     grid-template-columns: minmax(0, 1fr) auto;
 }
-.copy-content{
+:host(:not([clip-text])) .copy-content{
     overflow-wrap: break-word;
     word-wrap: break-word;
+}
+:host([clip-text]) .copy-content{
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
 }
 .copy-button{
     display: inline-flex;
@@ -59,7 +64,6 @@ smCopy.innerHTML = `
     }
 }
 </style>
-</style>
 <section class="copy">
     <p class="copy-content"></p>
     <button part="button" class="copy-button" title="copy">
@@ -72,24 +76,24 @@ smCopy.innerHTML = `
 customElements.define('sm-copy',
     class extends HTMLElement {
         constructor() {
-            super()
+            super();
             this.attachShadow({
                 mode: 'open'
-            }).append(smCopy.content.cloneNode(true))
-            
-            this.copyContent = this.shadowRoot.querySelector('.copy-content')
-            this.copyButton = this.shadowRoot.querySelector('.copy-button')
+            }).append(smCopy.content.cloneNode(true));
 
-            this.copy = this.copy.bind(this)
+            this.copyContent = this.shadowRoot.querySelector('.copy-content');
+            this.copyButton = this.shadowRoot.querySelector('.copy-button');
+
+            this.copy = this.copy.bind(this);
         }
         static get observedAttributes() {
-            return ['value']
+            return ['value'];
         }
         set value(val) {
-            this.setAttribute('value', val)
+            this.setAttribute('value', val);
         }
         get value() {
-            return this.getAttribute('value')
+            return this.getAttribute('value');
         }
         fireEvent() {
             this.dispatchEvent(
@@ -98,22 +102,22 @@ customElements.define('sm-copy',
                     bubbles: true,
                     cancelable: true,
                 })
-            )
+            );
         }
         copy() {
             navigator.clipboard.writeText(this.copyContent.textContent)
                 .then(res => this.fireEvent())
-                .catch(err => console.error(err))
+                .catch(err => console.error(err));
         }
         connectedCallback() {
-            this.copyButton.addEventListener('click', this.copy)
+            this.copyButton.addEventListener('click', this.copy);
         }
         attributeChangedCallback(name, oldValue, newValue) {
             if (name === 'value') {
-                this.copyContent.textContent = newValue
+                this.copyContent.textContent = newValue;
             }
         }
         disconnectedCallback() {
-            this.copyButton.removeEventListener('click', this.copy)
+            this.copyButton.removeEventListener('click', this.copy);
         }
-    })
+    });

@@ -1,4 +1,4 @@
-const smForm = document.createElement('template')
+const smForm = document.createElement('template');
 smForm.innerHTML = `
     <style>
     *{
@@ -8,19 +8,18 @@ smForm.innerHTML = `
     }
     :host{
         display: flex;
-        --gap: 1rem;
         width: 100%;
     }
     form{
         display: grid;
-        gap: var(--gap);
+        gap: var(--gap, 1.5rem);
         width: 100%;
     }
     </style>
-	<form onsubmit="return false">
+	<form part="form" onsubmit="return false">
 		<slot></slot>
 	</form>
-`
+`;
 
 customElements.define('sm-form', class extends HTMLElement {
 	constructor() {
@@ -29,17 +28,18 @@ customElements.define('sm-form', class extends HTMLElement {
 			mode: 'open'
 		}).append(smForm.content.cloneNode(true))
 
-		this.form = this.shadowRoot.querySelector('form')
+		this.form = this.shadowRoot.querySelector('form');
 		this.formElements
 		this.requiredElements
 		this.submitButton
 		this.resetButton
-		this.allRequiredValid = false
+		this.allRequiredValid = false;
 
 		this.debounce = this.debounce.bind(this)
-		this.handleInput = this.handleInput.bind(this)
+		this._checkValidity = this._checkValidity.bind(this)
 		this.handleKeydown = this.handleKeydown.bind(this)
 		this.reset = this.reset.bind(this)
+		this.elementsChanged = this.elementsChanged.bind(this)
 	}
 	debounce(callback, wait) {
 		let timeoutId = null;
@@ -50,7 +50,7 @@ customElements.define('sm-form', class extends HTMLElement {
 			}, wait);
 		};
 	}
-	handleInput(e) {
+	_checkValidity() {
 		this.allRequiredValid = this.requiredElements.every(elem => elem.isValid)
 		if (!this.submitButton) return;
 		if (this.allRequiredValid) {
@@ -61,34 +61,42 @@ customElements.define('sm-form', class extends HTMLElement {
 		}
 	}
 	handleKeydown(e) {
-		if (e.key === 'Enter' && e.target.tagName !== 'SM-TEXTAREA' ) {
+		if (e.key === 'Enter' && e.target.tagName !== 'SM-TEXTAREA') {
 			if (this.allRequiredValid) {
-				this.submitButton.click()
+				if (this.submitButton && this.submitButton.tagName === 'SM-BUTTON') {
+					this.submitButton.click()
+				}
+				this.dispatchEvent(new CustomEvent('submit', {
+					bubbles: true,
+					composed: true,
+				}))
 			}
 			else {
-			    this.requiredElements.find(elem => !elem.isValid).vibrate()
+				this.requiredElements.find(elem => !elem.isValid).vibrate()
 			}
 		}
 	}
 	reset() {
 		this.formElements.forEach(elem => elem.reset())
 	}
+	elementsChanged() {
+		this.formElements = [...this.querySelectorAll('sm-input, sm-textarea, sm-checkbox, tags-input, file-input, sm-switch, sm-radio')]
+		this.requiredElements = this.formElements.filter(elem => elem.hasAttribute('required'));
+		this.submitButton = this.querySelector('[variant="primary"], [type="submit"]');
+		this.resetButton = this.querySelector('[type="reset"]');
+		if (this.resetButton) {
+			this.resetButton.addEventListener('click', this.reset);
+		}
+		this._checkValidity()
+	}
 	connectedCallback() {
 		const slot = this.shadowRoot.querySelector('slot')
-		slot.addEventListener('slotchange', e => {
-			this.formElements = [...this.querySelectorAll('sm-input, sm-textarea, sm-checkbox, tags-input, file-input, sm-switch, sm-radio')]
-			this.requiredElements = this.formElements.filter(elem => elem.hasAttribute('required'))
-			this.submitButton = e.target.assignedElements().find(elem => elem.getAttribute('variant') === 'primary' || elem.getAttribute('type') === 'submit');
-			this.resetButton = e.target.assignedElements().find(elem => elem.getAttribute('type') === 'reset');
-			if (this.resetButton) {
-				this.resetButton.addEventListener('click', this.reset)
-			}
-		})
-		this.addEventListener('input', this.debounce(this.handleInput, 100))
-		this.addEventListener('keydown', this.debounce(this.handleKeydown, 100))
+		slot.addEventListener('slotchange', this.elementsChanged)
+		this.addEventListener('input', this.debounce(this._checkValidity, 100));
+		this.addEventListener('keydown', this.debounce(this.handleKeydown, 100));
 	}
 	disconnectedCallback() {
-		this.removeEventListener('input', this.debounce(this.handleInput, 100))
-		this.removeEventListener('keydown', this.debounce(this.handleKeydown, 100))
+		this.removeEventListener('input', this.debounce(this._checkValidity, 100));
+		this.removeEventListener('keydown', this.debounce(this.handleKeydown, 100));
 	}
 })

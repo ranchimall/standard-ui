@@ -79,8 +79,8 @@ textarea{
     position: absolute;
     margin: 0.7rem 1rem;
     opacity: .7;
-    font-weight: 400;
-    font-size: 1rem;
+    font-weight: inherit;
+    font-size: inherit;
     line-height: 1.5;
     pointer-events: none;
     user-select: none;
@@ -121,7 +121,7 @@ customElements.define('sm-textarea',
             this.textareaBox = this.shadowRoot.querySelector('.textarea')
             this.placeholder = this.shadowRoot.querySelector('.placeholder')
             this.reflectedAttributes = ['disabled', 'required', 'readonly', 'rows', 'minlength', 'maxlength']
-        
+
             this.reset = this.reset.bind(this)
             this.focusIn = this.focusIn.bind(this)
             this.fireEvent = this.fireEvent.bind(this)
@@ -142,21 +142,21 @@ customElements.define('sm-textarea',
         }
         set disabled(val) {
             if (val) {
-                this.setAttribute('disabled', '')   
+                this.setAttribute('disabled', '')
             } else {
-                this.removeAttribute('disabled')   
+                this.removeAttribute('disabled')
             }
         }
         get isValid() {
             return this.textarea.checkValidity()
         }
-        reset(){
+        reset() {
             this.setAttribute('value', '')
         }
-        focusIn(){
+        focusIn() {
             this.textarea.focus()
         }
-        fireEvent(){
+        fireEvent() {
             let event = new Event('input', {
                 bubbles: true,
                 cancelable: true,
@@ -164,7 +164,7 @@ customElements.define('sm-textarea',
             });
             this.dispatchEvent(event);
         }
-        checkInput(){
+        checkInput() {
             if (!this.hasAttribute('placeholder') || this.getAttribute('placeholder') === '')
                 return;
             if (this.textarea.value !== '') {

@@ -96,6 +96,13 @@ smNotifications.innerHTML = `
         width: 100%;
         fill: rgba(var(--text-color), 0.7);
     }
+    .icon--success {
+        fill: var(--green);
+      }
+      .icon--failure,
+      .icon--error {
+        fill: var(--danger-color);
+      }
     .close{
         height: 2rem;
         width: 2rem;
@@ -142,7 +149,7 @@ smNotifications.innerHTML = `
 
 customElements.define('sm-notifications', class extends HTMLElement {
     constructor() {
-        super()
+        super();
         this.shadow = this.attachShadow({
             mode: 'open'
         }).append(smNotifications.content.cloneNode(true))
@@ -169,31 +176,31 @@ customElements.define('sm-notifications', class extends HTMLElement {
         return result;
     }
 
-    createNotification(message, options) {
-        const { pinned = false, icon = '' } = options
+    createNotification(message, options = {}) {
+        const { pinned = false, icon = '' } = options;
         const notification = document.createElement('div')
         notification.id = this.randString(8)
-        notification.classList.add('notification')
-        let composition = ``
+        notification.classList.add('notification');
+        let composition = ``;
         composition += `
             <div class="icon-container">${icon}</div>
             <p>${message}</p>
-            `
+            `;
         if (pinned) {
-            notification.classList.add('pinned')
+            notification.classList.add('pinned');
             composition += `
                 <button class="close">
                     <svg class="icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="24" height="24"><path fill="none" d="M0 0h24v24H0z"/><path d="M12 10.586l4.95-4.95 1.414 1.414-4.95 4.95 4.95 4.95-1.414 1.414-4.95-4.95-4.95 4.95-1.414-1.414 4.95-4.95-4.95-4.95L7.05 5.636z"/></svg>
                 </button>
-            `
+            `;
         }
-        notification.innerHTML = composition
-        return notification
+        notification.innerHTML = composition;
+        return notification;
     }
 
     push(message, options = {}) {
-        const notification = this.createNotification(message, options)
-        this.notificationPanel.append(notification)
+        const notification = this.createNotification(message, options);
+        this.notificationPanel.append(notification);
         notification.animate([
             {
                 transform: `translateY(1rem)`,
@@ -203,8 +210,8 @@ customElements.define('sm-notifications', class extends HTMLElement {
                 transform: `none`,
                 opacity: '1'
             },
-        ], this.animationOptions)
-        return notification.id
+        ], this.animationOptions);
+        return notification.id;
     }
 
     removeNotification(notification) {
@@ -218,36 +225,36 @@ customElements.define('sm-notifications', class extends HTMLElement {
                 opacity: '0'
             }
         ], this.animationOptions).onfinish = () => {
-            notification.remove()
-        }
+            notification.remove();
+        };
     }
 
     clearAll() {
         Array.from(this.notificationPanel.children).forEach(child => {
-            this.removeNotification(child)
-        })
+            this.removeNotification(child);
+        });
     }
 
     connectedCallback() {
         this.notificationPanel.addEventListener('click', e => {
-            if (e.target.closest('.close')) (
-                this.removeNotification(e.target.closest('.notification'))
-            )
-        })
+            if (e.target.closest('.close')) {
+                this.removeNotification(e.target.closest('.notification'));
+            }
+        });
 
         const observer = new MutationObserver(mutationList => {
             mutationList.forEach(mutation => {
                 if (mutation.type === 'childList') {
                     if (mutation.addedNodes.length && !mutation.addedNodes[0].classList.contains('pinned')) {
                         setTimeout(() => {
-                            this.removeNotification(mutation.addedNodes[0])
+                            this.removeNotification(mutation.addedNodes[0]);
                         }, 5000);
                     }
                 }
-            })
-        })
+            });
+        });
         observer.observe(this.notificationPanel, {
             childList: true,
-        })
+        });
     }
-})
+});

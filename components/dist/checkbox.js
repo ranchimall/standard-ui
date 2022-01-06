@@ -95,6 +95,7 @@ customElements.define('sm-checkbox', class extends HTMLElement {
             mode: 'open'
         }).append(smCheckbox.content.cloneNode(true))
 
+        this.defaultState
         this.checkbox = this.shadowRoot.querySelector('.checkbox');
 
         this.reset = this.reset.bind(this)
@@ -140,31 +141,36 @@ customElements.define('sm-checkbox', class extends HTMLElement {
         return this.getAttribute('value')
     }
 
-    reset() {
-        this.removeAttribute('checked')
+    focusIn() {
+        this.focus()
     }
 
-    dispatch(){
+    reset() {
+        this.value = this.defaultState
+    }
+
+    dispatch() {
         this.dispatchEvent(new CustomEvent('change', {
             bubbles: true,
             composed: true
         }))
     }
-    handleKeyDown(e){
+    handleKeyDown(e) {
         if (e.code === "Space") {
             e.preventDefault()
             this.click()
         }
     }
-    handleClick(e){
+    handleClick(e) {
         this.toggleAttribute('checked')
     }
-    
+
     connectedCallback() {
         if (!this.hasAttribute('disabled')) {
             this.setAttribute('tabindex', '0')
         }
         this.setAttribute('role', 'checkbox')
+        this.defaultState = this.hasAttribute('checked')
         if (!this.hasAttribute('checked')) {
             this.setAttribute('aria-checked', 'false')
         }
