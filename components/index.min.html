@@ -407,35 +407,16 @@
             getRef("notification_drawer").clearAll();
             notify("We are back online.", "success");
         });
-
+        let zIndex = 10
         // function required for popups or modals to appear
-        class Stack {
-            constructor() {
-                this.items = [];
-            }
-            push(element) {
-                this.items.push(element);
-            }
-            pop() {
-                if (this.items.length == 0)
-                    return "Underflow";
-                return this.items.pop();
-            }
-            peek() {
-                return this.items[this.items.length - 1];
-            }
-        }
-        let popupStack = new Stack(),
-            zIndex = 10;
-
-        async function showPopup(popup, pinned) {
+        function showPopup(popupId, pinned) {
             zIndex++
-            getRef(popup).setAttribute('style', `z-index: ${zIndex}`)
-            popupStack = getRef(popup).show({ pinned, popupStack })
-            return getRef(popup);
+            getRef(popupId).setAttribute('style', `z-index: ${zIndex}`)
+            getRef(popupId).show({ pinned })
+            return getRef(popupId);
         }
 
-        // hides the popup or modal 
+        // hides the popup or modal
         function hidePopup() {
             if (popupStack.peek() === undefined)
                 return;
@@ -617,7 +598,7 @@
             else {
                 pageId = targetPage.includes('#') ? targetPage.split('#')[1] : targetPage
             }
-            if(!appPages.includes(pageId)) return
+            if (!appPages.includes(pageId)) return
             document.querySelector('.page:not(.hide-completely)').classList.add('hide-completely')
             document.querySelector('.list__item--active').classList.remove('list__item--active')
             getRef(pageId).classList.remove('hide-completely')

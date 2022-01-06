@@ -603,19 +603,20 @@
                     </div>
                     <div class="tr">
                         <div>
-                            sm-button 
+                            sm-button
                             <span class="highlight">variant="primary"</span>
                             or
                             <span class="highlight">type="submit"</span>
                         </div>
                         <p>
-                            Whenever enter is pressed inside an active <span class="highlight">sm-input</span>, this will fire click event. <br>
+                            Whenever enter is pressed inside an active <span class="highlight">sm-input</span>, this
+                            will fire click event. <br>
                             This will also change state depending opon validation conditions.
                         </p>
                     </div>
                     <div class="tr">
                         <div>
-                            sm-button 
+                            sm-button
                             <span class="highlight">type="reset"</span>
                         </div>
                         <p>
@@ -628,11 +629,13 @@
                 <h1 class="page__title">Hamburger menu</h1>
                 <section class="grid auto-grid-2 gap-3">
                     <div class="grid gap-1">
-                        <img class="screenshot" loading="lazy" src="assets/ham-menu-closed.png" alt="Hamburger menu closed">
+                        <img class="screenshot" loading="lazy" src="assets/ham-menu-closed.png"
+                            alt="Hamburger menu closed">
                         <h4>Hamburger menu closed</h4>
                     </div>
                     <div class="grid gap-1">
-                        <img class="screenshot" loading="lazy" src="assets/ham-menu-open.png" alt="Hamburger menu opened">
+                        <img class="screenshot" loading="lazy" src="assets/ham-menu-open.png"
+                            alt="Hamburger menu opened">
                         <h4>Hamburger menu open</h4>
                     </div>
                 </section>
@@ -1898,7 +1901,7 @@
 </code>
 </pre>
             </section>
-        </article>  
+        </article>
     </main>
     <template id="nav_item_template">
         <li>
@@ -2015,35 +2018,16 @@
             getRef("notification_drawer").clearAll();
             notify("We are back online.", "success");
         });
-
+        let zIndex = 10
         // function required for popups or modals to appear
-        class Stack {
-            constructor() {
-                this.items = [];
-            }
-            push(element) {
-                this.items.push(element);
-            }
-            pop() {
-                if (this.items.length == 0)
-                    return "Underflow";
-                return this.items.pop();
-            }
-            peek() {
-                return this.items[this.items.length - 1];
-            }
-        }
-        let popupStack = new Stack(),
-            zIndex = 10;
-
-        async function showPopup(popup, pinned) {
+        function showPopup(popupId, pinned) {
             zIndex++
-            getRef(popup).setAttribute('style', `z-index: ${zIndex}`)
-            popupStack = getRef(popup).show({ pinned, popupStack })
-            return getRef(popup);
+            getRef(popupId).setAttribute('style', `z-index: ${zIndex}`)
+            getRef(popupId).show({ pinned })
+            return getRef(popupId);
         }
 
-        // hides the popup or modal 
+        // hides the popup or modal
         function hidePopup() {
             if (popupStack.peek() === undefined)
                 return;
@@ -2228,7 +2212,7 @@
             else {
                 pageId = targetPage.includes('#') ? targetPage.split('#')[1] : targetPage
             }
-            if(!appPages.includes(pageId)) return
+            if (!appPages.includes(pageId)) return
             document.querySelector('.page:not(.hide-completely)').classList.add('hide-completely')
             document.querySelector('.list__item--active').classList.remove('list__item--active')
             getRef(pageId).classList.remove('hide-completely')
