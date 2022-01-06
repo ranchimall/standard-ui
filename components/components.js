@@ -30,8 +30,12 @@ smButton.innerHTML = `
     color: var(--accent-color);
 }
 :host([variant='no-outline']) .button{
-    background: rgba(var(--background-color), 1); 
+    background: inherit; 
     color: var(--accent-color);
+}
+:host([disabled]){
+    pointer-events: none;
+    cursor: not-allowed;
 }
 .button {
     position: relative;
@@ -62,17 +66,20 @@ smButton.innerHTML = `
     align-items: center;
 }
 :host([disabled]) .button{
+    pointer-events: none;
     cursor: not-allowed;
     opacity: 0.6;
     color: rgba(var(--text-color), 1);
     background-color: rgba(var(--text-color), 0.3);
 }
 @media (hover: hover){
-    :host(:not([disabled])) .button:hover{
+    :host(:not([disabled])) .button:hover,
+    :host(:focus-within:not([disabled])) .button{
         -webkit-box-shadow: 0 0.1rem 0.1rem rgba(0, 0, 0, 0.1), 0 0.2rem 0.8rem rgba(0, 0, 0, 0.12);
-                box-shadow: 0 0.1rem 0.1rem rgba(0, 0, 0, 0.1), 0 0.2rem 0.8rem rgba(0, 0, 0, 0.12);
+        box-shadow: 0 0.1rem 0.1rem rgba(0, 0, 0, 0.1), 0 0.2rem 0.8rem rgba(0, 0, 0, 0.12);
     }
-    :host([variant='outlined']) .button:hover{
+    :host([variant='outlined']:not([disabled])) .button:hover,
+    :host(:focus-within[variant='outlined']:not([disabled])) .button:hover{
         -webkit-box-shadow: 0 0 0 1px rgba(var(--text-color), 0.2) inset, 0 0.1rem 0.1rem rgba(0, 0, 0, 0.1), 0 0.4rem 0.8rem rgba(0, 0, 0, 0.12);
                 box-shadow: 0 0 0 1px rgba(var(--text-color), 0.2) inset, 0 0.1rem 0.1rem rgba(0, 0, 0, 0.1), 0 0.4rem 0.8rem rgba(0, 0, 0, 0.12);
     }
@@ -94,49 +101,52 @@ smButton.innerHTML = `
 customElements.define('sm-button',
     class extends HTMLElement {
         constructor() {
-            super()
+            super();
             this.attachShadow({
                 mode: 'open'
-            }).append(smButton.content.cloneNode(true))
+            }).append(smButton.content.cloneNode(true));
         }
         static get observedAttributes() {
             return ['disabled'];
         }
 
         get disabled() {
-            return this.hasAttribute('disabled')
+            return this.hasAttribute('disabled');
         }
 
         set disabled(value) {
             if (value) {
-                this.setAttribute('disabled', '')
-            }else {
-                this.removeAttribute('disabled')
+                this.setAttribute('disabled', '');
+            } else {
+                this.removeAttribute('disabled');
             }
+        }
+        focusIn() {
+            this.focus();
         }
 
         handleKeyDown(e) {
             if (!this.hasAttribute('disabled') && (e.key === 'Enter' || e.code === 'Space')) {
-                e.preventDefault()
-                this.click()
+                e.preventDefault();
+                this.click();
             }
         }
 
         connectedCallback() {
             if (!this.hasAttribute('disabled')) {
-                this.setAttribute('tabindex', '0')
+                this.setAttribute('tabindex', '0');
             }
-            this.setAttribute('role', 'button')
-            this.addEventListener('keydown', this.handleKeyDown)
+            this.setAttribute('role', 'button');
+            this.addEventListener('keydown', this.handleKeyDown);
         }
-        attributeChangedCallback(name, oldVal, newVal) {
+        attributeChangedCallback(name) {
             if (name === 'disabled') {
-                this.removeAttribute('tabindex')
-                this.setAttribute('aria-disabled', 'true')
-            }
-            else {
-                this.setAttribute('tabindex', '0')
-                this.setAttribute('aria-disabled', 'false')
+                if (this.hasAttribute('disabled')) {
+                    this.removeAttribute('tabindex');
+                } else {
+                    this.setAttribute('tabindex', '0');
+                }
+                this.setAttribute('aria-disabled', this.hasAttribute('disabled'));
             }
         }
     })
@@ -512,14 +522,14 @@ customElements.define('sm-carousel', class extends HTMLElement {
 
         const resObs = new ResizeObserver(entries => {
             entries.forEach(entry => {
-                if(entry.contentBoxSize) {
+                if (entry.contentBoxSize) {
                     // Firefox implements `contentBoxSize` as a single content rect, rather than an array
                     const contentBoxSize = Array.isArray(entry.contentBoxSize) ? entry.contentBoxSize[0] : entry.contentBoxSize;
-                    
+
                     this.scrollDistance = contentBoxSize.inlineSize * 0.6
                 } else {
                     this.scrollDistance = entry.contentRect.width * 0.6
-                  }
+                }
             })
         })
         resObs.observe(this)
@@ -653,7 +663,6 @@ smCheckbox.innerHTML = `
 </style>
 <label class="checkbox">
     <svg class="icon" viewBox="0 0 64 64">
-        <title>checkbox</title>
         <path class="checkmark" d="M50.52,19.56,26,44.08,13.48,31.56" />
     </svg>
     <slot></slot>
@@ -665,6 +674,7 @@ customElements.define('sm-checkbox', class extends HTMLElement {
             mode: 'open'
         }).append(smCheckbox.content.cloneNode(true))
 
+        this.defaultState
         this.checkbox = this.shadowRoot.querySelector('.checkbox');
 
         this.reset = this.reset.bind(this)
@@ -710,31 +720,36 @@ customElements.define('sm-checkbox', class extends HTMLElement {
         return this.getAttribute('value')
     }
 
-    reset() {
-        this.removeAttribute('checked')
+    focusIn() {
+        this.focus()
     }
 
-    dispatch(){
+    reset() {
+        this.value = this.defaultState
+    }
+
+    dispatch() {
         this.dispatchEvent(new CustomEvent('change', {
             bubbles: true,
             composed: true
         }))
     }
-    handleKeyDown(e){
+    handleKeyDown(e) {
         if (e.code === "Space") {
             e.preventDefault()
             this.click()
         }
     }
-    handleClick(e){
+    handleClick(e) {
         this.toggleAttribute('checked')
     }
-    
+
     connectedCallback() {
         if (!this.hasAttribute('disabled')) {
             this.setAttribute('tabindex', '0')
         }
         this.setAttribute('role', 'checkbox')
+        this.defaultState = this.hasAttribute('checked')
         if (!this.hasAttribute('checked')) {
             this.setAttribute('aria-checked', 'false')
         }
@@ -762,7 +777,7 @@ customElements.define('sm-checkbox', class extends HTMLElement {
         this.removeEventListener('change', this.handleClick)
     }
 })
-const smCopy = document.createElement('template')
+const smCopy = document.createElement('template');
 smCopy.innerHTML = `
 <style>     
 *{
@@ -772,9 +787,8 @@ smCopy.innerHTML = `
             box-sizing: border-box;
 }       
 :host{
-    display: -webkit-inline-box;
-    display: -ms-inline-flexbox;
-    display: inline-flex;
+    display: -webkit-box;
+    display: flex;
     --accent-color: #4d2588;
     --text-color: 17, 17, 17;
     --background-color: 255, 255, 255;
@@ -785,10 +799,20 @@ smCopy.innerHTML = `
 }
 .copy{
     display: grid;
-    gap: 1rem;
+    width: 100%;
+    gap: 0.5rem;
     padding: var(--padding);
     align-items: center;
     grid-template-columns: minmax(0, 1fr) auto;
+}
+:host(:not([clip-text])) .copy-content{
+    overflow-wrap: break-word;
+    word-wrap: break-word;
+}
+:host([clip-text]) .copy-content{
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
 }
 .copy-button{
     display: inline-flex;
@@ -819,7 +843,6 @@ smCopy.innerHTML = `
     }
 }
 </style>
-</style>
 <section class="copy">
     <p class="copy-content"></p>
     <button part="button" class="copy-button" title="copy">
@@ -832,24 +855,24 @@ smCopy.innerHTML = `
 customElements.define('sm-copy',
     class extends HTMLElement {
         constructor() {
-            super()
+            super();
             this.attachShadow({
                 mode: 'open'
-            }).append(smCopy.content.cloneNode(true))
-            
-            this.copyContent = this.shadowRoot.querySelector('.copy-content')
-            this.copyButton = this.shadowRoot.querySelector('.copy-button')
+            }).append(smCopy.content.cloneNode(true));
 
-            this.copy = this.copy.bind(this)
+            this.copyContent = this.shadowRoot.querySelector('.copy-content');
+            this.copyButton = this.shadowRoot.querySelector('.copy-button');
+
+            this.copy = this.copy.bind(this);
         }
         static get observedAttributes() {
-            return ['value']
+            return ['value'];
         }
         set value(val) {
-            this.setAttribute('value', val)
+            this.setAttribute('value', val);
         }
         get value() {
-            return this.getAttribute('value')
+            return this.getAttribute('value');
         }
         fireEvent() {
             this.dispatchEvent(
@@ -858,25 +881,25 @@ customElements.define('sm-copy',
                     bubbles: true,
                     cancelable: true,
                 })
-            )
+            );
         }
         copy() {
             navigator.clipboard.writeText(this.copyContent.textContent)
                 .then(res => this.fireEvent())
-                .catch(err => console.error(err))
+                .catch(err => console.error(err));
         }
         connectedCallback() {
-            this.copyButton.addEventListener('click', this.copy)
+            this.copyButton.addEventListener('click', this.copy);
         }
         attributeChangedCallback(name, oldValue, newValue) {
             if (name === 'value') {
-                this.copyContent.textContent = newValue
+                this.copyContent.textContent = newValue;
             }
         }
         disconnectedCallback() {
-            this.copyButton.removeEventListener('click', this.copy)
+            this.copyButton.removeEventListener('click', this.copy);
         }
-    })
+    });
 const fileInput = document.createElement('template')
 fileInput.innerHTML = `
   	<style>
@@ -944,74 +967,74 @@ fileInput.innerHTML = `
 `
 
 customElements.define('file-input', class extends HTMLElement {
-	constructor() {
-		super()
-		this.attachShadow({
-			mode: 'open'
-		}).append(fileInput.content.cloneNode(true))
-		this.input = this.shadowRoot.querySelector('input')
-		this.fileInput = this.shadowRoot.querySelector('.file-input')
-		this.filesPreviewWraper = this.shadowRoot.querySelector('.files-preview-wrapper')
-		this.reflectedAttributes = ['accept', 'multiple', 'capture']
+    constructor() {
+        super()
+        this.attachShadow({
+            mode: 'open'
+        }).append(fileInput.content.cloneNode(true))
+        this.input = this.shadowRoot.querySelector('input')
+        this.fileInput = this.shadowRoot.querySelector('.file-input')
+        this.filesPreviewWraper = this.shadowRoot.querySelector('.files-preview-wrapper')
+        this.reflectedAttributes = ['accept', 'multiple', 'capture']
 
-		this.reset = this.reset.bind(this)
-		this.formatBytes = this.formatBytes.bind(this)
-		this.createFilePreview = this.createFilePreview.bind(this)
-		this.handleChange = this.handleChange.bind(this)
-		this.handleKeyDown = this.handleKeyDown.bind(this)
-	}
-	static get observedAttributes() {
-		return ['accept', 'multiple', 'capture']
-	}
-	get files() {
-		return this.input.files
-	}
-	set accept(val) {
-		this.setAttribute('accept', val)
-	}
-	set multiple(val) {
-		if (val) {
-			this.setAttribute('mutiple', '')
-		}
-		else {
-			this.removeAttribute('mutiple')
-		}
-	}
-	set capture(val) {
-		this.setAttribute('capture', val)
-	}
-	set value(val) {
-		this.input.value = val
+        this.reset = this.reset.bind(this)
+        this.formatBytes = this.formatBytes.bind(this)
+        this.createFilePreview = this.createFilePreview.bind(this)
+        this.handleChange = this.handleChange.bind(this)
+        this.handleKeyDown = this.handleKeyDown.bind(this)
+    }
+    static get observedAttributes() {
+        return ['accept', 'multiple', 'capture']
+    }
+    get files() {
+        return this.input.files
+    }
+    set accept(val) {
+        this.setAttribute('accept', val)
+    }
+    set multiple(val) {
+        if (val) {
+            this.setAttribute('mutiple', '')
+        }
+        else {
+            this.removeAttribute('mutiple')
+        }
+    }
+    set capture(val) {
+        this.setAttribute('capture', val)
+    }
+    set value(val) {
+        this.input.value = val
     }
     get isValid() {
         return this.input.value !== ''
     }
-    reset(){
+    reset() {
         this.input.value = ''
         this.filesPreviewWraper.innerHTML = ''
     }
-    formatBytes(a,b=2){if(0===a)return"0 Bytes";const c=0>b?0:b,d=Math.floor(Math.log(a)/Math.log(1024));return parseFloat((a/Math.pow(1024,d)).toFixed(c))+" "+["Bytes","KB","MB","GB","TB","PB","EB","ZB","YB"][d]}
-	createFilePreview(file){
+    formatBytes(a, b = 2) { if (0 === a) return "0 Bytes"; const c = 0 > b ? 0 : b, d = Math.floor(Math.log(a) / Math.log(1024)); return parseFloat((a / Math.pow(1024, d)).toFixed(c)) + " " + ["Bytes", "KB", "MB", "GB", "TB", "PB", "EB", "ZB", "YB"][d] }
+    createFilePreview(file) {
         const filePreview = document.createElement('li')
-        const {name, size} = file
-		filePreview.className = 'file-preview'
-		filePreview.innerHTML = `
+        const { name, size } = file
+        filePreview.className = 'file-preview'
+        filePreview.innerHTML = `
 			<div class="file-name">${name}</div>
             <h5 class="file-size">${this.formatBytes(size)}</h5>
 		`
-		return filePreview
-	}
-	handleChange(e){
-		this.filesPreviewWraper.innerHTML = ''
-		const frag = document.createDocumentFragment()
-		Array.from(e.target.files).forEach(file => {
-			frag.append(
-				this.createFilePreview(file)
-			)
-		});
-		this.filesPreviewWraper.append(frag)
+        return filePreview
     }
-    handleKeyDown(e){
+    handleChange(e) {
+        this.filesPreviewWraper.innerHTML = ''
+        const frag = document.createDocumentFragment()
+        Array.from(e.target.files).forEach(file => {
+            frag.append(
+                this.createFilePreview(file)
+            )
+        });
+        this.filesPreviewWraper.append(frag)
+    }
+    handleKeyDown(e) {
         if (e.key === 'Enter' || e.code === 'Space') {
             e.preventDefault()
             this.input.click()
@@ -1022,23 +1045,23 @@ customElements.define('file-input', class extends HTMLElement {
         this.setAttribute('aria-label', 'File upload')
         this.input.addEventListener('change', this.handleChange)
         this.fileInput.addEventListener('keydown', this.handleKeyDown)
-	}
-	attributeChangedCallback(name) {
-		if (this.reflectedAttributes.includes(name)){
+    }
+    attributeChangedCallback(name) {
+        if (this.reflectedAttributes.includes(name)) {
             if (this.hasAttribute(name)) {
                 this.input.setAttribute(name, this.getAttribute(name) ? this.getAttribute(name) : '')
-			}
-			else {
+            }
+            else {
                 this.input.removeAttribute(name)
-			}
-		}
-	}
-	disconnectedCallback() {
+            }
+        }
+    }
+    disconnectedCallback() {
         this.input.removeEventListener('change', this.handleChange)
         this.fileInput.removeEventListener('keydown', this.handleKeyDown)
-	}
+    }
 })
-const smForm = document.createElement('template')
+const smForm = document.createElement('template');
 smForm.innerHTML = `
     <style>
     *{
@@ -1047,101 +1070,99 @@ smForm.innerHTML = `
         box-sizing: border-box;
     }
     :host{
-        --gap: 1rem;
+        display: flex;
         width: 100%;
     }
     form{
         display: grid;
-        gap: var(--gap);
+        gap: var(--gap, 1.5rem);
         width: 100%;
     }
     </style>
-	<form onsubmit="return false">
+	<form part="form" onsubmit="return false">
 		<slot></slot>
 	</form>
-`
+`;
 
 customElements.define('sm-form', class extends HTMLElement {
-	constructor() {
-		super()
-		this.attachShadow({
-			mode: 'open'
-		}).append(smForm.content.cloneNode(true))
+    constructor() {
+        super()
+        this.attachShadow({
+            mode: 'open'
+        }).append(smForm.content.cloneNode(true))
 
-		this.form = this.shadowRoot.querySelector('form')
-		this.formElements
-		this.requiredElements
-		this.submitButton
-		this.resetButton
-		this.allRequiredValid = false
+        this.form = this.shadowRoot.querySelector('form');
+        this.formElements
+        this.requiredElements
+        this.submitButton
+        this.resetButton
+        this.allRequiredValid = false;
 
-		this.debounce = this.debounce.bind(this)
-		this.handleInput = this.handleInput.bind(this)
-		this.handleKeydown = this.handleKeydown.bind(this)
-		this.reset = this.reset.bind(this)
-	}
-	debounce(callback, wait) {
-		let timeoutId = null;
-		return (...args) => {
-			window.clearTimeout(timeoutId);
-			timeoutId = window.setTimeout(() => {
-				callback.apply(null, args);
-			}, wait);
-		};
-	}
-	handleInput(e) {
-		this.allRequiredValid = this.requiredElements.every(elem => elem.isValid)
-		if (!this.submitButton) return;
-		if (this.allRequiredValid) {
-			this.submitButton.disabled = false;
-		}
-		else {
-			this.submitButton.disabled = true;
-		}
-	}
-	handleKeydown(e) {
-		if (e.key === 'Enter') {
-			if (this.allRequiredValid) {
-				this.submitButton.click()
-			}
-/* 			else {
-				this.requiredElements.find(elem => !elem.isValid)
-					.animate([
-						{ transform: 'translateX(-1rem)' },
-						{ transform: 'translateX(1rem)' },
-						{ transform: 'translateX(-0.5rem)' },
-						{ transform: 'translateX(0.5rem)' },
-						{ transform: 'translateX(0)' },
-					], {
-						duration: 300,
-						easing: 'ease'
-					})
-			} */
-		}
-	}
-	reset() {
-		this.formElements.forEach(elem => elem.reset())
-	}
-	connectedCallback() {
-		const slot = this.shadowRoot.querySelector('slot')
-		slot.addEventListener('slotchange', e => {
-			this.formElements = [...this.querySelectorAll('sm-input, sm-textarea, sm-checkbox, tags-input, file-input, sm-switch, sm-radio')]
-			this.requiredElements = this.formElements.filter(elem => elem.hasAttribute('required'))
-			this.submitButton = e.target.assignedElements().find(elem => elem.getAttribute('variant') === 'primary' || elem.getAttribute('type') === 'submit');
-			this.resetButton = e.target.assignedElements().find(elem => elem.getAttribute('type') === 'reset');
-			if (this.resetButton) {
-				this.resetButton.addEventListener('click', this.reset)
-			}
-		})
-		this.addEventListener('input', this.debounce(this.handleInput, 100))
-		this.addEventListener('keydown', this.debounce(this.handleKeydown, 100))
-	}
-	disconnectedCallback() {
-		this.removeEventListener('input', this.debounce(this.handleInput, 100))
-		this.removeEventListener('keydown', this.debounce(this.handleKeydown, 100))
-	}
+        this.debounce = this.debounce.bind(this)
+        this._checkValidity = this._checkValidity.bind(this)
+        this.handleKeydown = this.handleKeydown.bind(this)
+        this.reset = this.reset.bind(this)
+        this.elementsChanged = this.elementsChanged.bind(this)
+    }
+    debounce(callback, wait) {
+        let timeoutId = null;
+        return (...args) => {
+            window.clearTimeout(timeoutId);
+            timeoutId = window.setTimeout(() => {
+                callback.apply(null, args);
+            }, wait);
+        };
+    }
+    _checkValidity() {
+        this.allRequiredValid = this.requiredElements.every(elem => elem.isValid)
+        if (!this.submitButton) return;
+        if (this.allRequiredValid) {
+            this.submitButton.disabled = false;
+        }
+        else {
+            this.submitButton.disabled = true;
+        }
+    }
+    handleKeydown(e) {
+        if (e.key === 'Enter' && e.target.tagName !== 'SM-TEXTAREA') {
+            if (this.allRequiredValid) {
+                if (this.submitButton && this.submitButton.tagName === 'SM-BUTTON') {
+                    this.submitButton.click()
+                }
+                this.dispatchEvent(new CustomEvent('submit', {
+                    bubbles: true,
+                    composed: true,
+                }))
+            }
+            else {
+                this.requiredElements.find(elem => !elem.isValid).vibrate()
+            }
+        }
+    }
+    reset() {
+        this.formElements.forEach(elem => elem.reset())
+    }
+    elementsChanged() {
+        this.formElements = [...this.querySelectorAll('sm-input, sm-textarea, sm-checkbox, tags-input, file-input, sm-switch, sm-radio')]
+        this.requiredElements = this.formElements.filter(elem => elem.hasAttribute('required'));
+        this.submitButton = this.querySelector('[variant="primary"], [type="submit"]');
+        this.resetButton = this.querySelector('[type="reset"]');
+        if (this.resetButton) {
+            this.resetButton.addEventListener('click', this.reset);
+        }
+        this._checkValidity()
+    }
+    connectedCallback() {
+        const slot = this.shadowRoot.querySelector('slot')
+        slot.addEventListener('slotchange', this.elementsChanged)
+        this.addEventListener('input', this.debounce(this._checkValidity, 100));
+        this.addEventListener('keydown', this.debounce(this.handleKeydown, 100));
+    }
+    disconnectedCallback() {
+        this.removeEventListener('input', this.debounce(this._checkValidity, 100));
+        this.removeEventListener('keydown', this.debounce(this.handleKeydown, 100));
+    }
 })
-
 
 const hamburgerMenu = document.createElement('template')
 hamburgerMenu.innerHTML = `
@@ -1374,7 +1395,6 @@ border: none;
     --success-color: #00C853;
     --danger-color: red;
     --width: 100%;
-    --font-size: 1rem;
     --icon-gap: 0.5rem;
     --border-radius: 0.3rem;
     --padding: 0.7rem 1rem;
@@ -1436,9 +1456,9 @@ border: none;
     opacity: 0.6;
 }
 .label {
+    font-size: inherit;
     opacity: .7;
     font-weight: 400;
-    font-size: var(--font-size);
     position: absolute;
     top: 0;
     -webkit-transition: -webkit-transform 0.3s;
@@ -1476,7 +1496,7 @@ border: none;
             flex: 1;
 }    
 input{
-    font-size: var(--font-size);
+    font-size: inherit;
     border: none;
     background: transparent;
     outline: none;
@@ -1497,7 +1517,7 @@ input{
     color: var(--accent-color)
 }
 :host([variant="outlined"]) .input {
-    box-shadow: 0 0 0 0.1rem rgba(var(--text-color), 0.4) inset;
+    box-shadow: 0 0 0 0.1rem var(--border-color, rgba(var(--text-color), 0.4)) inset;
     background: rgba(var(--background-color), 1);
 }
 :host([variant="outlined"]) .label {
@@ -1521,7 +1541,7 @@ input{
     text-align: left;
     font-size: 0.9rem;
     align-items: center;
-    padding: 0.8rem 1rem;
+    padding: 0.8rem 0;
     color: rgba(var(--text-color), 0.8);
 }
 .success{
@@ -1561,107 +1581,131 @@ customElements.define('sm-input',
     class extends HTMLElement {
 
         constructor() {
-            super()
+            super();
             this.attachShadow({
                 mode: 'open'
-            }).append(smInput.content.cloneNode(true))
+            }).append(smInput.content.cloneNode(true));
 
-            this.inputParent = this.shadowRoot.querySelector('.input')
-            this.input = this.shadowRoot.querySelector('input')
-            this.clearBtn = this.shadowRoot.querySelector('.clear')
-            this.label = this.shadowRoot.querySelector('.label')
-            this.feedbackText = this.shadowRoot.querySelector('.feedback-text')
-            this._helperText
-            this._errorText
-            this.isRequired = false
-            this.validationFunction
-            this.reflectedAttributes = ['value', 'required', 'disabled', 'type', 'inputmode', 'readonly', 'min', 'max', 'pattern', 'minlength', 'maxlength', 'step']
-        
-            this.reset = this.reset.bind(this)
-            this.focusIn = this.focusIn.bind(this)
-            this.focusOut = this.focusOut.bind(this)
-            this.fireEvent = this.fireEvent.bind(this)
-            this.checkInput = this.checkInput.bind(this)
+            this.inputParent = this.shadowRoot.querySelector('.input');
+            this.input = this.shadowRoot.querySelector('input');
+            this.clearBtn = this.shadowRoot.querySelector('.clear');
+            this.label = this.shadowRoot.querySelector('.label');
+            this.feedbackText = this.shadowRoot.querySelector('.feedback-text');
+            this.outerContainer = this.shadowRoot.querySelector('.outer-container');
+            this._helperText = '';
+            this._errorText = '';
+            this.isRequired = false;
+            this.hideRequired = false;
+            this.validationFunction = undefined;
+            this.reflectedAttributes = ['value', 'required', 'disabled', 'type', 'inputmode', 'readonly', 'min', 'max', 'pattern', 'minlength', 'maxlength', 'step'];
+
+            this.reset = this.reset.bind(this);
+            this.focusIn = this.focusIn.bind(this);
+            this.focusOut = this.focusOut.bind(this);
+            this.fireEvent = this.fireEvent.bind(this);
+            this.checkInput = this.checkInput.bind(this);
+            this.vibrate = this.vibrate.bind(this);
         }
 
         static get observedAttributes() {
-            return ['value', 'placeholder', 'required', 'disabled', 'type', 'inputmode', 'readonly', 'min', 'max', 'pattern', 'minlength', 'maxlength', 'step', 'helper-text', 'error-text']
+            return ['value', 'placeholder', 'required', 'disabled', 'type', 'inputmode', 'readonly', 'min', 'max', 'pattern', 'minlength', 'maxlength', 'step', 'helper-text', 'error-text', 'hiderequired'];
         }
 
         get value() {
-            return this.input.value
+            return this.input.value;
         }
 
         set value(val) {
             this.input.value = val;
-            this.checkInput()
-            this.fireEvent()
+            this.checkInput();
+            this.fireEvent();
         }
 
         get placeholder() {
-            return this.getAttribute('placeholder')
+            return this.getAttribute('placeholder');
         }
 
         set placeholder(val) {
-            this.setAttribute('placeholder', val)
+            this.setAttribute('placeholder', val);
         }
 
         get type() {
-            return this.getAttribute('type')
+            return this.getAttribute('type');
         }
 
         set type(val) {
-            this.setAttribute('type', val)
-        }
-
-        get isValid() {
-            const _isValid = this.input.checkValidity()
-            let _customValid = true
-            if (this.customValidation) {
-                _customValid = this.validationFunction(this.input.value)
-            }
-            return (_isValid && _customValid)
+            this.setAttribute('type', val);
         }
 
         get validity() {
-            return this.input.validity
+            return this.input.validity;
         }
 
+        get disabled() {
+            return this.hasAttribute('disabled');
+        }
         set disabled(value) {
             if (value)
-                this.inputParent.classList.add('disabled')
+                this.inputParent.classList.add('disabled');
             else
-                this.inputParent.classList.remove('disabled')
+                this.inputParent.classList.remove('disabled');
+        }
+        get readOnly() {
+            return this.hasAttribute('readonly');
         }
         set readOnly(value) {
             if (value) {
-                this.setAttribute('readonly', '')
+                this.setAttribute('readonly', '');
             } else {
-                this.removeAttribute('readonly')
+                this.removeAttribute('readonly');
             }
         }
         set customValidation(val) {
-            this.validationFunction = val
+            this.validationFunction = val;
         }
         set errorText(val) {
-            this._errorText = val
+            this._errorText = val;
         }
         set helperText(val) {
-            this._helperText = val
+            this._helperText = val;
         }
-        reset(){
-            this.value = ''
+        get isValid() {
+            if (this.input.value !== '') {
+                const _isValid = this.input.checkValidity();
+                let _customValid = true;
+                if (this.validationFunction) {
+                    _customValid = Boolean(this.validationFunction(this.input.value));
+                }
+                if (_isValid && _customValid) {
+                    this.feedbackText.classList.remove('error');
+                    this.feedbackText.classList.add('success');
+                    this.feedbackText.textContent = '';
+                } else {
+                    if (this._errorText) {
+                        this.feedbackText.classList.add('error');
+                        this.feedbackText.classList.remove('success');
+                        this.feedbackText.innerHTML = `
+                            <svg class="status-icon status-icon--error" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="24" height="24"><path fill="none" d="M0 0h24v24H0z"/><path d="M12 22C6.477 22 2 17.523 2 12S6.477 2 12 2s10 4.477 10 10-4.477 10-10 10zm-1-7v2h2v-2h-2zm0-8v6h2V7h-2z"/></svg>
+                        ${this._errorText}
+                        `;
+                    }
+                }
+                return (_isValid && _customValid);
+            }
+        }
+        reset() {
+            this.value = '';
         }
 
-        focusIn(){
-            this.input.focus()
+        focusIn() {
+            this.input.focus();
         }
 
-        focusOut(){
-            this.input.blur()
+        focusOut() {
+            this.input.blur();
         }
 
-        fireEvent(){
+        fireEvent() {
             let event = new Event('input', {
                 bubbles: true,
                 cancelable: true,
@@ -1670,60 +1714,59 @@ customElements.define('sm-input',
             this.dispatchEvent(event);
         }
 
-        checkInput(e){
+        checkInput(e) {
             if (!this.hasAttribute('readonly')) {
-                if (this.input.value !== '') {
-                    this.clearBtn.classList.remove('hide')
+                if (this.input.value.trim() !== '') {
+                    this.clearBtn.classList.remove('hide');
                 } else {
-                    this.clearBtn.classList.add('hide')
-                    if (this.isRequired) {
-                        this.feedbackText.textContent = '* required'
+                    this.clearBtn.classList.add('hide');
+                    if (this.isRequired && !this.hideRequired) {
+                        this.feedbackText.textContent = '*required';
                     }
-                }
-                if (!this.isValid) {
-                    if (this._errorText) {
-                        this.feedbackText.classList.add('error')
-                        this.feedbackText.classList.remove('success')
-                        this.feedbackText.innerHTML = `
-                            <svg class="status-icon status-icon--error" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="24" height="24"><path fill="none" d="M0 0h24v24H0z"/><path d="M12 22C6.477 22 2 17.523 2 12S6.477 2 12 2s10 4.477 10 10-4.477 10-10 10zm-1-7v2h2v-2h-2zm0-8v6h2V7h-2z"/></svg>
-                        ${this._errorText}
-                        `
-                    }
-                } else {
-                    this.feedbackText.classList.remove('error')
-                    this.feedbackText.classList.add('success')
-                    this.feedbackText.textContent = ''
                 }
             }
             if (!this.hasAttribute('placeholder') || this.getAttribute('placeholder').trim() === '') return;
             if (this.input.value !== '') {
                 if (this.animate)
-                    this.inputParent.classList.add('animate-label')
+                    this.inputParent.classList.add('animate-label');
                 else
-                    this.label.classList.add('hide')
+                    this.label.classList.add('hide');
             } else {
                 if (this.animate)
-                    this.inputParent.classList.remove('animate-label')
+                    this.inputParent.classList.remove('animate-label');
                 else
-                    this.label.classList.remove('hide')
+                    this.label.classList.remove('hide');
             }
+        }
+        vibrate() {
+            this.outerContainer.animate([
+                { transform: 'translateX(-1rem)' },
+                { transform: 'translateX(1rem)' },
+                { transform: 'translateX(-0.5rem)' },
+                { transform: 'translateX(0.5rem)' },
+                { transform: 'translateX(0)' },
+            ], {
+                duration: 300,
+                easing: 'ease'
+            });
         }
 
 
         connectedCallback() {
-            this.animate = this.hasAttribute('animate')
-            this.input.addEventListener('input', this.checkInput)
-            this.clearBtn.addEventListener('click', this.reset)
+            this.animate = this.hasAttribute('animate');
+            this.setAttribute('role', 'textbox');
+            this.input.addEventListener('input', this.checkInput);
+            this.clearBtn.addEventListener('click', this.reset);
         }
-        
+
         attributeChangedCallback(name, oldValue, newValue) {
             if (oldValue !== newValue) {
                 if (this.reflectedAttributes.includes(name)) {
                     if (this.hasAttribute(name)) {
-                        this.input.setAttribute(name, this.getAttribute(name) ? this.getAttribute(name) : '')
+                        this.input.setAttribute(name, this.getAttribute(name) ? this.getAttribute(name) : '');
                     }
                     else {
-                        this.input.removeAttribute(name)
+                        this.input.removeAttribute(name);
                     }
                 }
                 if (name === 'placeholder') {
@@ -1731,43 +1774,56 @@ customElements.define('sm-input',
                     this.setAttribute('aria-label', newValue);
                 }
                 else if (this.hasAttribute('value')) {
-                    this.checkInput()
+                    this.checkInput();
                 }
                 else if (name === 'type') {
                     if (this.hasAttribute('type') && this.getAttribute('type') === 'number') {
-                        this.input.setAttribute('inputmode', 'numeric')
+                        this.input.setAttribute('inputmode', 'numeric');
                     }
                 }
                 else if (name === 'helper-text') {
-                    this._helperText = this.getAttribute('helper-text')
+                    this._helperText = this.getAttribute('helper-text');
                 }
                 else if (name === 'error-text') {
-                    this._errorText = this.getAttribute('error-text')
+                    this._errorText = this.getAttribute('error-text');
                 }
                 else if (name === 'required') {
-                    this.isRequired = this.hasAttribute('required')
-                    this.feedbackText.textContent = '* required'
+                    this.isRequired = this.hasAttribute('required');
+                    if (this.isRequired && !this.hideRequired) {
+                        this.feedbackText.textContent = '';
+                    } else {
+                        this.feedbackText.textContent = '*required';
+                    }
+                    if (this.isRequired) {
+                        this.setAttribute('aria-required', 'true');
+                    }
+                    else {
+                        this.setAttribute('aria-required', 'false');
+                    }
+                }
+                else if (name === 'hiderequired') {
+                    this.hideRequired = this.hasAttribute('hiderequired')
                 }
                 else if (name === 'readonly') {
                     if (this.hasAttribute('readonly')) {
-                        this.inputParent.classList.add('readonly')
+                        this.inputParent.classList.add('readonly');
                     } else {
-                        this.inputParent.classList.remove('readonly')
+                        this.inputParent.classList.remove('readonly');
                     }
                 }
                 else if (name === 'disabled') {
                     if (this.hasAttribute('disabled')) {
-                        this.inputParent.classList.add('disabled')
+                        this.inputParent.classList.add('disabled');
                     }
                     else {
-                        this.inputParent.classList.remove('disabled')
+                        this.inputParent.classList.remove('disabled');
                     }
                 }
             }
         }
         disconnectedCallback() {
-            this.input.removeEventListener('input', this.checkInput)
-            this.clearBtn.removeEventListener('click', this.reset)
+            this.input.removeEventListener('input', this.checkInput);
+            this.clearBtn.removeEventListener('click', this.reset);
         }
     })
 const smMenu = document.createElement('template')
@@ -1783,6 +1839,7 @@ smMenu.innerHTML = `
     display: -webkit-inline-box;
     display: -ms-inline-flexbox;
     display: inline-flex;
+
 }
 .menu{
     display: -ms-grid;
@@ -1827,7 +1884,8 @@ smMenu.innerHTML = `
     right: 0;
 }
 .options{
-    padding: 0.5rem 0;
+    top: 100%;
+    padding: 0.3rem;
     overflow: hidden auto;
     position: absolute;
     display: -webkit-box;
@@ -1840,8 +1898,8 @@ smMenu.innerHTML = `
     -webkit-box-direction: normal;
         -ms-flex-direction: column;
             flex-direction: column;
-    background: rgba(var(--background-color), 1);
-    border-radius: 0.3rem;
+    background: var(--background, rgba(var(--background-color), 1));
+    border-radius: var(--border-radius, 0.5rem);
     z-index: 1;
     -webkit-box-shadow: 0 0.5rem 1.5rem -0.5rem rgba(0,0,0,0.3);
             box-shadow: 0 0.5rem 1.5rem -0.5rem rgba(0,0,0,0.3);
@@ -1868,7 +1926,7 @@ smMenu.innerHTML = `
 </style>
 <div class="select">
     <div class="menu" tabindex="0">
-        <svg class="icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="24" height="24"><path fill="none" d="M0 0h24v24H0z"/><path d="M12 3c-1.1 0-2 .9-2 2s.9 2 2 2 2-.9 2-2-.9-2-2-2zm0 14c-1.1 0-2 .9-2 2s.9 2 2 2 2-.9 2-2-.9-2-2-2zm0-7c-1.1 0-2 .9-2 2s.9 2 2 2 2-.9 2-2-.9-2-2-2z"/></svg>
+        <svg class="icon" xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 0 24 24" width="24px" fill="#000000"><path d="M0 0h24v24H0V0z" fill="none"/><path d="M12 8c1.1 0 2-.9 2-2s-.9-2-2-2-2 .9-2 2 .9 2 2 2zm0 2c-1.1 0-2 .9-2 2s.9 2 2 2 2-.9 2-2-.9-2-2-2zm0 6c-1.1 0-2 .9-2 2s.9 2 2 2 2-.9 2-2-.9-2-2-2z"/></svg>
     </div>
     <div class="options hide">
         <slot></slot> 
@@ -1897,7 +1955,7 @@ customElements.define('sm-menu', class extends HTMLElement {
         this.collapse = this.collapse.bind(this)
         this.toggle = this.toggle.bind(this)
         this.handleKeyDown = this.handleKeyDown.bind(this)
-        this.handleClickoutSide = this.handleClickoutSide.bind(this)
+        this.handleClickOutside = this.handleClickOutside.bind(this)
 
     }
     static get observedAttributes() {
@@ -1965,7 +2023,7 @@ customElements.define('sm-menu', class extends HTMLElement {
                 e.preventDefault()
                 this.toggle()
             }
-        } else { // If mey is pressed over menu options
+        } else { // If key is pressed over menu options
             if (e.code === 'ArrowUp') {
                 e.preventDefault()
                 if (document.activeElement.previousElementSibling) {
@@ -1988,7 +2046,7 @@ customElements.define('sm-menu', class extends HTMLElement {
             }
         }
     }
-    handleClickoutSide(e) {
+    handleClickOutside(e) {
         if (!this.contains(e.target) && e.button !== 2) {
             this.collapse()
         }
@@ -2003,12 +2061,12 @@ customElements.define('sm-menu', class extends HTMLElement {
         });
         this.addEventListener('click', this.toggle)
         this.addEventListener('keydown', this.handleKeyDown)
-        document.addEventListener('mousedown', this.handleClickoutSide)
+        document.addEventListener('mousedown', this.handleClickOutside)
     }
     disconnectedCallback() {
         this.removeEventListener('click', this.toggle)
         this.removeEventListener('keydown', this.handleKeyDown)
-        document.removeEventListener('mousedown', this.handleClickoutSide)
+        document.removeEventListener('mousedown', this.handleClickOutside)
     }
 })
 
@@ -2026,20 +2084,19 @@ menuOption.innerHTML = `
     display: -webkit-box;
     display: -ms-flexbox;
     display: flex;
-    --padding: 0.6rem 1.6rem;
 }
 .option{
     display: -webkit-box;
     display: -ms-flexbox;
     display: flex;
     min-width: 100%;
-    padding: var(--padding);
+    padding: var(--padding, 0.6rem 1rem);
     cursor: pointer;
     overflow-wrap: break-word;
     white-space: nowrap;
     outline: none;
-    font-size: 1rem;
     user-select: none;
+    border-radius: 0.3rem;
     -webkit-box-align: center;
         -ms-flex-align: center;
             align-items: center;
@@ -2049,8 +2106,8 @@ menuOption.innerHTML = `
     background: rgba(var(--text-color), 0.1);
 }
 @media (any-hover: hover){
-    :host{
-        --padding: 0.8rem 1.6rem;
+    .option{
+        transition: background-color 0.2s;
     }
     .option:hover{
         background: rgba(var(--text-color), 0.1);
@@ -2070,6 +2127,7 @@ customElements.define('menu-option', class extends HTMLElement {
 
     connectedCallback() {
         this.setAttribute('role', 'option')
+        this.setAttribute('tabindex', '0')
         this.addEventListener('keyup', e => {
             if (e.code === 'Enter' || e.code === 'Space') {
                 e.preventDefault()
@@ -2176,6 +2234,13 @@ smNotifications.innerHTML = `
         width: 100%;
         fill: rgba(var(--text-color), 0.7);
     }
+    .icon--success {
+        fill: var(--green);
+      }
+      .icon--failure,
+      .icon--error {
+        fill: var(--danger-color);
+      }
     .close{
         height: 2rem;
         width: 2rem;
@@ -2222,7 +2287,7 @@ smNotifications.innerHTML = `
 
 customElements.define('sm-notifications', class extends HTMLElement {
     constructor() {
-        super()
+        super();
         this.shadow = this.attachShadow({
             mode: 'open'
         }).append(smNotifications.content.cloneNode(true))
@@ -2249,31 +2314,31 @@ customElements.define('sm-notifications', class extends HTMLElement {
         return result;
     }
 
-    createNotification(message, options) {
-        const { pinned = false, icon = '' } = options
+    createNotification(message, options = {}) {
+        const { pinned = false, icon = '' } = options;
         const notification = document.createElement('div')
         notification.id = this.randString(8)
-        notification.classList.add('notification')
-        let composition = ``
+        notification.classList.add('notification');
+        let composition = ``;
         composition += `
             <div class="icon-container">${icon}</div>
             <p>${message}</p>
-            `
+            `;
         if (pinned) {
-            notification.classList.add('pinned')
+            notification.classList.add('pinned');
             composition += `
                 <button class="close">
                     <svg class="icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="24" height="24"><path fill="none" d="M0 0h24v24H0z"/><path d="M12 10.586l4.95-4.95 1.414 1.414-4.95 4.95 4.95 4.95-1.414 1.414-4.95-4.95-4.95 4.95-1.414-1.414 4.95-4.95-4.95-4.95L7.05 5.636z"/></svg>
                 </button>
-            `
+            `;
         }
-        notification.innerHTML = composition
-        return notification
+        notification.innerHTML = composition;
+        return notification;
     }
 
     push(message, options = {}) {
-        const notification = this.createNotification(message, options)
-        this.notificationPanel.append(notification)
+        const notification = this.createNotification(message, options);
+        this.notificationPanel.append(notification);
         notification.animate([
             {
                 transform: `translateY(1rem)`,
@@ -2283,8 +2348,8 @@ customElements.define('sm-notifications', class extends HTMLElement {
                 transform: `none`,
                 opacity: '1'
             },
-        ], this.animationOptions)
-        return notification.id
+        ], this.animationOptions);
+        return notification.id;
     }
 
     removeNotification(notification) {
@@ -2298,40 +2363,59 @@ customElements.define('sm-notifications', class extends HTMLElement {
                 opacity: '0'
             }
         ], this.animationOptions).onfinish = () => {
-            notification.remove()
-        }
+            notification.remove();
+        };
     }
 
     clearAll() {
         Array.from(this.notificationPanel.children).forEach(child => {
-            this.removeNotification(child)
-        })
+            this.removeNotification(child);
+        });
     }
 
     connectedCallback() {
         this.notificationPanel.addEventListener('click', e => {
-            if (e.target.closest('.close')) (
-                this.removeNotification(e.target.closest('.notification'))
-            )
-        })
+            if (e.target.closest('.close')) {
+                this.removeNotification(e.target.closest('.notification'));
+            }
+        });
 
         const observer = new MutationObserver(mutationList => {
             mutationList.forEach(mutation => {
                 if (mutation.type === 'childList') {
                     if (mutation.addedNodes.length && !mutation.addedNodes[0].classList.contains('pinned')) {
                         setTimeout(() => {
-                            this.removeNotification(mutation.addedNodes[0])
+                            this.removeNotification(mutation.addedNodes[0]);
                         }, 5000);
                     }
                 }
-            })
-        })
+            });
+        });
         observer.observe(this.notificationPanel, {
             childList: true,
-        })
+        });
     }
-})
-const smPopup = document.createElement('template')
+});
+
+class Stack {
+    constructor() {
+        this.items = [];
+    }
+    push(element) {
+        this.items.push(element);
+    }
+    pop() {
+        if (this.items.length == 0)
+            return "Underflow";
+        return this.items.pop();
+    }
+    peek() {
+        return this.items[this.items.length - 1];
+    }
+}
+const popupStack = new Stack();
+
+const smPopup = document.createElement('template');
 smPopup.innerHTML = `
 <style>
 *{
@@ -2352,7 +2436,6 @@ smPopup.innerHTML = `
     --height: auto;
     --min-width: auto;
     --min-height: auto;
-    --body-padding: 1.5rem;
     --backdrop-background: rgba(0, 0, 0, 0.6);
     --border-radius: 0.8rem 0.8rem 0 0;
 }
@@ -2365,16 +2448,24 @@ smPopup.innerHTML = `
     left: 0;
     right: 0;
     place-items: center;
-    background: var(--backdrop-background);
-    -webkit-transition: opacity 0.3s;
-    -o-transition: opacity 0.3s;
-    transition: opacity 0.3s;
     z-index: 10;
     touch-action: none;
 }
 :host(.stacked) .popup{
     -webkit-transform: scale(0.9) translateY(-2rem) !important;
             transform: scale(0.9) translateY(-2rem) !important;
+}
+.background{
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    pointer-events: none;
+    background: var(--backdrop-background);
+    -webkit-transition: opacity 0.3s;
+    -o-transition: opacity 0.3s;
+    transition: opacity 0.3s;
 }
 .popup{
     display: -webkit-box;
@@ -2395,17 +2486,9 @@ smPopup.innerHTML = `
     min-height: var(--min-height);
     max-height: 90vh;
     border-radius: var(--border-radius);
-    -webkit-transform: scale(1) translateY(100%);
-            transform: scale(1) translateY(100%);
-    -webkit-transition: -webkit-transform 0.3s;
-    transition: -webkit-transform 0.3s;
-    -o-transition: transform 0.3s;
-    transition: transform 0.3s, -webkit-transform 0.3s;
-    transition: transform 0.3s;
     background: rgba(var(--background-color), 1);
     -webkit-box-shadow: 0 -1rem 2rem #00000020;
             box-shadow: 0 -1rem 2rem #00000020;
-    content-visibility: auto;
 }
 .container-header{
     display: -webkit-box;
@@ -2432,17 +2515,15 @@ smPopup.innerHTML = `
         -ms-flex: 1;
             flex: 1;
     width: 100%;
-    padding: var(--body-padding);
+    padding: var(--body-padding, 1.5rem);
     overflow-y: auto;
 }
 .hide{
-    opacity: 0;
-    pointer-events: none;
-    visiblity: none;
+    display:none;
 }
 @media screen and (min-width: 640px){
     :host{
-        --border-radius: 0.4rem;
+        --border-radius: 0.5rem;
     }
     .popup{
         -ms-flex-item-align: center;
@@ -2450,8 +2531,6 @@ smPopup.innerHTML = `
             align-self: center;
         border-radius: var(--border-radius);
         height: var(--height);
-        -webkit-transform: scale(1) translateY(3rem);
-                transform: scale(1) translateY(3rem);
         -webkit-box-shadow: 0 3rem 2rem -0.5rem #00000040;
                 box-shadow: 0 3rem 2rem -0.5rem #00000040;
     }
@@ -2486,7 +2565,8 @@ smPopup.innerHTML = `
     }
 }
 </style>
-<div part="background" class="popup-container hide" role="dialog">
+<div class="popup-container hide" role="dialog">
+    <div part="background" class="background"></div>
     <div part="popup" class="popup">
         <div part="popup-header" class="popup-top">
             <div class="handle"></div>
@@ -2500,34 +2580,38 @@ smPopup.innerHTML = `
 `;
 customElements.define('sm-popup', class extends HTMLElement {
     constructor() {
-        super()
+        super();
         this.attachShadow({
             mode: 'open'
-        }).append(smPopup.content.cloneNode(true))
+        }).append(smPopup.content.cloneNode(true));
 
-        this.allowClosing = false
-        this.isOpen = false
-        this.pinned = false
-        this.popupStack
-        this.offset
-        this.touchStartY = 0
-        this.touchEndY = 0
-        this.touchStartTime = 0
-        this.touchEndTime = 0
-        this.touchEndAnimataion
+        this.allowClosing = false;
+        this.isOpen = false;
+        this.pinned = false;
+        this.offset = 0;
+        this.touchStartY = 0;
+        this.touchEndY = 0;
+        this.touchStartTime = 0;
+        this.touchEndTime = 0;
+        this.touchEndAnimation = undefined;
+        this.focusable
+        this.autoFocus
+        this.mutationObserver
 
-        this.popupContainer = this.shadowRoot.querySelector('.popup-container')
-        this.popup = this.shadowRoot.querySelector('.popup')
-        this.popupBodySlot = this.shadowRoot.querySelector('.popup-body slot')
-        this.popupHeader = this.shadowRoot.querySelector('.popup-top')
+        this.popupContainer = this.shadowRoot.querySelector('.popup-container');
+        this.backdrop = this.shadowRoot.querySelector('.background');
+        this.popup = this.shadowRoot.querySelector('.popup');
+        this.popupBodySlot = this.shadowRoot.querySelector('.popup-body slot');
+        this.popupHeader = this.shadowRoot.querySelector('.popup-top');
 
-        this.resumeScrolling = this.resumeScrolling.bind(this)
-        this.show = this.show.bind(this)
-        this.hide = this.hide.bind(this)
-        this.handleTouchStart = this.handleTouchStart.bind(this)
-        this.handleTouchMove = this.handleTouchMove.bind(this)
-        this.handleTouchEnd = this.handleTouchEnd.bind(this)
-        this.movePopup = this.movePopup.bind(this)
+        this.resumeScrolling = this.resumeScrolling.bind(this);
+        this.setStateOpen = this.setStateOpen.bind(this);
+        this.show = this.show.bind(this);
+        this.hide = this.hide.bind(this);
+        this.handleTouchStart = this.handleTouchStart.bind(this);
+        this.handleTouchMove = this.handleTouchMove.bind(this);
+        this.handleTouchEnd = this.handleTouchEnd.bind(this);
+        this.detectFocus = this.detectFocus.bind(this);
     }
 
     static get observedAttributes() {
@@ -2535,177 +2619,257 @@ customElements.define('sm-popup', class extends HTMLElement {
     }
 
     get open() {
-        return this.isOpen
+        return this.isOpen;
+    }
+
+    animateTo(element, keyframes, options) {
+        const anime = element.animate(keyframes, { ...options, fill: 'both' })
+        anime.finished.then(() => {
+            anime.commitStyles()
+            anime.cancel()
+        })
+        return anime
     }
 
     resumeScrolling() {
         const scrollY = document.body.style.top;
         window.scrollTo(0, parseInt(scrollY || '0') * -1);
-        setTimeout(() => {
-            document.body.style.overflow = 'auto';
-            document.body.style.top = 'initial'
-        }, 300);
+        document.body.style.overflow = 'auto';
+        document.body.style.top = 'initial';
+    }
+
+    setStateOpen() {
+        if (!this.isOpen || this.offset) {
+            const animOptions = {
+                duration: 300,
+                easing: 'ease'
+            }
+            const initialAnimation = (window.innerWidth > 640) ? 'scale(1.1)' : `translateY(${this.offset ? `${this.offset}px` : '100%'})`
+            this.animateTo(this.popup, [
+                {
+                    opacity: this.offset ? 1 : 0,
+                    transform: initialAnimation
+                },
+                {
+                    opacity: 1,
+                    transform: 'none'
+                },
+            ], animOptions)
+
+        }
     }
 
     show(options = {}) {
-        const {pinned = false, popupStack = undefined} = options
-        if (popupStack)
-            this.popupStack = popupStack
-        if (this.popupStack && !this.hasAttribute('open')) {
-            this.popupStack.push({
-                popup: this,
-                permission: pinned
-            })
-            if (this.popupStack.items.length > 1) {
-                this.popupStack.items[this.popupStack.items.length - 2].popup.classList.add('stacked')
+        const { pinned = false } = options;
+        if (!this.isOpen) {
+            const animOptions = {
+                duration: 300,
+                easing: 'ease'
             }
+            if (popupStack) {
+                popupStack.push({
+                    popup: this,
+                    permission: pinned
+                });
+                if (popupStack.items.length > 1) {
+                    this.animateTo(popupStack.items[popupStack.items.length - 2].popup.shadowRoot.querySelector('.popup'), [
+                        { transform: 'none' },
+                        { transform: 'translateY(-1.5rem) scale(0.9)' },
+                    ], animOptions)
+                }
+            }
+            this.popupContainer.classList.remove('hide');
+            if (!this.offset)
+                this.backdrop.animate([
+                    { opacity: 0 },
+                    { opacity: 1 },
+                ], animOptions)
+            this.setStateOpen()
             this.dispatchEvent(
                 new CustomEvent("popupopened", {
                     bubbles: true,
                     detail: {
                         popup: this,
-                        popupStack: this.popupStack
                     }
                 })
-            )
-            this.setAttribute('open', '')
-            this.pinned = pinned
-            this.isOpen = true
+            );
+            this.pinned = pinned;
+            this.isOpen = true;
+            document.body.style.overflow = 'hidden';
+            document.body.style.top = `-${window.scrollY}px`;
+            const elementToFocus = this.autoFocus || this.focusable[0];
+            elementToFocus.tagName.includes('SM-') ? elementToFocus.focusIn() : elementToFocus.focus();
+            if (!this.hasAttribute('open'))
+                this.setAttribute('open', '');
         }
-        this.popupContainer.classList.remove('hide')
-        this.popup.style.transform = 'none';
-        document.body.style.overflow = 'hidden';
-        document.body.style.top = `-${window.scrollY}px`
-        return this.popupStack
     }
     hide() {
-        if (window.innerWidth < 640)
-            this.popup.style.transform = 'translateY(100%)';
-        else
-            this.popup.style.transform = 'translateY(3rem)';
-        this.popupContainer.classList.add('hide')
-        this.removeAttribute('open')
-        if (typeof this.popupStack !== 'undefined') {
-            this.popupStack.pop()
-            if (this.popupStack.items.length) {
-                this.popupStack.items[this.popupStack.items.length - 1].popup.classList.remove('stacked')
-            } else {
-                this.resumeScrolling()
-            }
-        } else {
-            this.resumeScrolling()
+        const animOptions = {
+            duration: 150,
+            easing: 'ease'
         }
+        this.backdrop.animate([
+            { opacity: 1 },
+            { opacity: 0 }
+        ], animOptions)
+        this.animateTo(this.popup, [
+            {
+                opacity: 1,
+                transform: (window.innerWidth > 640) ? 'none' : `translateY(${this.offset ? `${this.offset}px` : '0'})`
+            },
+            {
+                opacity: 0,
+                transform: (window.innerWidth > 640) ? 'scale(1.1)' : 'translateY(100%)'
+            },
+        ], animOptions).finished
+            .finally(() => {
+                this.popupContainer.classList.add('hide');
+                this.popup.style = ''
+                this.removeAttribute('open');
+                if (typeof popupStack !== 'undefined') {
+                    popupStack.pop();
+                    if (popupStack.items.length) {
+                        this.animateTo(popupStack.items[popupStack.items.length - 1].popup.shadowRoot.querySelector('.popup'), [
+                            { transform: 'translateY(-1.5rem) scale(0.9)' },
+                            { transform: 'none' },
+                        ], animOptions)
 
-        if (this.forms.length) {
-            setTimeout(() => {
-                this.forms.forEach(form => form.reset())
-            }, 300);
-        }
-        setTimeout(() => {
-            this.dispatchEvent(
-                new CustomEvent("popupclosed", {
-                    bubbles: true,
-                    detail: {
-                        popup: this,
-                        popupStack: this.popupStack
+                    } else {
+                        this.resumeScrolling();
                     }
-                })
-            )
-            this.isOpen = false
-        }, 300);
+                } else {
+                    this.resumeScrolling();
+                }
+
+                if (this.forms.length) {
+                    this.forms.forEach(form => form.reset());
+                }
+                this.dispatchEvent(
+                    new CustomEvent("popupclosed", {
+                        bubbles: true,
+                        detail: {
+                            popup: this,
+                        }
+                    })
+                );
+                this.isOpen = false;
+            })
     }
 
     handleTouchStart(e) {
-        this.touchStartY = e.changedTouches[0].clientY
-        this.popup.style.transition = 'transform 0.1s'
-        this.touchStartTime = e.timeStamp
+        this.offset = 0
+        this.popupHeader.addEventListener('touchmove', this.handleTouchMove, { passive: true });
+        this.popupHeader.addEventListener('touchend', this.handleTouchEnd, { passive: true });
+        this.touchStartY = e.changedTouches[0].clientY;
+        this.touchStartTime = e.timeStamp;
     }
 
     handleTouchMove(e) {
         if (this.touchStartY < e.changedTouches[0].clientY) {
             this.offset = e.changedTouches[0].clientY - this.touchStartY;
-            this.touchEndAnimataion = window.requestAnimationFrame(() => this.movePopup())
+            this.touchEndAnimation = window.requestAnimationFrame(() => {
+                this.popup.style.transform = `translateY(${this.offset}px)`;
+            });
         }
     }
 
     handleTouchEnd(e) {
-        this.touchEndTime = e.timeStamp
-        cancelAnimationFrame(this.touchEndAnimataion)
-        this.touchEndY = e.changedTouches[0].clientY
-        this.popup.style.transition = 'transform 0.3s'
-        this.threshold = this.popup.getBoundingClientRect().height * 0.3
+        this.touchEndTime = e.timeStamp;
+        cancelAnimationFrame(this.touchEndAnimation);
+        this.touchEndY = e.changedTouches[0].clientY;
+        this.threshold = this.popup.getBoundingClientRect().height * 0.3;
         if (this.touchEndTime - this.touchStartTime > 200) {
             if (this.touchEndY - this.touchStartY > this.threshold) {
                 if (this.pinned) {
-                    this.show()
-                    return
+                    this.setStateOpen();
+                    return;
                 } else
-                    this.hide()
+                    this.hide();
             } else {
-                this.show()
+                this.setStateOpen();
             }
         } else {
             if (this.touchEndY > this.touchStartY)
                 if (this.pinned) {
-                    this.show()
-                    return
+                    this.setStateOpen();
+                    return;
                 }
                 else
-                    this.hide()
+                    this.hide();
+        }
+        this.popupHeader.removeEventListener('touchmove', this.handleTouchMove, { passive: true });
+        this.popupHeader.removeEventListener('touchend', this.handleTouchEnd, { passive: true });
+    }
+
+
+    detectFocus(e) {
+        if (e.code === 'Tab') {
+            const lastElement = this.focusable[this.focusable.length - 1];
+            const firstElement = this.focusable[0];
+            if (e.shiftKey && document.activeElement === firstElement) {
+                e.preventDefault();
+                lastElement.tagName.includes('SM-') ? lastElement.focusIn() : lastElement.focus();
+            } else if (!e.shiftKey && document.activeElement === lastElement) {
+                e.preventDefault();
+                firstElement.tagName.includes('SM-') ? firstElement.focusIn() : firstElement.focus();
+            }
         }
     }
 
-    movePopup() {
-        this.popup.style.transform = `translateY(${this.offset}px)`
+    updateFocusableList() {
+        this.focusable = this.querySelectorAll('sm-button:not([disabled]), button:not([disabled]), [href], sm-input, input, sm-select, select, sm-checkbox, sm-textarea, textarea, [tabindex]:not([tabindex="-1"])')
+        this.autoFocus = this.querySelector('[autofocus]')
     }
 
     connectedCallback() {
-
         this.popupBodySlot.addEventListener('slotchange', () => {
-            this.forms = this.querySelectorAll('sm-form')
-        })
+            this.forms = this.querySelectorAll('sm-form');
+            this.updateFocusableList()
+        });
         this.popupContainer.addEventListener('mousedown', e => {
             if (e.target === this.popupContainer && !this.pinned) {
                 if (this.pinned) {
-                    this.show()
+                    this.setStateOpen();
                 } else
-                    this.hide()
+                    this.hide();
             }
-        })
+        });
 
         const resizeObserver = new ResizeObserver(entries => {
             for (let entry of entries) {
                 if (entry.contentBoxSize) {
                     // Firefox implements `contentBoxSize` as a single content rect, rather than an array
                     const contentBoxSize = Array.isArray(entry.contentBoxSize) ? entry.contentBoxSize[0] : entry.contentBoxSize;
-                    this.threshold = entry.blockSize.height * 0.3
+                    this.threshold = contentBoxSize.blockSize.height * 0.3;
                 } else {
-                    this.threshold = entry.contentRect.height * 0.3
+                    this.threshold = entry.contentRect.height * 0.3;
                 }
             }
         });
-        resizeObserver.observe(this)
-        
-        
-        this.popupHeader.addEventListener('touchstart', (e) => { this.handleTouchStart(e) }, { passive: true })
-        this.popupHeader.addEventListener('touchmove', (e) => { this.handleTouchMove(e) }, { passive: true })
-        this.popupHeader.addEventListener('touchend', (e) => { this.handleTouchEnd(e) }, { passive: true })
+        resizeObserver.observe(this);
+
+        this.mutationObserver = new MutationObserver(entries => {
+            this.updateFocusableList()
+        })
+        this.mutationObserver.observe(this, { attributes: true, childList: true, subtree: true })
+
+        this.addEventListener('keydown', this.detectFocus);
+        this.popupHeader.addEventListener('touchstart', this.handleTouchStart, { passive: true });
     }
     disconnectedCallback() {
-        this.popupHeader.removeEventListener('touchstart', this.handleTouchStart, { passive: true })
-        this.popupHeader.removeEventListener('touchmove', this.handleTouchMove, { passive: true })
-        this.popupHeader.removeEventListener('touchend', this.handleTouchEnd, { passive: true })
-        resizeObserver.unobserve()
+        this.removeEventListener('keydown', this.detectFocus);
+        resizeObserver.unobserve();
+        this.mutationObserver.disconnect()
+        this.popupHeader.removeEventListener('touchstart', this.handleTouchStart, { passive: true });
     }
-    attributeChangedCallback(name, oldVal, newVal) {
+    attributeChangedCallback(name) {
         if (name === 'open') {
             if (this.hasAttribute('open')) {
-                this.show()
+                this.show();
             }
         }
     }
-})
-
+});
 const smRadio = document.createElement('template')
 smRadio.innerHTML = `
 <style>
@@ -2836,7 +3000,7 @@ window.customElements.define('sm-radio', class extends HTMLElement {
             this.dispatchEvent(new CustomEvent(`changed${this.getAttribute('name')}`, this.options))
         }
     }
-    handleKeyDown(e){
+    handleKeyDown(e) {
         if (e.code === "Space") {
             e.preventDefault()
             this.handleClick()
@@ -2847,7 +3011,7 @@ window.customElements.define('sm-radio', class extends HTMLElement {
             this.setAttribute('checked', '')
             this.dispatchGroupEvent()
         }
-        
+
     }
     handleRadioGroup(e) {
         if (e.detail.uid !== this.uniqueId) {
@@ -2936,10 +3100,6 @@ smSwitch.innerHTML = `
         cursor: pointer;
         -webkit-tap-highlight-color: transparent;
     }
-    :host(:not([disabled])) label:focus-visible{
-        -webkit-box-shadow: 0 0 0 0.1rem var(--accent-color);
-            box-shadow: 0 0 0 0.1rem var(--accent-color);
-    }
     :host([disabled]) {
         cursor: not-allowed;
         opacity: 0.6;
@@ -2979,15 +3139,12 @@ smSwitch.innerHTML = `
         border-radius: 1rem;
     }
     
-    .switch:active .button::after,
-    .switch:focus .button::after{
-        opacity: 1
-    }
-    .switch:focus-visible .button::after{
-        opacity: 1
+    label:active .thumb::after,
+    label:focus-within .thumb::after{
+        opacity: 1;
     }
     
-    .button::after{
+    .thumb::after{
         content: '';
         display: -webkit-box;
         display: -ms-flexbox;
@@ -3003,7 +3160,7 @@ smSwitch.innerHTML = `
         transition: opacity 0.3s;
     }
     
-    .button {
+    .thumb {
         position: relative;
         display: -webkit-inline-box;
         display: -ms-inline-flexbox;
@@ -3027,7 +3184,7 @@ smSwitch.innerHTML = `
         border: solid 0.3rem white;
     }
     
-    input:checked ~ .button {
+    input:checked ~ .thumb {
         -webkit-transform: translateX(100%);
             -ms-transform: translateX(100%);
                 transform: translateX(100%);
@@ -3042,7 +3199,7 @@ smSwitch.innerHTML = `
     <div part="switch" class="switch">
         <input type="checkbox">
         <div class="track"></div>
-        <div class="button"></div>
+        <div class="thumb"></div>
     </div>
     <slot name="right"></slot>
 </label>`
@@ -3089,12 +3246,16 @@ customElements.define('sm-switch', class extends HTMLElement {
         }
     }
 
-    dispatch(){
+    reset() {
+
+    }
+
+    dispatch() {
         this.dispatchEvent(new CustomEvent('change', {
             bubbles: true,
             composed: true,
             detail: {
-                value: this.isChecked 
+                value: this.isChecked
             }
         }))
     }
@@ -3118,21 +3279,21 @@ customElements.define('sm-switch', class extends HTMLElement {
         if (oldValue !== newValue) {
             if (name === 'disabled') {
                 if (this.hasAttribute('disabled')) {
-                    this.disabled = true                
+                    this.disabled = true
                 }
                 else {
-                    this.disabled = false                
+                    this.disabled = false
                 }
             }
             else if (name === 'checked') {
                 if (this.hasAttribute('checked')) {
                     this.isChecked = true
-                    this.input.checked = true            
+                    this.input.checked = true
                 }
                 else {
                     this.isChecked = false
-                    this.input.checked = false               
-                } 
+                    this.input.checked = false
+                }
             }
         }
     }
@@ -3148,9 +3309,9 @@ smSelect.innerHTML = `
             box-sizing: border-box;
 } 
 :host{
-    display: -webkit-inline-box;
-    display: -ms-inline-flexbox;
-    display: inline-flex;
+    display: -webkit-box;
+    display: -ms-flexbox;
+    display: flex;
     --accent-color: #4d2588;
     --text-color: 17, 17, 17;
     --background-color: 255, 255, 255;
@@ -3160,9 +3321,6 @@ smSelect.innerHTML = `
 :host([disabled]) .select{
     opacity: 0.6;
     cursor: not-allowed;
-}
-.hide{
-    display: none !important;
 }
 .select{
     position: relative;
@@ -3178,16 +3336,18 @@ smSelect.innerHTML = `
     -webkit-tap-highlight-color: transparent;
 }
 .icon {
-    height: 1.5rem;
-    width: 1.5rem;
+    height: 1.2rem;
+    width: 1.2rem;
+    margin-left: 0.5rem;
     fill: rgba(var(--text-color), 0.7);
 }      
 .selected-option-text{
-    font-size: 0.9rem;
+    font-size: inherit;
     overflow: hidden;
     -o-text-overflow: ellipsis;
        text-overflow: ellipsis;
     white-space: nowrap;
+    font-weight: 500;
 }
 .selection{
     border-radius: 0.3rem;
@@ -3196,20 +3356,18 @@ smSelect.innerHTML = `
     -ms-grid-columns: 1fr auto;
     grid-template-columns: 1fr auto;
         grid-template-areas: 'heading heading' '. .';
-    padding: 0.4rem 1rem;
+    padding: 0.4rem 0.8rem;
     background: rgba(var(--text-color), 0.06);
     border: solid 1px rgba(var(--text-color), 0.2);
     -webkit-box-align: center;
         -ms-flex-align: center;
             align-items: center;
     outline: none;
+    z-index: 2;
 }
 .selection:focus{
     -webkit-box-shadow: 0 0 0 0.1rem var(--accent-color);
             box-shadow: 0 0 0 0.1rem var(--accent-color) 
-}
-.icon{
-    margin-left: 1rem;
 }
 :host([align-select="left"]) .options{
     left: 0;
@@ -3219,6 +3377,7 @@ smSelect.innerHTML = `
 }
 .options{
     top: 100%;
+    padding: var(--options-padding, 0.3rem);
     margin-top: 0.2rem; 
     overflow: hidden auto;
     position: absolute;
@@ -3234,8 +3393,8 @@ smSelect.innerHTML = `
     max-height: var(--max-height);
     background: rgba(var(--background-color), 1);
     border: solid 1px rgba(var(--text-color), 0.2);
-    border-radius: 0.3rem;
-    z-index: 2;
+    border-radius: var(--border-radius, 0.5rem);
+    z-index: 1;
     -webkit-box-shadow: 0.4rem 0.8rem 1.2rem #00000030;
             box-shadow: 0.4rem 0.8rem 1.2rem #00000030;
 }
@@ -3243,6 +3402,9 @@ smSelect.innerHTML = `
     -webkit-transform: rotate(180deg);
         -ms-transform: rotate(180deg);
             transform: rotate(180deg)
+}
+.hide{
+    display: none;
 }
 @media (any-hover: hover){
     ::-webkit-scrollbar{
@@ -3259,7 +3421,7 @@ smSelect.innerHTML = `
     }
 }
 </style>
-<div class="select" >
+<div class="select">
     <div class="selection">
         <div class="selected-option-text"></div>
         <svg class="icon toggle" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="24" height="24"><path fill="none" d="M0 0h24v24H0z"/><path d="M12 13.172l4.95-4.95 1.414 1.414L12 16 5.636 9.636 7.05 8.222z"/></svg>
@@ -3275,6 +3437,7 @@ customElements.define('sm-select', class extends HTMLElement {
             mode: 'open'
         }).append(smSelect.content.cloneNode(true))
 
+        this.focusIn = this.focusIn.bind(this)
         this.reset = this.reset.bind(this)
         this.open = this.open.bind(this)
         this.collapse = this.collapse.bind(this)
@@ -3287,6 +3450,7 @@ customElements.define('sm-select', class extends HTMLElement {
         this.availableOptions
         this.previousOption
         this.isOpen = false;
+        this.label = ''
         this.slideDown = [{
             transform: `translateY(-0.5rem)`,
             opacity: 0
@@ -3317,7 +3481,7 @@ customElements.define('sm-select', class extends HTMLElement {
         this.selectedOptionText = this.shadowRoot.querySelector('.selected-option-text')
     }
     static get observedAttributes() {
-        return ['value', 'disabled']
+        return ['disabled', 'label']
     }
     get value() {
         return this.getAttribute('value')
@@ -3326,8 +3490,24 @@ customElements.define('sm-select', class extends HTMLElement {
         this.setAttribute('value', val)
     }
 
-    reset() {
+    reset(fire = true) {
+        if (this.availableOptions[0] && this.previousOption !== this.availableOptions[0]) {
+            const firstElement = this.availableOptions[0];
+            if (this.previousOption) {
+                this.previousOption.classList.remove('check-selected')
+            }
+            firstElement.classList.add('check-selected')
+            this.value = firstElement.getAttribute('value')
+            this.selectedOptionText.textContent = `${this.label}${firstElement.textContent}`
+            this.previousOption = firstElement;
+            if (fire) {
+                this.fireEvent()
+            }
+        }
+    }
 
+    focusIn() {
+        this.selection.focus()
     }
 
     open() {
@@ -3383,7 +3563,7 @@ customElements.define('sm-select', class extends HTMLElement {
     handleOptionSelection(e) {
         if (this.previousOption !== document.activeElement) {
             this.value = document.activeElement.getAttribute('value')
-            this.selectedOptionText.textContent = document.activeElement.textContent;
+            this.selectedOptionText.textContent = `${this.label}${document.activeElement.textContent}`;
             this.fireEvent()
             if (this.previousOption) {
                 this.previousOption.classList.remove('check-selected')
@@ -3435,16 +3615,7 @@ customElements.define('sm-select', class extends HTMLElement {
         let slot = this.shadowRoot.querySelector('slot')
         slot.addEventListener('slotchange', e => {
             this.availableOptions = slot.assignedElements()
-            if (this.availableOptions[0]) {
-                let firstElement = this.availableOptions[0];
-                this.previousOption = firstElement;
-                firstElement.classList.add('check-selected')
-                this.value = firstElement.getAttribute('value')
-                this.selectedOptionText.textContent = firstElement.textContent
-                this.availableOptions.forEach((element) => {
-                    element.setAttribute('tabindex', "0");
-                })
-            }
+            this.reset(false)
         });
         this.addEventListener('click', this.handleClick)
         this.addEventListener('keydown', this.handleKeydown)
@@ -3462,6 +3633,8 @@ customElements.define('sm-select', class extends HTMLElement {
             } else {
                 this.selection.setAttribute('tabindex', '0')
             }
+        } else if (name === 'label') {
+            this.label = this.hasAttribute('label') ? `${this.getAttribute('label')} ` : ''
         }
     }
 })
@@ -3482,18 +3655,20 @@ smOption.innerHTML = `
     display: flex;
 }
 .option{
-    display: -webkit-box;
-    display: -ms-flexbox;
-    display: flex;
+    display: grid;
     -webkit-box-align: center;
         -ms-flex-align: center;
             align-items: center;
-    min-width: 100%;
-    padding: 0.8rem 1.2rem;
+    min-width: max-content;
+    width: 100%;
+    gap: 0.5rem;
+    grid-template-columns: max-content minmax(0, 1fr);
+    padding: var(--padding, 0.6rem 1rem);
     cursor: pointer;
-    overflow-wrap: break-word;
+    white-space: nowrap;
     outline: none;
     user-select: none;
+    border-radius: var(--border-radius, 0.3rem);
 }
 :host(:focus){
     outline: none;
@@ -3503,7 +3678,6 @@ smOption.innerHTML = `
     opacity: 0;
     height: 1.2rem;
     width: 1.2rem;
-    margin-right: 0.5rem;
     fill: rgba(var(--text-color), 0.8);
 }
 :host(:focus) .option .icon{
@@ -3535,10 +3709,10 @@ customElements.define('sm-option', class extends HTMLElement {
 
     connectedCallback() {
         this.setAttribute('role', 'option')
+        this.setAttribute('tabindex', '0')
     }
 })
-
-const spinner = document.createElement('template')
+const spinner = document.createElement('template');
 spinner.innerHTML = `
 <style>     
 *{
@@ -3549,10 +3723,12 @@ spinner.innerHTML = `
 }
 :host{
     --accent-color: #4d2588;
+    --height: 1.6rem;
+    --width: 1.6rem;
 }
 .loader {
-    height: 1.6rem;
-    width: 1.6rem;
+    height: var(--height);
+    width: var(--weight);
     stroke-width: 8;
     overflow: visible;
     stroke: var(--accent-color);
@@ -3578,18 +3754,17 @@ spinner.innerHTML = `
 </style>
 <svg viewBox="0 0 64 64" class="loader"><circle cx="32" cy="32" r="32" /></svg>
 
-`
-class SquareLoader extends HTMLElement {
+`;
+class SpinnerLoader extends HTMLElement {
     constructor() {
         super();
         this.attachShadow({
             mode: 'open'
-        }).append(spinner.content.cloneNode(true))
+        }).append(spinner.content.cloneNode(true));
     }
 }
-
-window.customElements.define('sm-spinner', SquareLoader);
-const stripSelect = document.createElement('template')
+window.customElements.define('sm-spinner', SpinnerLoader);
+const stripSelect = document.createElement('template');
 stripSelect.innerHTML = `
 <style>
     *{
@@ -3602,7 +3777,7 @@ stripSelect.innerHTML = `
         --accent-color: #4d2588;
         --text-color: 17, 17, 17;
         --background-color: 255, 255, 255;
-        --gap: 0.5rem;
+        padding: 1rem 0;
     }
     .hide{
         display: none !important;
@@ -3614,7 +3789,6 @@ stripSelect.innerHTML = `
         position: relative;
         display: flex;
         align-items: center;
-        padding: 1rem 0;
     }
     .strip-select{
         position: relative;
@@ -3622,13 +3796,13 @@ stripSelect.innerHTML = `
     :host([multiline]) .strip-select{
         display: flex;
         flex-wrap: wrap;
-        gap: 0.5rem;
+        gap: var(--gap, 0.5rem);
         overflow: auto hidden;
     }
     :host(:not([multiline])) .strip-select{
         display: grid;
         grid-auto-flow: column;
-        gap: var(--gap);
+        gap: var(--gap, 0.5rem);
         max-width: 100%;   
         align-items: center;
         overflow: auto hidden;
@@ -3655,13 +3829,6 @@ stripSelect.innerHTML = `
         height: 100%;
         pointer-events: none;
     }
-    .cover--left{
-        background: linear-gradient(90deg, rgba(var(--background-color), 1) 60%, transparent);
-    }
-    .cover--right{
-        right: 0;
-        background: linear-gradient(90deg, transparent 0%, rgba(var(--background-color), 1) 40%);
-    }
     .nav-button--right::before{
         background-color: red;
     }
@@ -3671,6 +3838,9 @@ stripSelect.innerHTML = `
         fill: rgba(var(--text-color), .8);
     }
     @media (hover: none){
+        ::-webkit-scrollbar {
+            height: 0;
+        }
         .nav-button{
             display: none;
         }
@@ -3679,6 +3849,13 @@ stripSelect.innerHTML = `
         }
         .cover{
             width: 2rem;
+        }
+        .cover--left{
+            background: linear-gradient(90deg, rgba(var(--background-color), 1), transparent);
+        }
+        .cover--right{
+            right: 0;
+            background: linear-gradient(90deg, transparent, rgba(var(--background-color), 1));
         }
     }
     @media (hover: hover){
@@ -3691,6 +3868,13 @@ stripSelect.innerHTML = `
         }
         .strip-select{
             overflow: hidden;
+        }
+        .cover--left{
+            background: linear-gradient(90deg, rgba(var(--background-color), 1) 60%, transparent);
+        }
+        .cover--right{
+            right: 0;
+            background: linear-gradient(90deg, transparent 0%, rgba(var(--background-color), 1) 40%);
         }
     }
 </style>
@@ -3708,39 +3892,39 @@ stripSelect.innerHTML = `
     <div class="cover cover--right hide"></div>
 </section>
 
-`
-customElements.define('strip-select', class extends HTMLElement{
+`;
+customElements.define('strip-select', class extends HTMLElement {
     constructor() {
-        super()
+        super();
         this.attachShadow({
             mode: 'open'
-        }).append(stripSelect.content.cloneNode(true))
-        this.stripSelect = this.shadowRoot.querySelector('.strip-select')
-        this.slottedOptions
-        this._value
-        this.scrollDistance
+        }).append(stripSelect.content.cloneNode(true));
+        this.stripSelect = this.shadowRoot.querySelector('.strip-select');
+        this.slottedOptions = undefined;
+        this._value = undefined;
+        this.scrollDistance = 0;
 
-        this.scrollLeft = this.scrollLeft.bind(this)
-        this.scrollRight = this.scrollRight.bind(this)
-        this.fireEvent = this.fireEvent.bind(this)
+        this.scrollLeft = this.scrollLeft.bind(this);
+        this.scrollRight = this.scrollRight.bind(this);
+        this.fireEvent = this.fireEvent.bind(this);
     }
     get value() {
-        return this._value
+        return this._value;
     }
-    scrollLeft(){
+    scrollLeft() {
         this.stripSelect.scrollBy({
             left: -this.scrollDistance,
             behavior: 'smooth'
-        })
+        });
     }
 
-    scrollRight(){
+    scrollRight() {
         this.stripSelect.scrollBy({
             left: this.scrollDistance,
             behavior: 'smooth'
-        })
+        });
     }
-    fireEvent(){
+    fireEvent() {
         this.dispatchEvent(
             new CustomEvent("change", {
                 bubbles: true,
@@ -3749,104 +3933,104 @@ customElements.define('strip-select', class extends HTMLElement{
                     value: this._value
                 }
             })
-        )
+        );
     }
     connectedCallback() {
-        this.setAttribute('role', 'listbox')
+        this.setAttribute('role', 'listbox');
 
-        const slot = this.shadowRoot.querySelector('slot')
-        const coverLeft = this.shadowRoot.querySelector('.cover--left')
-        const coverRight = this.shadowRoot.querySelector('.cover--right')
-        const navButtonLeft = this.shadowRoot.querySelector('.nav-button--left')
-        const navButtonRight = this.shadowRoot.querySelector('.nav-button--right')
+        const slot = this.shadowRoot.querySelector('slot');
+        const coverLeft = this.shadowRoot.querySelector('.cover--left');
+        const coverRight = this.shadowRoot.querySelector('.cover--right');
+        const navButtonLeft = this.shadowRoot.querySelector('.nav-button--left');
+        const navButtonRight = this.shadowRoot.querySelector('.nav-button--right');
         slot.addEventListener('slotchange', e => {
-            const assignedElements = slot.assignedElements()
+            const assignedElements = slot.assignedElements();
             assignedElements.forEach(elem => {
                 if (elem.hasAttribute('selected')) {
-                    elem.setAttribute('active', '')
-                    this._value = elem.value
+                    elem.setAttribute('active', '');
+                    this._value = elem.value;
                 }
-            })
+            });
             if (!this.hasAttribute('multiline')) {
                 if (assignedElements.length > 0) {
-                    firstOptionObserver.observe(slot.assignedElements()[0])
-                    lastOptionObserver.observe(slot.assignedElements()[slot.assignedElements().length - 1])
+                    firstOptionObserver.observe(slot.assignedElements()[0]);
+                    lastOptionObserver.observe(slot.assignedElements()[slot.assignedElements().length - 1]);
                 }
                 else {
-                    navButtonLeft.classList.add('hide')
-                    navButtonRight.classList.add('hide')
-                    coverLeft.classList.add('hide')
-                    coverRight.classList.add('hide')
-                    firstOptionObserver.disconnect()
-                    lastOptionObserver.disconnect()
+                    navButtonLeft.classList.add('hide');
+                    navButtonRight.classList.add('hide');
+                    coverLeft.classList.add('hide');
+                    coverRight.classList.add('hide');
+                    firstOptionObserver.disconnect();
+                    lastOptionObserver.disconnect();
                 }
             }
-        })
+        });
         const resObs = new ResizeObserver(entries => {
             entries.forEach(entry => {
-                if(entry.contentBoxSize) {
+                if (entry.contentBoxSize) {
                     // Firefox implements `contentBoxSize` as a single content rect, rather than an array
                     const contentBoxSize = Array.isArray(entry.contentBoxSize) ? entry.contentBoxSize[0] : entry.contentBoxSize;
-                    
-                    this.scrollDistance = contentBoxSize.inlineSize * 0.6
+
+                    this.scrollDistance = contentBoxSize.inlineSize * 0.6;
                 } else {
-                    this.scrollDistance = entry.contentRect.width * 0.6
-                  }
-            })
-        })
-        resObs.observe(this)
+                    this.scrollDistance = entry.contentRect.width * 0.6;
+                }
+            });
+        });
+        resObs.observe(this);
         this.stripSelect.addEventListener('option-clicked', e => {
             if (this._value !== e.target.value) {
-                this._value = e.target.value
-                slot.assignedElements().forEach(elem => elem.removeAttribute('active'))
-                e.target.setAttribute('active', '')
-                e.target.scrollIntoView({ behavior: "smooth", block: "nearest", inline: "center" })
-                this.fireEvent()
+                this._value = e.target.value;
+                slot.assignedElements().forEach(elem => elem.removeAttribute('active'));
+                e.target.setAttribute('active', '');
+                e.target.scrollIntoView({ behavior: "smooth", block: "nearest", inline: "center" });
+                this.fireEvent();
             }
-        })
+        });
         const firstOptionObserver = new IntersectionObserver(entries => {
             entries.forEach(entry => {
                 if (entry.isIntersecting) {
-                    navButtonLeft.classList.add('hide')
-                    coverLeft.classList.add('hide')
+                    navButtonLeft.classList.add('hide');
+                    coverLeft.classList.add('hide');
                 }
                 else {
-                    navButtonLeft.classList.remove('hide')
-                    coverLeft.classList.remove('hide')
+                    navButtonLeft.classList.remove('hide');
+                    coverLeft.classList.remove('hide');
                 }
-            })
+            });
         },
-        {
-            threshold: 0.9,
-            root: this
-        })
+            {
+                threshold: 0.9,
+                root: this
+            });
         const lastOptionObserver = new IntersectionObserver(entries => {
             entries.forEach(entry => {
                 if (entry.isIntersecting) {
-                    navButtonRight.classList.add('hide')
-                    coverRight.classList.add('hide')
+                    navButtonRight.classList.add('hide');
+                    coverRight.classList.add('hide');
                 }
                 else {
-                    navButtonRight.classList.remove('hide')
-                    coverRight.classList.remove('hide')
+                    navButtonRight.classList.remove('hide');
+                    coverRight.classList.remove('hide');
                 }
-            })
+            });
         },
-        {
-            threshold: 0.9,
-            root: this
-        })
-        navButtonLeft.addEventListener('click', this.scrollLeft)
-        navButtonRight.addEventListener('click', this.scrollRight)
+            {
+                threshold: 0.9,
+                root: this
+            });
+        navButtonLeft.addEventListener('click', this.scrollLeft);
+        navButtonRight.addEventListener('click', this.scrollRight);
     }
     disconnectedCallback() {
-        navButtonLeft.removeEventListener('click', this.scrollLeft)
-        navButtonRight.removeEventListener('click', this.scrollRight)    
+        navButtonLeft.removeEventListener('click', this.scrollLeft);
+        navButtonRight.removeEventListener('click', this.scrollRight);
     }
-})
+});
 
 //Strip option
-const stripOption = document.createElement('template')
+const stripOption = document.createElement('template');
 stripOption.innerHTML = `
 <style>
     *{
@@ -3856,25 +4040,21 @@ stripOption.innerHTML = `
                 box-sizing: border-box;
     }  
     :host{
-        --border-radius: 2rem;
         --background-color: inherit;
-        --active-option-color: inherit;
-        --active-option-backgroud-color: rgba(var(--text-color), .2);
     }
     .strip-option{
         display: flex;
         flex-shrink: 0;
         cursor: pointer;
         white-space: nowrap;
-        padding: 0.5rem 0.8rem;
+        padding: var(--padding, 0.4rem 0.6rem);
         transition: background 0.3s;
-        border-radius: var(--border-radius);
-        box-shadow: 0 0 0 1px rgba(var(--text-color), .2) inset;
+        border-radius: var(--border-radius, 2rem);
         -webkit-tap-highlight-color: transparent;
     }
     :host([active]) .strip-option{
-        color: var(--active-option-color);
-        background-color: var(--active-option-backgroud-color);
+        color: var(--active-option-color, inherit);
+        background-color: var(--active-background-color, rgba(var(--text-color), 0.06));
     }
     :host(:focus-within){
         outline: none;
@@ -3889,23 +4069,23 @@ stripOption.innerHTML = `
 <label class="strip-option">
     <slot></slot>
 </label>
-`
-customElements.define('strip-option', class extends HTMLElement{
+`;
+customElements.define('strip-option', class extends HTMLElement {
     constructor() {
-        super()
+        super();
         this.attachShadow({
             mode: 'open'
-        }).append(stripOption.content.cloneNode(true))
-        this._value
-        this.radioButton = this.shadowRoot.querySelector('input')
-        
-        this.fireEvent = this.fireEvent.bind(this)
-        this.handleKeyDown = this.handleKeyDown.bind(this)
+        }).append(stripOption.content.cloneNode(true));
+        this._value = undefined;
+        this.radioButton = this.shadowRoot.querySelector('input');
+
+        this.fireEvent = this.fireEvent.bind(this);
+        this.handleKeyDown = this.handleKeyDown.bind(this);
     }
     get value() {
-        return this._value
+        return this._value;
     }
-    fireEvent(){
+    fireEvent() {
         this.dispatchEvent(
             new CustomEvent("option-clicked", {
                 bubbles: true,
@@ -3914,25 +4094,25 @@ customElements.define('strip-option', class extends HTMLElement{
                     value: this._value
                 }
             })
-        )
+        );
     }
-    handleKeyDown(e){
+    handleKeyDown(e) {
         if (e.key === 'Enter' || e.key === 'Space') {
-            this.fireEvent()
+            this.fireEvent();
         }
     }
     connectedCallback() {
-        this.setAttribute('role', 'option')
-        this.setAttribute('tabindex', '0')
-        this._value = this.getAttribute('value')
-        this.addEventListener('click', this.fireEvent)
-        this.addEventListener('keydown', this.handleKeyDown)
+        this.setAttribute('role', 'option');
+        this.setAttribute('tabindex', '0');
+        this._value = this.getAttribute('value');
+        this.addEventListener('click', this.fireEvent);
+        this.addEventListener('keydown', this.handleKeyDown);
     }
     disconnectedCallback() {
-        this.removeEventListener('click', this.fireEvent)
-        this.removeEventListener('keydown', this.handleKeyDown)
+        this.removeEventListener('click', this.fireEvent);
+        this.removeEventListener('keydown', this.handleKeyDown);
     }
-})
+});
 const smTabHeader = document.createElement('template')
 smTabHeader.innerHTML = `
 <style>
@@ -3949,6 +4129,8 @@ smTabHeader.innerHTML = `
         --accent-color: #4d2588;
         --text-color: 17, 17, 17;
         --background-color: 255, 255, 255;
+        --gap: 1rem;
+        --justify-content: flex-start;
         --tab-indicator-border-radius: 0.3rem;
     }
     .tabs{
@@ -3961,10 +4143,8 @@ smTabHeader.innerHTML = `
         display: -ms-grid;
         display: grid;
         grid-auto-flow: column;
-        -webkit-box-pack: start;
-            -ms-flex-pack: start;
-                justify-content: flex-start;
-        gap: 1rem;
+        justify-content: var(--justify-content);
+        gap: var(--gap);
         position: relative;
         overflow: auto hidden;
         max-width: 100%;
@@ -4008,7 +4188,7 @@ smTabHeader.innerHTML = `
         color: var(--accent-color);
         opacity: 1;
     }
-    @media (hover: none){
+    @media (any-hover: none){
         .tab-header::-webkit-scrollbar-track {
             -webkit-box-shadow: none !important;
             background-color: transparent !important;
@@ -4016,6 +4196,11 @@ smTabHeader.innerHTML = `
         .tab-header::-webkit-scrollbar {
             height: 0;
             background-color: transparent;
+        }
+    }         
+    @media (any-hover: hover){
+        .tab-header{
+            overflow: hidden;
         }
     }         
 </style>
@@ -4045,6 +4230,7 @@ customElements.define('sm-tab-header', class extends HTMLElement {
         this.changeTab = this.changeTab.bind(this)
         this.handleClick = this.handleClick.bind(this)
         this.handlePanelChange = this.handlePanelChange.bind(this)
+        this.moveIndiactor = this.moveIndiactor.bind(this)
     }
 
     fireEvent(index) {
@@ -4070,10 +4256,9 @@ customElements.define('sm-tab-header', class extends HTMLElement {
             this.prevTab.classList.remove('active')
         target.classList.add('active')
 
-        target.scrollIntoView({
+        this.tabHeader.scrollTo({
             behavior: 'smooth',
-            block: 'nearest',
-            inline: 'center'
+            left: target.getBoundingClientRect().left - this.tabHeader.getBoundingClientRect().left + this.tabHeader.scrollLeft
         })
         this.moveIndiactor(target.getBoundingClientRect())
         this.prevTab = target;
@@ -4085,9 +4270,8 @@ customElements.define('sm-tab-header', class extends HTMLElement {
             this.fireEvent(e.target.dataset.index)
         }
     }
-    
+
     handlePanelChange(e) {
-        console.log(this.allTabs)
         this.changeTab(this.allTabs[e.detail.index])
     }
 
@@ -4158,6 +4342,7 @@ smTab.innerHTML = `
         display: -ms-inline-flexbox;
         display: inline-flex;
         z-index: 1;
+        --padding: 0.8rem 1rem;
     }
     .tab{
         position: relative;
@@ -4171,7 +4356,7 @@ smTab.innerHTML = `
         cursor: pointer;
         -webkit-tap-highlight-color: transparent;
         white-space: nowrap;
-        padding: 0.4rem 0.8rem;
+        padding: var(--padding);
         font-weight: 500;
         word-spacing: 0.1rem;
         text-align: center;
@@ -4265,7 +4450,6 @@ customElements.define('sm-tab-panels', class extends HTMLElement {
         this.isTransitioning = false
 
         this.panelContainer = this.shadowRoot.querySelector('.panel-container');
-        this.panelSlot = this.shadowRoot.querySelector('slot');
         this.handleTabChange = this.handleTabChange.bind(this)
     }
     handleTabChange(e) {
@@ -4289,8 +4473,9 @@ customElements.define('sm-tab-panels', class extends HTMLElement {
         )
     }
     connectedCallback() {
-        this.panelSlot.addEventListener('slotchange', () => {
-            this.allPanels = this.panelSlot.assignedElements()
+        const slot = this.shadowRoot.querySelector('slot');
+        slot.addEventListener('slotchange', (e) => {
+            this.allPanels = e.target.assignedElements()
             this.allPanels.forEach((panel, index) => {
                 panel.dataset.index = index
                 intersectionObserver.observe(panel)
@@ -4302,7 +4487,7 @@ customElements.define('sm-tab-panels', class extends HTMLElement {
 
             entries.forEach(entry => {
                 if (!this.isTransitioning && entry.isIntersecting) {
-                    this.fireEvent(entry.target.dataset.index), 3000
+                    this.fireEvent(entry.target.dataset.index)
                 }
             })
         }, {
@@ -4314,7 +4499,6 @@ customElements.define('sm-tab-panels', class extends HTMLElement {
         document.removeEventListener(`switchedtab${this.id}`, this.handleTabChange)
     }
 })
-
 const tagsInput = document.createElement('template')
 tagsInput.innerHTML = `
   <style>
@@ -4400,135 +4584,138 @@ tagsInput.innerHTML = `
 `
 
 customElements.define('tags-input', class extends HTMLElement {
-	constructor() {
-		super()
-		this.attachShadow({
-			mode: 'open'
-		}).append(tagsInput.content.cloneNode(true))
-		
-		this.input = this.shadowRoot.querySelector('input')
-		this.tagsWrapper = this.shadowRoot.querySelector('.tags-wrapper')
-		this.placeholder = this.shadowRoot.querySelector('.placeholder')
-		this.reflectedAttributes = ['placeholder', 'limit']
-		this.limit = undefined
-		this.tags = new Set()
+    constructor() {
+        super()
+        this.attachShadow({
+            mode: 'open'
+        }).append(tagsInput.content.cloneNode(true))
 
-		this.reset = this.reset.bind(this)
-		this.handleInput = this.handleInput.bind(this)
-		this.handleKeydown = this.handleKeydown.bind(this)
-		this.handleClick = this.handleClick.bind(this)
-		this.removeTag = this.removeTag.bind(this)
-	}
-	static get observedAttributes() {
-		return ['placeholder', 'limit']
-	}
-	get value() {
-		return [...this.tags].join()
-	}
-	focusIn() {
-		this.input.focus()
-	}
-	reset(){
-		this.input.value = ''
-		this.tags.clear()
-		while (this.input.previousElementSibling) {
-			this.input.previousElementSibling.remove()
-		}
-	}
-	handleInput(e){
-		const inputValueLength = e.target.value.trim().length
-		e.target.setAttribute('size', inputValueLength ? inputValueLength : '3')
-		if (inputValueLength) {
-			this.placeholder.classList.add('hide')
-		}
-		else if (!inputValueLength && !this.tags.size) {
-			this.placeholder.classList.remove('hide')
-		}
-	}
-	handleKeydown(e){
-		if (e.key === ',' || e.key === '/') {
-			e.preventDefault()
-		}
-		if (e.target.value.trim() !== '') {
-			if (e.key === 'Enter' || e.key === ',' || e.key === '/' || e.code === 'Space') {
-				const tagValue = e.target.value.trim()
-				if (this.tags.has(tagValue)) {
-					this.tagsWrapper.querySelector(`[data-value="${tagValue}"]`).animate([
-						{
-							backgroundColor: 'initial'
-						},
-						{
-							backgroundColor: 'var(--accent-color)'
-						},
-						{
-							backgroundColor: 'initial'
-						},
-					], {
-						duration: 300,
-						easing: 'ease'
-					})
-				}
-				else {
-					const tag = document.createElement('span')
-					tag.dataset.value = tagValue
-					tag.className = 'tag'
-					tag.innerHTML = `
+        this.input = this.shadowRoot.querySelector('input')
+        this.tagsWrapper = this.shadowRoot.querySelector('.tags-wrapper')
+        this.placeholder = this.shadowRoot.querySelector('.placeholder')
+        this.reflectedAttributes = ['placeholder', 'limit']
+        this.limit = undefined
+        this.tags = new Set()
+
+        this.reset = this.reset.bind(this)
+        this.handleInput = this.handleInput.bind(this)
+        this.handleKeydown = this.handleKeydown.bind(this)
+        this.handleClick = this.handleClick.bind(this)
+        this.removeTag = this.removeTag.bind(this)
+    }
+    static get observedAttributes() {
+        return ['placeholder', 'limit']
+    }
+    get value() {
+        return [...this.tags].join()
+    }
+    get isValid() {
+        return this.tags.size
+    }
+    focusIn() {
+        this.input.focus()
+    }
+    reset() {
+        this.input.value = ''
+        this.tags.clear()
+        while (this.input.previousElementSibling) {
+            this.input.previousElementSibling.remove()
+        }
+    }
+    handleInput(e) {
+        const inputValueLength = e.target.value.trim().length
+        e.target.setAttribute('size', inputValueLength ? inputValueLength : '3')
+        if (inputValueLength) {
+            this.placeholder.classList.add('hide')
+        }
+        else if (!inputValueLength && !this.tags.size) {
+            this.placeholder.classList.remove('hide')
+        }
+    }
+    handleKeydown(e) {
+        if (e.key === ',' || e.key === '/') {
+            e.preventDefault()
+        }
+        if (e.target.value.trim() !== '') {
+            if (e.key === 'Enter' || e.key === ',' || e.key === '/' || e.code === 'Space') {
+                const tagValue = e.target.value.trim()
+                if (this.tags.has(tagValue)) {
+                    this.tagsWrapper.querySelector(`[data-value="${tagValue}"]`).animate([
+                        {
+                            backgroundColor: 'initial'
+                        },
+                        {
+                            backgroundColor: 'var(--accent-color)'
+                        },
+                        {
+                            backgroundColor: 'initial'
+                        },
+                    ], {
+                        duration: 300,
+                        easing: 'ease'
+                    })
+                }
+                else {
+                    const tag = document.createElement('span')
+                    tag.dataset.value = tagValue
+                    tag.className = 'tag'
+                    tag.innerHTML = `
                         <span class="tag-text">${tagValue}</span>
                         <svg class="icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="24" height="24"><path fill="none" d="M0 0h24v24H0z"/><path d="M12 10.586l4.95-4.95 1.414 1.414-4.95 4.95 4.95 4.95-1.414 1.414-4.95-4.95-4.95 4.95-1.414-1.414 4.95-4.95-4.95-4.95L7.05 5.636z"/></svg>
                         `
-					this.input.before(tag)
-					this.tags.add(tagValue)
-				}
-				e.target.value = ''
-				e.target.setAttribute('size', '3')
-				if (this.limit && this.limit < this.tags.size + 1) {
-					this.input.readOnly = true
-					return
-				}
-			}
-		}
-		else {
-			if (e.key === 'Backspace' && this.input.previousElementSibling) {
-				this.removeTag(this.input.previousElementSibling)
-			}
-			if (this.limit && this.limit > this.tags.size) {
-				this.input.readOnly = false
-			}
-		}
-	}
-	handleClick(e){
-		if (e.target.closest('.tag')) {
-			this.removeTag(e.target.closest('.tag'))
-		}
-		else {
-			this.input.focus()
-		}
-	}
-	removeTag(tag){
-		this.tags.delete(tag.dataset.value)
-		tag.remove()
-		if (!this.tags.size) {
-			this.placeholder.classList.remove('hide')
-		}
-	}
-	connectedCallback() {
-		this.input.addEventListener('input', this.handleInput)
-		this.input.addEventListener('keydown', this.handleKeydown)
-		this.tagsWrapper.addEventListener('click', this.handleClick)
-	}
-	attributeChangedCallback(name, oldValue, newValue) {
-		if (name === 'placeholder') {
-			this.placeholder.textContent = newValue
-		}
-		if (name === 'limit') {
-			this.limit = parseInt(newValue)
-		}
-	}
-	disconnectedCallback() {
-		this.input.removeEventListener('input', this.handleInput)
-		this.input.removeEventListener('keydown', this.handleKeydown)
-		this.tagsWrapper.removeEventListener('click', this.handleClick)
-	}
+                    this.input.before(tag)
+                    this.tags.add(tagValue)
+                }
+                e.target.value = ''
+                e.target.setAttribute('size', '3')
+                if (this.limit && this.limit < this.tags.size + 1) {
+                    this.input.readOnly = true
+                    return
+                }
+            }
+        }
+        else {
+            if (e.key === 'Backspace' && this.input.previousElementSibling) {
+                this.removeTag(this.input.previousElementSibling)
+            }
+            if (this.limit && this.limit > this.tags.size) {
+                this.input.readOnly = false
+            }
+        }
+    }
+    handleClick(e) {
+        if (e.target.closest('.tag')) {
+            this.removeTag(e.target.closest('.tag'))
+        }
+        else {
+            this.input.focus()
+        }
+    }
+    removeTag(tag) {
+        this.tags.delete(tag.dataset.value)
+        tag.remove()
+        if (!this.tags.size) {
+            this.placeholder.classList.remove('hide')
+        }
+    }
+    connectedCallback() {
+        this.input.addEventListener('input', this.handleInput)
+        this.input.addEventListener('keydown', this.handleKeydown)
+        this.tagsWrapper.addEventListener('click', this.handleClick)
+    }
+    attributeChangedCallback(name, oldValue, newValue) {
+        if (name === 'placeholder') {
+            this.placeholder.textContent = newValue
+        }
+        if (name === 'limit') {
+            this.limit = parseInt(newValue)
+        }
+    }
+    disconnectedCallback() {
+        this.input.removeEventListener('input', this.handleInput)
+        this.input.removeEventListener('keydown', this.handleKeydown)
+        this.tagsWrapper.removeEventListener('click', this.handleClick)
+    }
 })
 const smTextarea = document.createElement('template')
 smTextarea.innerHTML = `
@@ -4611,8 +4798,8 @@ textarea{
     position: absolute;
     margin: 0.7rem 1rem;
     opacity: .7;
-    font-weight: 400;
-    font-size: 1rem;
+    font-weight: inherit;
+    font-size: inherit;
     line-height: 1.5;
     pointer-events: none;
     user-select: none;
@@ -4653,7 +4840,7 @@ customElements.define('sm-textarea',
             this.textareaBox = this.shadowRoot.querySelector('.textarea')
             this.placeholder = this.shadowRoot.querySelector('.placeholder')
             this.reflectedAttributes = ['disabled', 'required', 'readonly', 'rows', 'minlength', 'maxlength']
-        
+
             this.reset = this.reset.bind(this)
             this.focusIn = this.focusIn.bind(this)
             this.fireEvent = this.fireEvent.bind(this)
@@ -4674,21 +4861,21 @@ customElements.define('sm-textarea',
         }
         set disabled(val) {
             if (val) {
-                this.setAttribute('disabled', '')   
+                this.setAttribute('disabled', '')
             } else {
-                this.removeAttribute('disabled')   
+                this.removeAttribute('disabled')
             }
         }
         get isValid() {
             return this.textarea.checkValidity()
         }
-        reset(){
+        reset() {
             this.setAttribute('value', '')
         }
-        focusIn(){
+        focusIn() {
             this.textarea.focus()
         }
-        fireEvent(){
+        fireEvent() {
             let event = new Event('input', {
                 bubbles: true,
                 cancelable: true,
@@ -4696,7 +4883,7 @@ customElements.define('sm-textarea',
             });
             this.dispatchEvent(event);
         }
-        checkInput(){
+        checkInput() {
             if (!this.hasAttribute('placeholder') || this.getAttribute('placeholder') === '')
                 return;
             if (this.textarea.value !== '') {
@@ -4748,7 +4935,6 @@ textField.innerHTML = `
         align-items: center;
     }
     .text{
-        padding: 0.6rem 0;
         transition: background-color 0.3s;
         border-bottom: 0.15rem solid transparent;
         overflow-wrap: break-word;
@@ -4770,44 +4956,38 @@ textField.innerHTML = `
     .editable{
         border-bottom: 0.15rem solid rgba(var(--text-color), 0.6);
     }
-    .icon-container{
+    .edit-button{
+        display: grid;
         position: relative;
         margin-left: 0.5rem;
-        height: 1.8rem;
-        width: 1.8rem;
+        background-color: transparent;
+        border: none;
     }
-    :host([disabled]) .icon-container{
+    :host([disabled]) .edit-button{
         display: none;
     }
     .icon{
-        position: absolute;
+        grid-area: 1/-1;
         cursor: pointer;
-        height: 2rem;
-        width: 2rem;
-        padding: 0.3rem;
+        height: 1.2rem;
+        width: 1.2rem;
         fill: rgba(var(--text-color), 1);
     }
     .hide{
-        display: none;
+        visibility: hidden;
     }
 </style>
 <div class="text-field">
     <div class="text" part="text"></div>
-    <div tabindex="0" class="icon-container">
-        <svg class="edit-button icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="24" height="24">
-            <title>Edit</title>
-            <path fill="none" d="M0 0h24v24H0z"/><path d="M12.9 6.858l4.242 4.243L7.242 21H3v-4.243l9.9-9.9zm1.414-1.414l2.121-2.122a1 1 0 0 1 1.414 0l2.829 2.829a1 1 0 0 1 0 1.414l-2.122 2.121-4.242-4.242z"/>
-        </svg>
-        <svg class="save-button icon hide" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="24" height="24">
-            <title>Save</title>
-            <path fill="none" d="M0 0h24v24H0z"/><path d="M10 15.172l9.192-9.193 1.415 1.414L10 18l-6.364-6.364 1.414-1.414z"/>
-        </svg>
-    </div>
+    <button class="edit-button">
+        <svg class="icon" title="edit" xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 0 24 24" width="24px" fill="#000000"><path d="M0 0h24v24H0z" fill="none"/><path d="M3 17.25V21h3.75L17.81 9.94l-3.75-3.75L3 17.25zM20.71 7.04c.39-.39.39-1.02 0-1.41l-2.34-2.34c-.39-.39-1.02-.39-1.41 0l-1.83 1.83 3.75 3.75 1.83-1.83z"/></svg>
+        <svg class="icon hide" title="Save" xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 0 24 24" width="24px" fill="#000000"><path d="M0 0h24v24H0z" fill="none"/><path d="M9 16.2L4.8 12l-1.4 1.4L9 19 21 7l-1.4-1.4L9 16.2z"/></svg>
+    </button>
 </div>
 `
 
-customElements.define('text-field', class extends HTMLElement{
-    constructor(){
+customElements.define('text-field', class extends HTMLElement {
+    constructor() {
         super()
         this.attachShadow({
             mode: 'open'
@@ -4817,36 +4997,34 @@ customElements.define('text-field', class extends HTMLElement{
         this.textContainer = this.textField.children[0]
         this.iconsContainer = this.textField.children[1]
         this.editButton = this.textField.querySelector('.edit-button')
-        this.saveButton = this.textField.querySelector('.save-button')
         this.isTextEditable = false
         this.isDisabled = false
 
         this.fireEvent = this.fireEvent.bind(this)
         this.setEditable = this.setEditable.bind(this)
         this.setNonEditable = this.setNonEditable.bind(this)
+        this.toggleEditable = this.toggleEditable.bind(this)
         this.revert = this.revert.bind(this)
     }
 
-    static get observedAttributes(){
-        return ['disabled']
+    static get observedAttributes() {
+        return ['disabled', 'value']
     }
 
-    get value(){
+    get value() {
         return this.text
     }
     set value(val) {
-        this.text = val
-        this.textContainer.textContent = val
         this.setAttribute('value', val)
     }
     set disabled(val) {
         this.isDisabled = val
-        if(this.isDisabled)
+        if (this.isDisabled)
             this.setAttribute('disabled', '')
         else
             this.removeAttribute('disabled')
     }
-    fireEvent(value){
+    fireEvent(value) {
         let event = new CustomEvent('change', {
             bubbles: true,
             cancelable: true,
@@ -4857,60 +5035,68 @@ customElements.define('text-field', class extends HTMLElement{
         });
         this.dispatchEvent(event);
     }
-    
-    setEditable(){
-        if(this.isTextEditable) return
+
+    setEditable() {
+        if (this.isTextEditable) return
         this.textContainer.contentEditable = true
         this.textContainer.classList.add('editable')
         this.textContainer.focus()
         document.execCommand('selectAll', false, null);
-        this.editButton.animate(this.rotateOut, this.animOptions).onfinish = () => {
-            this.editButton.classList.add('hide')
+        this.editButton.children[0].animate(this.rotateOut, this.animOptions).onfinish = () => {
+            this.editButton.children[0].classList.add('hide')
         }
         setTimeout(() => {
-            this.saveButton.classList.remove('hide')
-            this.saveButton.animate(this.rotateIn, this.animOptions)
+            this.editButton.children[1].classList.remove('hide')
+            this.editButton.children[1].animate(this.rotateIn, this.animOptions)
         }, 100);
         this.isTextEditable = true
     }
-    setNonEditable(){   
+    setNonEditable() {
         if (!this.isTextEditable) return
         this.textContainer.contentEditable = false
         this.textContainer.classList.remove('editable')
-        
-        if (this.text !== this.textContainer.textContent.trim()) {
+        const newValue = this.textContainer.textContent.trim()
+        if (this.text !== newValue && newValue !== '') {
             this.setAttribute('value', this.textContainer.textContent)
             this.text = this.textContainer.textContent.trim()
             this.fireEvent(this.text)
+        } else {
+            this.value = this.text
         }
-        this.saveButton.animate(this.rotateOut, this.animOptions).onfinish = () => {
-            this.saveButton.classList.add('hide')
+        this.editButton.children[1].animate(this.rotateOut, this.animOptions).onfinish = () => {
+            this.editButton.children[1].classList.add('hide')
         }
         setTimeout(() => {
-            this.editButton.classList.remove('hide')
-            this.editButton.animate(this.rotateIn, this.animOptions)
+            this.editButton.children[0].classList.remove('hide')
+            this.editButton.children[0].animate(this.rotateIn, this.animOptions)
         }, 100);
         this.isTextEditable = false
     }
+    toggleEditable() {
+        if (this.isTextEditable)
+            this.setNonEditable()
+        else
+            this.setEditable()
+    }
 
-    revert(){
+    revert() {
         if (this.textContainer.isContentEditable) {
             this.value = this.text
             this.setNonEditable()
         }
     }
 
-    connectedCallback(){
+    connectedCallback() {
         this.text
         if (this.hasAttribute('value')) {
             this.text = this.getAttribute('value')
             this.textContainer.textContent = this.text
         }
-        if(this.hasAttribute('disable'))
+        if (this.hasAttribute('disabled'))
             this.isDisabled = true
         else
             this.isDisabled = false
-        
+
         this.rotateOut = [
             {
                 transform: 'rotate(0)',
@@ -4939,32 +5125,31 @@ customElements.define('text-field', class extends HTMLElement{
         if (!this.isDisabled) {
             this.iconsContainer.classList.remove('hide')
             this.textContainer.addEventListener('dblclick', this.setEditable)
-            this.editButton.addEventListener('click', this.setEditable)
-            this.saveButton.addEventListener('click', this.setNonEditable)
+            this.editButton.addEventListener('click', this.toggleEditable)
         }
     }
-    attributeChangedCallback(name) {
+    attributeChangedCallback(name, oldValue, newValue) {
         if (name === 'disabled') {
             if (this.hasAttribute('disabled')) {
                 this.textContainer.removeEventListener('dblclick', this.setEditable)
-                this.editButton.removeEventListener('click', this.setEditable)
-                this.saveButton.removeEventListener('click', this.setNonEditable)
+                this.editButton.removeEventListener('click', this.toggleEditable)
                 this.revert()
             }
             else {
                 this.textContainer.addEventListener('dblclick', this.setEditable)
-                this.editButton.addEventListener('click', this.setEditable)
-                this.saveButton.addEventListener('click', this.setNonEditable)
+                this.editButton.addEventListener('click', this.toggleEditable)
             }
+        } else if (name === 'value') {
+            this.text = newValue
+            this.textContainer.textContent = newValue
         }
     }
     disconnectedCallback() {
         this.textContainer.removeEventListener('dblclick', this.setEditable)
-        this.editButton.removeEventListener('click', this.setEditable)
-        this.saveButton.removeEventListener('click', this.setNonEditable)
+        this.editButton.removeEventListener('click', this.toggleEditable)
     }
 })
-const themeToggle = document.createElement('template')
+const themeToggle = document.createElement('template');
 themeToggle.innerHTML = `
     <style>
     *{
@@ -5011,37 +5196,30 @@ themeToggle.innerHTML = `
         height: 100%;
         width: 100%;
         fill: rgba(var(--text-color), 1);
-        transition: transform 0.6s;
+        transition: transform 0.3s, opacity 0.1s;
     }
     
     .theme-switcher__checkbox {
         display: none;
     }
     :host([checked]) .moon-icon {
-        transform: scale(0) rotate(90deg);
+        transform: translateY(50%);
+        opacity: 0;
     }
     :host(:not([checked])) .sun-icon {
-        transform: scale(0) rotate(-90deg);
+        transform: translateY(50%);
+        opacity: 0;
     }
     </style>
     <label class="theme-toggle" title="Change theme" tabindex="0">
         <slot name="light-mode-icon">
-            <svg class="icon moon-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="24"
-                height="24">
-                <path fill="none" d="M0 0h24v24H0z" />
-                <path
-                    d="M10 6a8 8 0 0 0 11.955 6.956C21.474 18.03 17.2 22 12 22 6.477 22 2 17.523 2 12c0-5.2 3.97-9.474 9.044-9.955A7.963 7.963 0 0 0 10 6zm-6 6a8 8 0 0 0 8 8 8.006 8.006 0 0 0 6.957-4.045c-.316.03-.636.045-.957.045-5.523 0-10-4.477-10-10 0-.321.015-.64.045-.957A8.006 8.006 0 0 0 4 12zm14.164-9.709L19 2.5v1l-.836.209a2 2 0 0 0-1.455 1.455L16.5 6h-1l-.209-.836a2 2 0 0 0-1.455-1.455L13 3.5v-1l.836-.209A2 2 0 0 0 15.29.836L15.5 0h1l.209.836a2 2 0 0 0 1.455 1.455zm5 5L24 7.5v1l-.836.209a2 2 0 0 0-1.455 1.455L21.5 11h-1l-.209-.836a2 2 0 0 0-1.455-1.455L18 8.5v-1l.836-.209a2 2 0 0 0 1.455-1.455L20.5 5h1l.209.836a2 2 0 0 0 1.455 1.455z" />
-            </svg>
+        <svg xmlns="http://www.w3.org/2000/svg" class="icon moon-icon" enable-background="new 0 0 24 24" height="24px" viewBox="0 0 24 24" width="24px" fill="#000000"><rect fill="none" height="24" width="24"/><path d="M9.37,5.51C9.19,6.15,9.1,6.82,9.1,7.5c0,4.08,3.32,7.4,7.4,7.4c0.68,0,1.35-0.09,1.99-0.27C17.45,17.19,14.93,19,12,19 c-3.86,0-7-3.14-7-7C5,9.07,6.81,6.55,9.37,5.51z M12,3c-4.97,0-9,4.03-9,9s4.03,9,9,9s9-4.03,9-9c0-0.46-0.04-0.92-0.1-1.36 c-0.98,1.37-2.58,2.26-4.4,2.26c-2.98,0-5.4-2.42-5.4-5.4c0-1.81,0.89-3.42,2.26-4.4C12.92,3.04,12.46,3,12,3L12,3z"/></svg>
         </slot>
         <slot name="dark-mode-icon">
-            <svg class="icon sun-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="24" height="24">
-                <path fill="none" d="M0 0h24v24H0z" />
-                <path
-                d="M12 18a6 6 0 1 1 0-12 6 6 0 0 1 0 12zm0-2a4 4 0 1 0 0-8 4 4 0 0 0 0 8zM11 1h2v3h-2V1zm0 19h2v3h-2v-3zM3.515 4.929l1.414-1.414L7.05 5.636 5.636 7.05 3.515 4.93zM16.95 18.364l1.414-1.414 2.121 2.121-1.414 1.414-2.121-2.121zm2.121-14.85l1.414 1.415-2.121 2.121-1.414-1.414 2.121-2.121zM5.636 16.95l1.414 1.414-2.121 2.121-1.414-1.414 2.121-2.121zM23 11v2h-3v-2h3zM4 11v2H1v-2h3z" />
-            </svg>
+        <svg xmlns="http://www.w3.org/2000/svg" class="icon sun-icon" enable-background="new 0 0 24 24" height="24px" viewBox="0 0 24 24" width="24px" fill="#000000"><rect fill="none" height="24" width="24"/><path d="M12,9c1.65,0,3,1.35,3,3s-1.35,3-3,3s-3-1.35-3-3S10.35,9,12,9 M12,7c-2.76,0-5,2.24-5,5s2.24,5,5,5s5-2.24,5-5 S14.76,7,12,7L12,7z M2,13l2,0c0.55,0,1-0.45,1-1s-0.45-1-1-1l-2,0c-0.55,0-1,0.45-1,1S1.45,13,2,13z M20,13l2,0c0.55,0,1-0.45,1-1 s-0.45-1-1-1l-2,0c-0.55,0-1,0.45-1,1S19.45,13,20,13z M11,2v2c0,0.55,0.45,1,1,1s1-0.45,1-1V2c0-0.55-0.45-1-1-1S11,1.45,11,2z M11,20v2c0,0.55,0.45,1,1,1s1-0.45,1-1v-2c0-0.55-0.45-1-1-1C11.45,19,11,19.45,11,20z M5.99,4.58c-0.39-0.39-1.03-0.39-1.41,0 c-0.39,0.39-0.39,1.03,0,1.41l1.06,1.06c0.39,0.39,1.03,0.39,1.41,0s0.39-1.03,0-1.41L5.99,4.58z M18.36,16.95 c-0.39-0.39-1.03-0.39-1.41,0c-0.39,0.39-0.39,1.03,0,1.41l1.06,1.06c0.39,0.39,1.03,0.39,1.41,0c0.39-0.39,0.39-1.03,0-1.41 L18.36,16.95z M19.42,5.99c0.39-0.39,0.39-1.03,0-1.41c-0.39-0.39-1.03-0.39-1.41,0l-1.06,1.06c-0.39,0.39-0.39,1.03,0,1.41 s1.03,0.39,1.41,0L19.42,5.99z M7.05,18.36c0.39-0.39,0.39-1.03,0-1.41c-0.39-0.39-1.03-0.39-1.41,0l-1.06,1.06 c-0.39,0.39-0.39,1.03,0,1.41s1.03,0.39,1.41,0L7.05,18.36z"/></svg>
         </slot>
     </label>
-`
+`;
 
 class ThemeToggle extends HTMLElement {
     constructor() {
@@ -5049,47 +5227,47 @@ class ThemeToggle extends HTMLElement {
 
         this.attachShadow({
             mode: 'open'
-        }).append(themeToggle.content.cloneNode(true))
+        }).append(themeToggle.content.cloneNode(true));
 
-        this.isChecked = false
-        this.hasTheme = 'light'
+        this.isChecked = false;
+        this.hasTheme = 'light';
 
-        this.toggleState = this.toggleState.bind(this)
-        this.fireEvent = this.fireEvent.bind(this)
-        this.handleThemeChange = this.handleThemeChange.bind(this)
+        this.toggleState = this.toggleState.bind(this);
+        this.fireEvent = this.fireEvent.bind(this);
+        this.handleThemeChange = this.handleThemeChange.bind(this);
     }
     static get observedAttributes() {
         return ['checked'];
     }
 
     daylight() {
-        this.hasTheme = 'light'
-        document.body.dataset.theme = 'light'
-        this.setAttribute('aria-checked', 'false')
+        this.hasTheme = 'light';
+        document.body.dataset.theme = 'light';
+        this.setAttribute('aria-checked', 'false');
     }
-    
+
     nightlight() {
-        this.hasTheme = 'dark'
-        document.body.dataset.theme = 'dark'
-        this.setAttribute('aria-checked', 'true')
+        this.hasTheme = 'dark';
+        document.body.dataset.theme = 'dark';
+        this.setAttribute('aria-checked', 'true');
     }
 
     toggleState() {
-        this.toggleAttribute('checked')
-        this.fireEvent()
+        this.toggleAttribute('checked');
+        this.fireEvent();
     }
     handleKeyDown(e) {
         if (e.code === 'Space') {
-            this.toggleState()
+            this.toggleState();
         }
     }
     handleThemeChange(e) {
         if (e.detail.theme !== this.hasTheme) {
             if (e.detail.theme === 'dark') {
-                this.setAttribute('checked', '')
+                this.setAttribute('checked', '');
             }
             else {
-                this.removeAttribute('checked')   
+                this.removeAttribute('checked');
             }
         }
     }
@@ -5103,47 +5281,47 @@ class ThemeToggle extends HTMLElement {
                     theme: this.hasTheme
                 }
             })
-        )
+        );
     }
 
     connectedCallback() {
-        this.setAttribute('role', 'switch')
-        this.setAttribute('aria-label', 'theme toggle')
-        if (localStorage.theme === "dark") {
+        this.setAttribute('role', 'switch');
+        this.setAttribute('aria-label', 'theme toggle');
+        if (localStorage.getItem(`${window.location.hostname}-theme`) === "dark") {
             this.nightlight();
-            this.setAttribute('checked', '')
-        } else if (localStorage.theme === "light") {
+            this.setAttribute('checked', '');
+        } else if (localStorage.getItem(`${window.location.hostname}-theme`) === "light") {
             this.daylight();
-            this.removeAttribute('checked')
+            this.removeAttribute('checked');
         }
         else {
             if (window.matchMedia(`(prefers-color-scheme: dark)`).matches) {
                 this.nightlight();
-                this.setAttribute('checked', '')
+                this.setAttribute('checked', '');
             } else {
                 this.daylight();
-                this.removeAttribute('checked')
+                this.removeAttribute('checked');
             }
         }
         this.addEventListener("click", this.toggleState);
         this.addEventListener("keydown", this.handleKeyDown);
-        document.addEventListener('themechange', this.handleThemeChange)
+        document.addEventListener('themechange', this.handleThemeChange);
     }
-    
+
     disconnectedCallback() {
         this.removeEventListener("click", this.toggleState);
         this.removeEventListener("keydown", this.handleKeyDown);
-        document.removeEventListener('themechange', this.handleThemeChange)
+        document.removeEventListener('themechange', this.handleThemeChange);
     }
 
     attributeChangedCallback(name, oldVal, newVal) {
         if (name === 'checked') {
             if (this.hasAttribute('checked')) {
                 this.nightlight();
-                localStorage.setItem("theme", "dark");
+                localStorage.setItem(`${window.location.hostname}-theme`, "dark");
             } else {
                 this.daylight();
-                localStorage.setItem("theme", "light");
+                localStorage.setItem(`${window.location.hostname}-theme`, "light");
             }
         }
     }
