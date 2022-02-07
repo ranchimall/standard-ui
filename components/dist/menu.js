@@ -187,16 +187,16 @@ customElements.define('sm-menu', class extends HTMLElement {
     handleKeyDown(e) {
         // If key is pressed on menu button
         if (e.target === this) {
-            if (e.code === 'ArrowDown') {
+            if (e.key === 'ArrowDown') {
                 e.preventDefault()
                 this.availableOptions[0].focus()
             }
-            else if (e.code === 'Enter' || e.code === 'Space') {
+            else if (e.key === 'Enter' || e.key === ' ') {
                 e.preventDefault()
                 this.toggle()
             }
         } else { // If key is pressed over menu options
-            if (e.code === 'ArrowUp') {
+            if (e.key === 'ArrowUp') {
                 e.preventDefault()
                 if (document.activeElement.previousElementSibling) {
                     document.activeElement.previousElementSibling.focus()
@@ -204,7 +204,7 @@ customElements.define('sm-menu', class extends HTMLElement {
                     this.availableOptions[this.availableOptions.length - 1].focus()
                 }
             }
-            else if (e.code === 'ArrowDown') {
+            else if (e.key === 'ArrowDown') {
                 e.preventDefault()
                 if (document.activeElement.nextElementSibling) {
                     document.activeElement.nextElementSibling.focus()
@@ -212,7 +212,7 @@ customElements.define('sm-menu', class extends HTMLElement {
                     this.availableOptions[0].focus()
                 }
             }
-            else if (e.code === 'Enter' || e.code === 'Space') {
+            else if (e.key === 'Enter' || e.key === ' ') {
                 e.preventDefault()
                 e.target.click()
             }
@@ -301,7 +301,7 @@ customElements.define('menu-option', class extends HTMLElement {
         this.setAttribute('role', 'option')
         this.setAttribute('tabindex', '0')
         this.addEventListener('keyup', e => {
-            if (e.code === 'Enter' || e.code === 'Space') {
+            if (e.key === 'Enter' || e.key === ' ') {
                 e.preventDefault()
                 this.click()
             }

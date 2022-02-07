@@ -16,7 +16,6 @@ smCopy.innerHTML = `
     --padding: 0;
     --background-color: inherit;
     --button-background-color: rgba(var(--text-color), 0.2);
-    --button-border-radius: 0.3rem;
 }
 .copy{
     display: grid;
@@ -42,7 +41,7 @@ smCopy.innerHTML = `
     border: none;
     padding: 0.4rem;
     background-color: inherit;
-    border-radius: var(--button-border-radius);
+    border-radius: var(--button-border-radius, 0.3rem);
 }
 .copy-button:active{
     background-color: var(--button-background-color);

@@ -72,8 +72,8 @@ customElements.define('file-input', class extends HTMLElement {
 		}).append(fileInput.content.cloneNode(true))
 		this.input = this.shadowRoot.querySelector('input')
 		this.fileInput = this.shadowRoot.querySelector('.file-input')
-		this.filesPreviewWraper = this.shadowRoot.querySelector('.files-preview-wrapper')
-		this.reflectedAttributes = ['accept', 'multiple', 'capture']
+		this.filesPreviewWrapper = this.shadowRoot.querySelector('.files-preview-wrapper')
+		this.reflectedAttributes = ['accept', 'multiple', 'capture', 'type']
 
 		this.reset = this.reset.bind(this)
 		this.formatBytes = this.formatBytes.bind(this)
@@ -82,7 +82,7 @@ customElements.define('file-input', class extends HTMLElement {
 		this.handleKeyDown = this.handleKeyDown.bind(this)
 	}
 	static get observedAttributes() {
-		return ['accept', 'multiple', 'capture']
+		return ['accept', 'multiple', 'capture', 'type']
 	}
 	get files() {
 		return this.input.files
@@ -92,10 +92,10 @@ customElements.define('file-input', class extends HTMLElement {
 	}
 	set multiple(val) {
 		if (val) {
-			this.setAttribute('mutiple', '')
+			this.setAttribute('multiple', '')
 		}
 		else {
-			this.removeAttribute('mutiple')
+			this.removeAttribute('multiple')
 		}
 	}
 	set capture(val) {
@@ -103,18 +103,18 @@ customElements.define('file-input', class extends HTMLElement {
 	}
 	set value(val) {
 		this.input.value = val
-    }
-    get isValid() {
-        return this.input.value !== ''
-    }
-    reset(){
-        this.input.value = ''
-        this.filesPreviewWraper.innerHTML = ''
-    }
-    formatBytes(a,b=2){if(0===a)return"0 Bytes";const c=0>b?0:b,d=Math.floor(Math.log(a)/Math.log(1024));return parseFloat((a/Math.pow(1024,d)).toFixed(c))+" "+["Bytes","KB","MB","GB","TB","PB","EB","ZB","YB"][d]}
-	createFilePreview(file){
-        const filePreview = document.createElement('li')
-        const {name, size} = file
+	}
+	get isValid() {
+		return this.input.value !== ''
+	}
+	reset() {
+		this.input.value = ''
+		this.filesPreviewWrapper.innerHTML = ''
+	}
+	formatBytes(a, b = 2) { if (0 === a) return "0 Bytes"; const c = 0 > b ? 0 : b, d = Math.floor(Math.log(a) / Math.log(1024)); return parseFloat((a / Math.pow(1024, d)).toFixed(c)) + " " + ["Bytes", "KB", "MB", "GB", "TB", "PB", "EB", "ZB", "YB"][d] }
+	createFilePreview(file) {
+		const filePreview = document.createElement('li')
+		const { name, size } = file
 		filePreview.className = 'file-preview'
 		filePreview.innerHTML = `
 			<div class="file-name">${name}</div>
@@ -122,40 +122,40 @@ customElements.define('file-input', class extends HTMLElement {
 		`
 		return filePreview
 	}
-	handleChange(e){
-		this.filesPreviewWraper.innerHTML = ''
+	handleChange(e) {
+		this.filesPreviewWrapper.innerHTML = ''
 		const frag = document.createDocumentFragment()
 		Array.from(e.target.files).forEach(file => {
 			frag.append(
 				this.createFilePreview(file)
 			)
 		});
-		this.filesPreviewWraper.append(frag)
-    }
-    handleKeyDown(e){
-        if (e.key === 'Enter' || e.code === 'Space') {
-            e.preventDefault()
-            this.input.click()
-        }
-    }
-    connectedCallback() {
-        this.setAttribute('role', 'button')
-        this.setAttribute('aria-label', 'File upload')
-        this.input.addEventListener('change', this.handleChange)
-        this.fileInput.addEventListener('keydown', this.handleKeyDown)
+		this.filesPreviewWrapper.append(frag)
+	}
+	handleKeyDown(e) {
+		if (e.key === 'Enter' || e.key === ' ') {
+			e.preventDefault()
+			this.input.click()
+		}
+	}
+	connectedCallback() {
+		this.setAttribute('role', 'button')
+		this.setAttribute('aria-label', 'File upload')
+		this.input.addEventListener('change', this.handleChange)
+		this.fileInput.addEventListener('keydown', this.handleKeyDown)
 	}
 	attributeChangedCallback(name) {
-		if (this.reflectedAttributes.includes(name)){
-            if (this.hasAttribute(name)) {
-                this.input.setAttribute(name, this.getAttribute(name) ? this.getAttribute(name) : '')
+		if (this.reflectedAttributes.includes(name)) {
+			if (this.hasAttribute(name)) {
+				this.input.setAttribute(name, this.getAttribute(name) ? this.getAttribute(name) : '')
 			}
 			else {
-                this.input.removeAttribute(name)
+				this.input.removeAttribute(name)
 			}
 		}
 	}
 	disconnectedCallback() {
-        this.input.removeEventListener('change', this.handleChange)
-        this.fileInput.removeEventListener('keydown', this.handleKeyDown)
+		this.input.removeEventListener('change', this.handleChange)
+		this.fileInput.removeEventListener('keydown', this.handleKeyDown)
 	}
 })

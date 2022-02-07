@@ -33,6 +33,7 @@ tagsInput.innerHTML = `
   }
   
   .tag {
+      overflow-wrap: anywhere;
     cursor: pointer;
     user-select: none;
     align-items: center;
@@ -98,6 +99,7 @@ customElements.define('tags-input', class extends HTMLElement {
 
 		this.reset = this.reset.bind(this)
 		this.handleInput = this.handleInput.bind(this)
+		this.addTag = this.addTag.bind(this)
 		this.handleKeydown = this.handleKeydown.bind(this)
 		this.handleClick = this.handleClick.bind(this)
 		this.removeTag = this.removeTag.bind(this)
@@ -106,7 +108,11 @@ customElements.define('tags-input', class extends HTMLElement {
 		return ['placeholder', 'limit']
 	}
 	get value() {
-		return [...this.tags].join()
+		return [...this.tags].filter(v => v !== undefined)
+	}
+	set value(arr) {
+		this.reset();
+		[...new Set(arr.filter(v => v !== undefined))].forEach(tag => this.addTag(tag))
 	}
 	get isValid() {
 		return this.tags.size
@@ -120,6 +126,17 @@ customElements.define('tags-input', class extends HTMLElement {
 		while (this.input.previousElementSibling) {
 			this.input.previousElementSibling.remove()
 		}
+	}
+	addTag(tagValue) {
+		const tag = document.createElement('span')
+		tag.dataset.value = tagValue
+		tag.className = 'tag'
+		tag.innerHTML = `
+            <span class="tag-text">${tagValue}</span>
+            <svg class="icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="24" height="24"><path fill="none" d="M0 0h24v24H0z"/><path d="M12 10.586l4.95-4.95 1.414 1.414-4.95 4.95 4.95 4.95-1.414 1.414-4.95-4.95-4.95 4.95-1.414-1.414 4.95-4.95-4.95-4.95L7.05 5.636z"/></svg>
+            `
+		this.input.before(tag)
+		this.tags.add(tagValue)
 	}
 	handleInput(e) {
 		const inputValueLength = e.target.value.trim().length
@@ -136,7 +153,7 @@ customElements.define('tags-input', class extends HTMLElement {
 			e.preventDefault()
 		}
 		if (e.target.value.trim() !== '') {
-			if (e.key === 'Enter' || e.key === ',' || e.key === '/' || e.code === 'Space') {
+			if (e.key === 'Enter' || e.key === ',' || e.key === '/') {
 				const tagValue = e.target.value.trim()
 				if (this.tags.has(tagValue)) {
 					this.tagsWrapper.querySelector(`[data-value="${tagValue}"]`).animate([
@@ -153,17 +170,8 @@ customElements.define('tags-input', class extends HTMLElement {
 						duration: 300,
 						easing: 'ease'
 					})
-				}
-				else {
-					const tag = document.createElement('span')
-					tag.dataset.value = tagValue
-					tag.className = 'tag'
-					tag.innerHTML = `
-                        <span class="tag-text">${tagValue}</span>
-                        <svg class="icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="24" height="24"><path fill="none" d="M0 0h24v24H0z"/><path d="M12 10.586l4.95-4.95 1.414 1.414-4.95 4.95 4.95 4.95-1.414 1.414-4.95-4.95-4.95 4.95-1.414-1.414 4.95-4.95-4.95-4.95L7.05 5.636z"/></svg>
-                        `
-					this.input.before(tag)
-					this.tags.add(tagValue)
+				} else {
+					this.addTag(tagValue)
 				}
 				e.target.value = ''
 				e.target.setAttribute('size', '3')

@@ -145,7 +145,8 @@ smNotifications.innerHTML = `
     }
 </style>
 <div class="notification-panel"></div>
-`
+`;
+
 
 customElements.define('sm-notifications', class extends HTMLElement {
     constructor() {
@@ -178,7 +179,7 @@ customElements.define('sm-notifications', class extends HTMLElement {
 
     createNotification(message, options = {}) {
         const { pinned = false, icon = '' } = options;
-        const notification = document.createElement('div')
+        const notification = document.createElement('output')
         notification.id = this.randString(8)
         notification.classList.add('notification');
         let composition = ``;

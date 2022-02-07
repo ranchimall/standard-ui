@@ -14,8 +14,8 @@ themeToggle.innerHTML = `
     .theme-toggle {
         display: flex;
         position: relative;
-        width: 1.4rem;
-        height: 1.4rem;
+        width: 1.2rem;
+        height: 1.2rem;
         cursor: pointer;
         -webkit-tap-highlight-color: transparent;
     }
@@ -106,7 +106,7 @@ class ThemeToggle extends HTMLElement {
         this.fireEvent();
     }
     handleKeyDown(e) {
-        if (e.code === 'Space') {
+        if (e.key === ' ') {
             this.toggleState();
         }
     }

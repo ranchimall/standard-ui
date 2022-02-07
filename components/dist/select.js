@@ -14,7 +14,6 @@ smSelect.innerHTML = `
     --accent-color: #4d2588;
     --text-color: 17, 17, 17;
     --background-color: 255, 255, 255;
-    --max-height: auto;
     --min-width: 100%;
 }
 :host([disabled]) .select{
@@ -55,9 +54,8 @@ smSelect.innerHTML = `
     -ms-grid-columns: 1fr auto;
     grid-template-columns: 1fr auto;
         grid-template-areas: 'heading heading' '. .';
-    padding: 0.4rem 0.8rem;
+    padding: var(--padding,0.6rem 0.8rem);
     background: rgba(var(--text-color), 0.06);
-    border: solid 1px rgba(var(--text-color), 0.2);
     -webkit-box-align: center;
         -ms-flex-align: center;
             align-items: center;
@@ -89,7 +87,7 @@ smSelect.innerHTML = `
         -ms-flex-direction: column;
             flex-direction: column;
     min-width: var(--min-width);
-    max-height: var(--max-height);
+    max-height: var(--max-height, auto);
     background: rgba(var(--background-color), 1);
     border: solid 1px rgba(var(--text-color), 0.2);
     border-radius: var(--border-radius, 0.5rem);
@@ -186,7 +184,18 @@ customElements.define('sm-select', class extends HTMLElement {
         return this.getAttribute('value')
     }
     set value(val) {
-        this.setAttribute('value', val)
+        const selectedOption = this.availableOptions.find(option => option.getAttribute('value') === val)
+        if (selectedOption) {
+            this.setAttribute('value', val)
+            this.selectedOptionText.textContent = `${this.label}${selectedOption.textContent}`;
+            if (this.previousOption) {
+                this.previousOption.classList.remove('check-selected')
+            }
+            selectedOption.classList.add('check-selected')
+            this.previousOption = selectedOption
+        } else {
+            console.warn(`There is no option with ${val} as value`)
+        }
     }
 
     reset(fire = true) {
@@ -242,7 +251,7 @@ customElements.define('sm-select', class extends HTMLElement {
     }
 
     handleOptionsNavigation(e) {
-        if (e.code === 'ArrowUp') {
+        if (e.key === 'ArrowUp') {
             e.preventDefault()
             if (document.activeElement.previousElementSibling) {
                 document.activeElement.previousElementSibling.focus()
@@ -250,7 +259,7 @@ customElements.define('sm-select', class extends HTMLElement {
                 this.availableOptions[this.availableOptions.length - 1].focus()
             }
         }
-        else if (e.code === 'ArrowDown') {
+        else if (e.key === 'ArrowDown') {
             e.preventDefault()
             if (document.activeElement.nextElementSibling) {
                 document.activeElement.nextElementSibling.focus()
@@ -262,13 +271,7 @@ customElements.define('sm-select', class extends HTMLElement {
     handleOptionSelection(e) {
         if (this.previousOption !== document.activeElement) {
             this.value = document.activeElement.getAttribute('value')
-            this.selectedOptionText.textContent = `${this.label}${document.activeElement.textContent}`;
             this.fireEvent()
-            if (this.previousOption) {
-                this.previousOption.classList.remove('check-selected')
-            }
-            document.activeElement.classList.add('check-selected')
-            this.previousOption = document.activeElement
         }
     }
     handleClick(e) {
@@ -282,12 +285,12 @@ customElements.define('sm-select', class extends HTMLElement {
     }
     handleKeydown(e) {
         if (e.target === this) {
-            if (this.isOpen && e.code === 'ArrowDown') {
+            if (this.isOpen && e.key === 'ArrowDown') {
                 e.preventDefault()
                 this.availableOptions[0].focus()
                 this.handleOptionSelection(e)
             }
-            else if (e.code === 'Enter' || e.code === 'Space') {
+            else if (e.key === 'Enter' || e.key === ' ') {
                 e.preventDefault()
                 this.toggle()
             }
@@ -295,7 +298,7 @@ customElements.define('sm-select', class extends HTMLElement {
         else {
             this.handleOptionsNavigation(e)
             this.handleOptionSelection(e)
-            if (e.code === 'Enter' || e.code === 'Space') {
+            if (e.key === 'Enter' || e.key === ' ') {
                 e.preventDefault()
                 this.collapse()
             }

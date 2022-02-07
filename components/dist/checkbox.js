@@ -156,7 +156,7 @@ customElements.define('sm-checkbox', class extends HTMLElement {
         }))
     }
     handleKeyDown(e) {
-        if (e.code === "Space") {
+        if (e.key === ' ') {
             e.preventDefault()
             this.click()
         }

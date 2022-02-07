@@ -190,7 +190,7 @@ customElements.define('sm-switch', class extends HTMLElement {
 
     connectedCallback() {
         this.addEventListener('keydown', e => {
-            if (e.code === "Space" && !this.isDisabled) {
+            if (e.key === ' ' && !this.isDisabled) {
                 e.preventDefault()
                 this.input.click()
             }

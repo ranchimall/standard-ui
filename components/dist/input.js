@@ -45,7 +45,6 @@ border: none;
     --width: 100%;
     --icon-gap: 0.5rem;
     --border-radius: 0.3rem;
-    --padding: 0.7rem 1rem;
     --background: rgba(var(--text-color), 0.06);
 }
 .hide{
@@ -79,7 +78,7 @@ border: none;
             align-items: center;
     position: relative;
     gap: var(--icon-gap);
-    padding: var(--padding);
+    padding: var(--padding, 0.6rem 0.8rem);
     border-radius: var(--border-radius);
     -webkit-transition: opacity 0.3s;
     -o-transition: opacity 0.3s;
@@ -243,7 +242,6 @@ customElements.define('sm-input',
             this._helperText = '';
             this._errorText = '';
             this.isRequired = false;
-            this.hideRequired = false;
             this.validationFunction = undefined;
             this.reflectedAttributes = ['value', 'required', 'disabled', 'type', 'inputmode', 'readonly', 'min', 'max', 'pattern', 'minlength', 'maxlength', 'step'];
 
@@ -368,9 +366,6 @@ customElements.define('sm-input',
                     this.clearBtn.classList.remove('hide');
                 } else {
                     this.clearBtn.classList.add('hide');
-                    if (this.isRequired && !this.hideRequired) {
-                        this.feedbackText.textContent = '*required';
-                    }
                 }
             }
             if (!this.hasAttribute('placeholder') || this.getAttribute('placeholder').trim() === '') return;
@@ -437,20 +432,12 @@ customElements.define('sm-input',
                 }
                 else if (name === 'required') {
                     this.isRequired = this.hasAttribute('required');
-                    if (this.isRequired && !this.hideRequired) {
-                        this.feedbackText.textContent = '';
-                    } else {
-                        this.feedbackText.textContent = '*required';
-                    }
                     if (this.isRequired) {
                         this.setAttribute('aria-required', 'true');
                     }
                     else {
                         this.setAttribute('aria-required', 'false');
                     }
-                }
-                else if (name === 'hiderequired') {
-                    this.hideRequired = this.hasAttribute('hiderequired')
                 }
                 else if (name === 'readonly') {
                     if (this.hasAttribute('readonly')) {

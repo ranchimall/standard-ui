@@ -267,17 +267,15 @@ customElements.define('sm-popup', class extends HTMLElement {
                 duration: 300,
                 easing: 'ease'
             }
-            if (popupStack) {
-                popupStack.push({
-                    popup: this,
-                    permission: pinned
-                });
-                if (popupStack.items.length > 1) {
-                    this.animateTo(popupStack.items[popupStack.items.length - 2].popup.shadowRoot.querySelector('.popup'), [
-                        { transform: 'none' },
-                        { transform: 'translateY(-1.5rem) scale(0.9)' },
-                    ], animOptions)
-                }
+            popupStack.push({
+                popup: this,
+                permission: pinned
+            });
+            if (popupStack.items.length > 1) {
+                this.animateTo(popupStack.items[popupStack.items.length - 2].popup.shadowRoot.querySelector('.popup'), [
+                    { transform: 'none' },
+                    { transform: (window.innerWidth > 640) ? 'scale(0.95)' : 'translateY(-1.5rem)' },
+                ], animOptions)
             }
             this.popupContainer.classList.remove('hide');
             if (!this.offset)
@@ -327,20 +325,6 @@ customElements.define('sm-popup', class extends HTMLElement {
                 this.popupContainer.classList.add('hide');
                 this.popup.style = ''
                 this.removeAttribute('open');
-                if (typeof popupStack !== 'undefined') {
-                    popupStack.pop();
-                    if (popupStack.items.length) {
-                        this.animateTo(popupStack.items[popupStack.items.length - 1].popup.shadowRoot.querySelector('.popup'), [
-                            { transform: 'translateY(-1.5rem) scale(0.9)' },
-                            { transform: 'none' },
-                        ], animOptions)
-
-                    } else {
-                        this.resumeScrolling();
-                    }
-                } else {
-                    this.resumeScrolling();
-                }
 
                 if (this.forms.length) {
                     this.forms.forEach(form => form.reset());
@@ -355,6 +339,16 @@ customElements.define('sm-popup', class extends HTMLElement {
                 );
                 this.isOpen = false;
             })
+        popupStack.pop();
+        if (popupStack.items.length) {
+            this.animateTo(popupStack.items[popupStack.items.length - 1].popup.shadowRoot.querySelector('.popup'), [
+                { transform: (window.innerWidth > 640) ? 'scale(0.95)' : 'translateY(-1.5rem)' },
+                { transform: 'none' },
+            ], animOptions)
+
+        } else {
+            this.resumeScrolling();
+        }
     }
 
     handleTouchStart(e) {
@@ -404,7 +398,7 @@ customElements.define('sm-popup', class extends HTMLElement {
 
 
     detectFocus(e) {
-        if (e.code === 'Tab') {
+        if (e.key === 'Tab') {
             const lastElement = this.focusable[this.focusable.length - 1];
             const firstElement = this.focusable[0];
             if (e.shiftKey && document.activeElement === firstElement) {

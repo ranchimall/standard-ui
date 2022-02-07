@@ -126,7 +126,7 @@ customElements.define('sm-button',
         }
 
         handleKeyDown(e) {
-            if (!this.hasAttribute('disabled') && (e.key === 'Enter' || e.code === 'Space')) {
+            if (!this.hasAttribute('disabled') && (e.key === 'Enter' || e.key === ' ')) {
                 e.preventDefault();
                 this.click();
             }
