@@ -34,18 +34,13 @@ input:invalid{
 border: none;
 }
 :host{
-    display: -webkit-box;
-    display: -ms-flexbox;
     display: flex;
-    --accent-color: #4d2588;
-    --text-color: 17, 17, 17;
-    --background-color: 255, 255, 255;
     --success-color: #00C853;
     --danger-color: red;
     --width: 100%;
     --icon-gap: 0.5rem;
     --border-radius: 0.3rem;
-    --background: rgba(var(--text-color), 0.06);
+    --background: rgba(var(--text-color, (17,17,17)), 0.06);
 }
 .hide{
    opacity: 0 !important;
@@ -55,7 +50,7 @@ border: none;
     display: none;
 }
 .icon {
-    fill: rgba(var(--text-color), 0.6);
+    fill: rgba(var(--text-color, (17,17,17)), 0.6);
     height: 1.4rem;
     width: 1.4rem;
     border-radius: 1rem;
@@ -67,22 +62,16 @@ border: none;
     border-radius: 10rem;
 }
 .input {
-    display: -webkit-box;
-    display: -ms-flexbox;
     display: flex;
     cursor: text;
     min-width: 0;
     text-align: left;
-    -webkit-box-align: center;
-        -ms-flex-align: center;
             align-items: center;
     position: relative;
     gap: var(--icon-gap);
     padding: var(--padding, 0.6rem 0.8rem);
     border-radius: var(--border-radius);
-    -webkit-transition: opacity 0.3s;
-    -o-transition: opacity 0.3s;
-    transition: opacity 0.3s;
+    transition: opacity 0.3s, box-shadow 0.2s;
     background: var(--background);
     width: 100%;
     outline: none;
@@ -96,7 +85,7 @@ border: none;
     pointer-events: none;
 }
 .input:focus-within:not(.readonly){
-    box-shadow: 0 0 0 0.1rem var(--accent-color) inset !important;
+    box-shadow: 0 0 0 0.1rem var(--accent-color,teal) inset !important;
 }
 .disabled{
     pointer-events: none;
@@ -112,7 +101,7 @@ border: none;
     transition: -webkit-transform 0.3s;
     -o-transition: transform 0.3s;
     transition: transform 0.3s;
-    transition: transform 0.3s, -webkit-transform 0.3s;
+    transition: transform 0.3s, -webkit-transform 0.3s, color .03;
     -webkit-transform-origin: left;
     -ms-transform-origin: left;
         transform-origin: left;
@@ -131,15 +120,9 @@ border: none;
 }
 .container{
     width: 100%;
-    display: -webkit-box;
-    display: -ms-flexbox;
     display: flex;
     position: relative;
-    -webkit-box-align: center;
-        -ms-flex-align: center;
             align-items: center;
-    -webkit-box-flex: 1;
-        -ms-flex: 1;
             flex: 1;
 }    
 input{
@@ -147,40 +130,30 @@ input{
     border: none;
     background: transparent;
     outline: none;
-    color: rgba(var(--text-color), 1);
+    color: rgba(var(--text-color, (17,17,17)), 1);
     width: 100%;
 }
-:host(:not([variant="outlined"])) .animate-label .container input {
+:host([animate]) .input:focus-within .container input,
+.animate-label .container input {
     -webkit-transform: translateY(0.6rem);
             -ms-transform: translateY(0.6rem);
         transform: translateY(0.6rem);
     }
   
-:host(:not([variant="outlined"])) .animate-label .label {
+    :host([animate]) .input:focus-within .label,
+    .animate-label .label {
     -webkit-transform: translateY(-0.7em) scale(0.8);
             -ms-transform: translateY(-0.7em) scale(0.8);
         transform: translateY(-0.7em) scale(0.8);
     opacity: 1;
-    color: var(--accent-color)
+    color: var(--accent-color,teal)
 }
 :host([variant="outlined"]) .input {
-    box-shadow: 0 0 0 0.1rem var(--border-color, rgba(var(--text-color), 0.4)) inset;
-    background: rgba(var(--background-color), 1);
-}
-:host([variant="outlined"]) .label {
-    width: max-content;
-    margin-left: -0.5rem;
-    padding: 0 0.5rem;
-}
-:host([variant="outlined"]) .animate-label .label {
-    -webkit-transform: translate(0.1rem, -1.5rem) scale(0.8);
-            -ms-transform: translate(0.1rem, -1.5rem) scale(0.8);
-        transform: translate(0.1rem, -1.5rem) scale(0.8);
-    opacity: 1;
-    background: rgba(var(--background-color), 1);
+    box-shadow: 0 0 0 1px var(--border-color, rgba(var(--text-color, (17,17,17)), 0.3)) inset;
+    background: rgba(var(--background-color, (255,255,255)), 1);
 }
 .animate-label:focus-within:not(.readonly) .label{
-    color: var(--accent-color)
+    color: var(--accent-color,teal)
 }
 .feedback-text:not(:empty){
     display: flex;
@@ -189,7 +162,7 @@ input{
     font-size: 0.9rem;
     align-items: center;
     padding: 0.8rem 0;
-    color: rgba(var(--text-color), 0.8);
+    color: rgba(var(--text-color, (17,17,17)), 0.8);
 }
 .success{
     color: var(--success-color);
@@ -208,7 +181,7 @@ input{
 }
 @media (any-hover: hover){
     .icon:hover{
-        background: rgba(var(--text-color), 0.1);
+        background: rgba(var(--text-color, (17,17,17)), 0.1);
     }
 }
 </style>
