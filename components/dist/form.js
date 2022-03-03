@@ -63,7 +63,7 @@ customElements.define('sm-form', class extends HTMLElement {
 	handleKeydown(e) {
 		if (e.key === 'Enter' && e.target.tagName !== 'SM-TEXTAREA') {
 			if (this.allRequiredValid) {
-				if (this.submitButton && this.submitButton.tagName === 'SM-BUTTON') {
+				if (this.submitButton) {
 					this.submitButton.click()
 				}
 				this.dispatchEvent(new CustomEvent('submit', {
