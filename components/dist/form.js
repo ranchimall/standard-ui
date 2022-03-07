@@ -61,7 +61,7 @@ customElements.define('sm-form', class extends HTMLElement {
 		}
 	}
 	handleKeydown(e) {
-		if (e.key === 'Enter' && e.target.tagName !== 'SM-TEXTAREA') {
+		if (e.key === 'Enter' && !e.target.tagName.includes('TEXTAREA')) {
 			if (this.allRequiredValid) {
 				if (this.submitButton) {
 					this.submitButton.click()
