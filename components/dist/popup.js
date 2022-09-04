@@ -1,3 +1,4 @@
+//popup
 class Stack {
     constructor() {
         this.items = [];
@@ -30,9 +31,6 @@ smPopup.innerHTML = `
     display: -ms-grid;
     display: grid;
     z-index: 10;
-    --accent-color: #4d2588;
-    --text-color: 17, 17, 17;
-    --background-color: 255, 255, 255;
     --width: 100%;
     --height: auto;
     --min-width: auto;
@@ -87,7 +85,7 @@ smPopup.innerHTML = `
     min-height: var(--min-height);
     max-height: 90vh;
     border-radius: var(--border-radius);
-    background: rgba(var(--background-color), 1);
+    background: rgba(var(--background-color, (255,255,255)), 1);
     -webkit-box-shadow: 0 -1rem 2rem #00000020;
             box-shadow: 0 -1rem 2rem #00000020;
 }
@@ -147,7 +145,7 @@ smPopup.innerHTML = `
     .handle{
         height: 0.3rem;
         width: 2rem;
-        background: rgba(var(--text-color), .4);
+        background: rgba(var(--text-color, (17,17,17)), .4);
         border-radius: 1rem;
         margin: 0.5rem 0;
     }
@@ -158,10 +156,10 @@ smPopup.innerHTML = `
     }
     
     ::-webkit-scrollbar-thumb{
-        background: rgba(var(--text-color), 0.3);
+        background: rgba(var(--text-color, (17,17,17)), 0.3);
         border-radius: 1rem;
         &:hover{
-            background: rgba(var(--text-color), 0.5);
+            background: rgba(var(--text-color, (17,17,17))), 0.5);
         }
     }
 }
@@ -201,7 +199,7 @@ customElements.define('sm-popup', class extends HTMLElement {
 
         this.popupContainer = this.shadowRoot.querySelector('.popup-container');
         this.backdrop = this.shadowRoot.querySelector('.background');
-        this.popup = this.shadowRoot.querySelector('.popup');
+        this.dialogBox = this.shadowRoot.querySelector('.popup');
         this.popupBodySlot = this.shadowRoot.querySelector('.popup-body slot');
         this.popupHeader = this.shadowRoot.querySelector('.popup-top');
 
@@ -235,7 +233,7 @@ customElements.define('sm-popup', class extends HTMLElement {
     resumeScrolling() {
         const scrollY = document.body.style.top;
         window.scrollTo(0, parseInt(scrollY || '0') * -1);
-        document.body.style.overflow = 'auto';
+        document.body.style.overflow = '';
         document.body.style.top = 'initial';
     }
 
@@ -246,7 +244,7 @@ customElements.define('sm-popup', class extends HTMLElement {
                 easing: 'ease'
             }
             const initialAnimation = (window.innerWidth > 640) ? 'scale(1.1)' : `translateY(${this.offset ? `${this.offset}px` : '100%'})`
-            this.animateTo(this.popup, [
+            this.animateTo(this.dialogBox, [
                 {
                     opacity: this.offset ? 1 : 0,
                     transform: initialAnimation
@@ -311,7 +309,7 @@ customElements.define('sm-popup', class extends HTMLElement {
             { opacity: 1 },
             { opacity: 0 }
         ], animOptions)
-        this.animateTo(this.popup, [
+        this.animateTo(this.dialogBox, [
             {
                 opacity: 1,
                 transform: (window.innerWidth > 640) ? 'none' : `translateY(${this.offset ? `${this.offset}px` : '0'})`
@@ -323,7 +321,7 @@ customElements.define('sm-popup', class extends HTMLElement {
         ], animOptions).finished
             .finally(() => {
                 this.popupContainer.classList.add('hide');
-                this.popup.style = ''
+                this.dialogBox.style = ''
                 this.removeAttribute('open');
 
                 if (this.forms.length) {
@@ -363,7 +361,7 @@ customElements.define('sm-popup', class extends HTMLElement {
         if (this.touchStartY < e.changedTouches[0].clientY) {
             this.offset = e.changedTouches[0].clientY - this.touchStartY;
             this.touchEndAnimation = window.requestAnimationFrame(() => {
-                this.popup.style.transform = `translateY(${this.offset}px)`;
+                this.dialogBox.style.transform = `translateY(${this.offset}px)`;
             });
         }
     }
@@ -372,7 +370,7 @@ customElements.define('sm-popup', class extends HTMLElement {
         this.touchEndTime = e.timeStamp;
         cancelAnimationFrame(this.touchEndAnimation);
         this.touchEndY = e.changedTouches[0].clientY;
-        this.threshold = this.popup.getBoundingClientRect().height * 0.3;
+        this.threshold = this.dialogBox.getBoundingClientRect().height * 0.3;
         if (this.touchEndTime - this.touchStartTime > 200) {
             if (this.touchEndY - this.touchStartY > this.threshold) {
                 if (this.pinned) {
@@ -412,7 +410,7 @@ customElements.define('sm-popup', class extends HTMLElement {
     }
 
     updateFocusableList() {
-        this.focusable = this.querySelectorAll('sm-button:not([disabled]), button:not([disabled]), [href], sm-input, input, sm-select, select, sm-checkbox, sm-textarea, textarea, [tabindex]:not([tabindex="-1"])')
+        this.focusable = this.querySelectorAll('sm-button:not([disabled]), button:not([disabled]), [href], sm-input, input:not([readonly]), sm-select, select, sm-checkbox, sm-textarea, textarea, [tabindex]:not([tabindex="-1"])')
         this.autoFocus = this.querySelector('[autofocus]')
     }
 

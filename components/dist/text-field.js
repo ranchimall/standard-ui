@@ -5,17 +5,13 @@ textField.innerHTML = `
         padding: 0;
         margin: 0;
         box-sizing: border-box;
-    }
-    :host{
-        --accent-color: #4d2588;
-        --text-color: 17, 17, 17;
-        --background-color: 255, 255, 255;
-    }
+    } 
     .text-field{
         display: flex;
         align-items: center;
     }
     .text{
+        padding: 0.6rem 0;
         transition: background-color 0.3s;
         border-bottom: 0.15rem solid transparent;
         overflow-wrap: break-word;
@@ -37,33 +33,41 @@ textField.innerHTML = `
     .editable{
         border-bottom: 0.15rem solid rgba(var(--text-color), 0.6);
     }
-    .edit-button{
-        display: grid;
+    .icon-container{
         position: relative;
         margin-left: 0.5rem;
-        background-color: transparent;
-        border: none;
-    }
-    :host([disabled]) .edit-button{
-        display: none;
+        height: 1.8rem;
+        width: 1.8rem;
     }
     .icon{
-        grid-area: 1/-1;
+        position: absolute;
         cursor: pointer;
-        height: 1.2rem;
-        width: 1.2rem;
-        fill: rgba(var(--text-color), 1);
+        fill: none;
+        stroke-width: 8;
+        stroke: rgba(var(--text-color), 1);
+        height: 1.8rem;
+        width: 1.8rem;
+        padding: 0.4rem;
+        overflow: visible;
+        stroke-linecap: round;
+        stroke-linejoin: round;
     }
     .hide{
-        visibility: hidden;
+        display: none;
     }
 </style>
 <div class="text-field">
     <div class="text" part="text"></div>
-    <button class="edit-button">
-        <svg class="icon" title="edit" xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 0 24 24" width="24px" fill="#000000"><path d="M0 0h24v24H0z" fill="none"/><path d="M3 17.25V21h3.75L17.81 9.94l-3.75-3.75L3 17.25zM20.71 7.04c.39-.39.39-1.02 0-1.41l-2.34-2.34c-.39-.39-1.02-.39-1.41 0l-1.83 1.83 3.75 3.75 1.83-1.83z"/></svg>
-        <svg class="icon hide" title="Save" xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 0 24 24" width="24px" fill="#000000"><path d="M0 0h24v24H0z" fill="none"/><path d="M9 16.2L4.8 12l-1.4 1.4L9 19 21 7l-1.4-1.4L9 16.2z"/></svg>
-    </button>
+    <div class="icon-container">
+        <svg class="edit-button icon" viewBox="0 0 64 64">
+            <title>Edit</title>
+            <path d="M46.73,14.81l7,7,7.65-7.6A7.15,7.15,0,0,0,61.39,4L60.11,2.77a7.23,7.23,0,0,0-10.19,0L3.87,48.57a5,5,0,0,0-1.39,2.6L.53,61.27a1.74,1.74,0,0,0,2,2l10.15-1.94A5.06,5.06,0,0,0,15.34,60L49.6,25.9"/>
+        </svg>
+        <svg class="save-button icon hide" viewBox="0 0 64 64">
+            <title>Save</title>
+            <polyline points="0.35 31.82 21.45 52.98 63.65 10.66"/>
+        </svg>
+    </div>
 </div>
 `
 
@@ -78,35 +82,32 @@ customElements.define('text-field', class extends HTMLElement {
         this.textContainer = this.textField.children[0]
         this.iconsContainer = this.textField.children[1]
         this.editButton = this.textField.querySelector('.edit-button')
+        this.saveButton = this.textField.querySelector('.save-button')
         this.isTextEditable = false
         this.isDisabled = false
-
-        this.fireEvent = this.fireEvent.bind(this)
-        this.setEditable = this.setEditable.bind(this)
-        this.setNonEditable = this.setNonEditable.bind(this)
-        this.toggleEditable = this.toggleEditable.bind(this)
-        this.revert = this.revert.bind(this)
     }
 
     static get observedAttributes() {
-        return ['disabled', 'value']
+        return ['disable']
     }
 
     get value() {
         return this.text
     }
     set value(val) {
+        this.text = val
+        this.textContainer.textContent = val
         this.setAttribute('value', val)
     }
     set disabled(val) {
         this.isDisabled = val
         if (this.isDisabled)
-            this.setAttribute('disabled', '')
+            this.setAttribute('disable', '')
         else
-            this.removeAttribute('disabled')
+            this.removeAttribute('disable')
     }
-    fireEvent(value) {
-        let event = new CustomEvent('change', {
+    fireEvent = (value) => {
+        let event = new CustomEvent('contentchanged', {
             bubbles: true,
             cancelable: true,
             composed: true,
@@ -117,50 +118,42 @@ customElements.define('text-field', class extends HTMLElement {
         this.dispatchEvent(event);
     }
 
-    setEditable() {
+    setEditable = () => {
         if (this.isTextEditable) return
         this.textContainer.contentEditable = true
         this.textContainer.classList.add('editable')
         this.textContainer.focus()
         document.execCommand('selectAll', false, null);
-        this.editButton.children[0].animate(this.rotateOut, this.animOptions).onfinish = () => {
-            this.editButton.children[0].classList.add('hide')
+        this.editButton.animate(this.rotateOut, this.animOptions).onfinish = () => {
+            this.editButton.classList.add('hide')
         }
         setTimeout(() => {
-            this.editButton.children[1].classList.remove('hide')
-            this.editButton.children[1].animate(this.rotateIn, this.animOptions)
+            this.saveButton.classList.remove('hide')
+            this.saveButton.animate(this.rotateIn, this.animOptions)
         }, 100);
         this.isTextEditable = true
     }
-    setNonEditable() {
+    setNonEditable = () => {
         if (!this.isTextEditable) return
         this.textContainer.contentEditable = false
         this.textContainer.classList.remove('editable')
-        const newValue = this.textContainer.textContent.trim()
-        if (this.text !== newValue && newValue !== '') {
+
+        if (this.text !== this.textContainer.textContent.trim()) {
             this.setAttribute('value', this.textContainer.textContent)
             this.text = this.textContainer.textContent.trim()
             this.fireEvent(this.text)
-        } else {
-            this.value = this.text
         }
-        this.editButton.children[1].animate(this.rotateOut, this.animOptions).onfinish = () => {
-            this.editButton.children[1].classList.add('hide')
+        this.saveButton.animate(this.rotateOut, this.animOptions).onfinish = () => {
+            this.saveButton.classList.add('hide')
         }
         setTimeout(() => {
-            this.editButton.children[0].classList.remove('hide')
-            this.editButton.children[0].animate(this.rotateIn, this.animOptions)
+            this.editButton.classList.remove('hide')
+            this.editButton.animate(this.rotateIn, this.animOptions)
         }, 100);
         this.isTextEditable = false
     }
-    toggleEditable() {
-        if (this.isTextEditable)
-            this.setNonEditable()
-        else
-            this.setEditable()
-    }
 
-    revert() {
+    revert = () => {
         if (this.textContainer.isContentEditable) {
             this.value = this.text
             this.setNonEditable()
@@ -173,7 +166,7 @@ customElements.define('text-field', class extends HTMLElement {
             this.text = this.getAttribute('value')
             this.textContainer.textContent = this.text
         }
-        if (this.hasAttribute('disabled'))
+        if (this.hasAttribute('disable'))
             this.isDisabled = true
         else
             this.isDisabled = false
@@ -206,27 +199,30 @@ customElements.define('text-field', class extends HTMLElement {
         if (!this.isDisabled) {
             this.iconsContainer.classList.remove('hide')
             this.textContainer.addEventListener('dblclick', this.setEditable)
-            this.editButton.addEventListener('click', this.toggleEditable)
+            this.editButton.addEventListener('click', this.setEditable)
+            this.saveButton.addEventListener('click', this.setNonEditable)
         }
     }
-    attributeChangedCallback(name, oldValue, newValue) {
-        if (name === 'disabled') {
-            if (this.hasAttribute('disabled')) {
+    attributeChangedCallback(name) {
+        if (name === 'disable') {
+            if (this.hasAttribute('disable')) {
+                this.iconsContainer.classList.add('hide')
                 this.textContainer.removeEventListener('dblclick', this.setEditable)
-                this.editButton.removeEventListener('click', this.toggleEditable)
+                this.editButton.removeEventListener('click', this.setEditable)
+                this.saveButton.removeEventListener('click', this.setNonEditable)
                 this.revert()
             }
             else {
+                this.iconsContainer.classList.remove('hide')
                 this.textContainer.addEventListener('dblclick', this.setEditable)
-                this.editButton.addEventListener('click', this.toggleEditable)
+                this.editButton.addEventListener('click', this.setEditable)
+                this.saveButton.addEventListener('click', this.setNonEditable)
             }
-        } else if (name === 'value') {
-            this.text = newValue
-            this.textContainer.textContent = newValue
         }
     }
     disconnectedCallback() {
         this.textContainer.removeEventListener('dblclick', this.setEditable)
-        this.editButton.removeEventListener('click', this.toggleEditable)
+        this.editButton.removeEventListener('click', this.setEditable)
+        this.saveButton.removeEventListener('click', this.setNonEditable)
     }
 })

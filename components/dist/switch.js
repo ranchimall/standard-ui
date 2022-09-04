@@ -1,3 +1,5 @@
+//switch
+
 const smSwitch = document.createElement('template')
 smSwitch.innerHTML = `	
 <style>
@@ -12,9 +14,6 @@ smSwitch.innerHTML = `
         display: -webkit-inline-box;
         display: -ms-inline-flexbox;
         display: inline-flex;
-        --accent-color: #4d2588;
-        --text-color: 17, 17, 17;
-        --background-color: 255, 255, 255;
     }
     label{
         display: -webkit-box;
@@ -61,7 +60,7 @@ smSwitch.innerHTML = `
         -webkit-transition: background 0.3s;
         -o-transition: background 0.3s;
         transition: background 0.3s;
-        background: rgba(var(--text-color), 0.4);
+        background: rgba(var(--text-color,inherit), 0.4);
         -webkit-box-shadow: 0 0.1rem 0.3rem #00000040 inset;
                 box-shadow: 0 0.1rem 0.3rem #00000040 inset;
         border-radius: 1rem;
@@ -80,7 +79,7 @@ smSwitch.innerHTML = `
         position: absolute;
         height: 2.6rem;
         width: 2.6rem;
-        background: rgba(var(--text-color), 0.2);
+        background: rgba(var(--text-color,inherit), 0.2);
         border-radius: 2rem;
         opacity: 0;
         -webkit-transition: opacity 0.3s;
@@ -119,7 +118,7 @@ smSwitch.innerHTML = `
     }
     
     input:checked ~ .track {
-        background: var(--accent-color);
+        background: var(--accent-color, teal);
     }
 </style>
 <label tabindex="0">
@@ -172,6 +171,9 @@ customElements.define('sm-switch', class extends HTMLElement {
         } else {
             this.removeAttribute('checked')
         }
+    }
+    get value() {
+        return this.isChecked
     }
 
     reset() {

@@ -8,9 +8,6 @@ stripSelect.innerHTML = `
                 box-sizing: border-box;
     }  
     :host{
-        --accent-color: #4d2588;
-        --text-color: 17, 17, 17;
-        --background-color: 255, 255, 255;
         padding: 1rem 0;
     }
     .hide{
@@ -50,7 +47,7 @@ stripSelect.innerHTML = `
         cursor: pointer;
         position: absolute;
         align-items: center;
-        background: rgba(var(--background-color), 1);
+        background: rgba(var(--background-color,(255,255,255)), 1);
         transform: translateY(-50%);
     }
     .nav-button--right{
@@ -69,7 +66,7 @@ stripSelect.innerHTML = `
     .icon{
         height: 1.5rem;
         width: 1.5rem;
-        fill: rgba(var(--text-color), .8);
+        fill: rgba(var(--text-color,(17,17,17)), .8);
     }
     @media (hover: none){
         ::-webkit-scrollbar {
@@ -85,11 +82,11 @@ stripSelect.innerHTML = `
             width: 2rem;
         }
         .cover--left{
-            background: linear-gradient(90deg, rgba(var(--background-color), 1), transparent);
+            background: linear-gradient(90deg, rgba(var(--background-color,(255,255,255)), 1), transparent);
         }
         .cover--right{
             right: 0;
-            background: linear-gradient(90deg, transparent, rgba(var(--background-color), 1));
+            background: linear-gradient(90deg, transparent, rgba(var(--background-color,(255,255,255)), 1));
         }
     }
     @media (hover: hover){
@@ -104,11 +101,11 @@ stripSelect.innerHTML = `
             overflow: hidden;
         }
         .cover--left{
-            background: linear-gradient(90deg, rgba(var(--background-color), 1) 60%, transparent);
+            background: linear-gradient(90deg, rgba(var(--background-color,(255,255,255)), 1) 60%, transparent);
         }
         .cover--right{
             right: 0;
-            background: linear-gradient(90deg, transparent 0%, rgba(var(--background-color), 1) 40%);
+            background: linear-gradient(90deg, transparent 0%, rgba(var(--background-color,(255,255,255)), 1) 40%);
         }
     }
 </style>
@@ -137,13 +134,18 @@ customElements.define('strip-select', class extends HTMLElement {
         this.slottedOptions = undefined;
         this._value = undefined;
         this.scrollDistance = 0;
+        this.assignedElements = [];
 
         this.scrollLeft = this.scrollLeft.bind(this);
         this.scrollRight = this.scrollRight.bind(this);
         this.fireEvent = this.fireEvent.bind(this);
+        this.setSelectedOption = this.setSelectedOption.bind(this);
     }
     get value() {
         return this._value;
+    }
+    set value(val) {
+        this.setSelectedOption(val);
     }
     scrollLeft() {
         this.stripSelect.scrollBy({
@@ -158,6 +160,19 @@ customElements.define('strip-select', class extends HTMLElement {
             behavior: 'smooth'
         });
     }
+    setSelectedOption(value) {
+        if (this._value === value) return
+        this._value = value;
+        this.assignedElements.forEach(elem => {
+            if (elem.value === value) {
+                elem.setAttribute('active', '');
+                elem.scrollIntoView({ behavior: "smooth", block: "nearest", inline: "center" });
+            }
+            else
+                elem.removeAttribute('active')
+        });
+    }
+
     fireEvent() {
         this.dispatchEvent(
             new CustomEvent("change", {
@@ -178,17 +193,17 @@ customElements.define('strip-select', class extends HTMLElement {
         const navButtonLeft = this.shadowRoot.querySelector('.nav-button--left');
         const navButtonRight = this.shadowRoot.querySelector('.nav-button--right');
         slot.addEventListener('slotchange', e => {
-            const assignedElements = slot.assignedElements();
-            assignedElements.forEach(elem => {
+            this.assignedElements = slot.assignedElements();
+            this.assignedElements.forEach(elem => {
                 if (elem.hasAttribute('selected')) {
                     elem.setAttribute('active', '');
                     this._value = elem.value;
                 }
             });
             if (!this.hasAttribute('multiline')) {
-                if (assignedElements.length > 0) {
-                    firstOptionObserver.observe(slot.assignedElements()[0]);
-                    lastOptionObserver.observe(slot.assignedElements()[slot.assignedElements().length - 1]);
+                if (this.assignedElements.length > 0) {
+                    firstOptionObserver.observe(this.assignedElements[0]);
+                    lastOptionObserver.observe(this.assignedElements[this.assignedElements.length - 1]);
                 }
                 else {
                     navButtonLeft.classList.add('hide');
@@ -215,10 +230,7 @@ customElements.define('strip-select', class extends HTMLElement {
         resObs.observe(this);
         this.stripSelect.addEventListener('option-clicked', e => {
             if (this._value !== e.target.value) {
-                this._value = e.target.value;
-                slot.assignedElements().forEach(elem => elem.removeAttribute('active'));
-                e.target.setAttribute('active', '');
-                e.target.scrollIntoView({ behavior: "smooth", block: "nearest", inline: "center" });
+                this.setSelectedOption(e.target.value);
                 this.fireEvent();
             }
         });
@@ -273,9 +285,6 @@ stripOption.innerHTML = `
         -webkit-box-sizing: border-box;
                 box-sizing: border-box;
     }  
-    :host{
-        --background-color: inherit;
-    }
     .strip-option{
         display: flex;
         flex-shrink: 0;
@@ -287,17 +296,17 @@ stripOption.innerHTML = `
         -webkit-tap-highlight-color: transparent;
     }
     :host([active]) .strip-option{
-        color: var(--active-option-color, inherit);
-        background-color: var(--active-background-color, rgba(var(--text-color), 0.06));
+        color: var(--active-option-color, rgba(var(--background-color,white)));
+        background-color: var(--active-background-color, var(--accent-color,teal));
     }
     :host(:focus-within){
         outline: none;
     }
     :host(:focus-within) .strip-option{
-        box-shadow: 0 0 0 0.1rem var(--accent-color) inset;
+        box-shadow: 0 0 0 0.1rem var(--accent-color,teal) inset;
     }
     :host(:hover:not([active])) .strip-option{
-        background-color: rgba(var(--text-color), 0.06);
+        background-color: rgba(var(--text-color,(17,17,17)), 0.06);
     }
 </style>
 <label class="strip-option">

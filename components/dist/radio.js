@@ -8,9 +8,6 @@ smRadio.innerHTML = `
                 box-sizing: border-box;
     }  
     :host{
-        --accent-color: #4d2588;
-        --text-color: 17, 17, 17;
-        --background-color: 255, 255, 255;
         --gap: 0.5rem;
         --height: 1.4rem;
     }
@@ -36,16 +33,16 @@ smRadio.innerHTML = `
     .outer-disc{
         fill: none;
         stroke-width: 3;
-        stroke: rgba(var(--text-color), 0.7);
+        stroke: rgba(var(--text-color, (17,17,17)), 0.7);
     }
     .inner-disc{
-        fill: var(--accent-color);
+        fill: var(--accent-color, teal);
         transition: transform 0.3s;
         transform: scale(0);
         transform-origin: center;
     }
     :host([checked]) .outer-disc{
-        stroke: var(--accent-color);
+        stroke: var(--accent-color, teal);
     }
     :host([checked]) .inner-disc{
         transform: scale(1);
@@ -128,7 +125,7 @@ window.customElements.define('sm-radio', class extends HTMLElement {
             this.dispatchEvent(new CustomEvent(`changed${this.getAttribute('name')}`, this.options))
         }
     }
-    handleKeyDown(e){
+    handleKeyDown(e) {
         if (e.code === "Space") {
             e.preventDefault()
             this.handleClick()
@@ -139,7 +136,7 @@ window.customElements.define('sm-radio', class extends HTMLElement {
             this.setAttribute('checked', '')
             this.dispatchGroupEvent()
         }
-        
+
     }
     handleRadioGroup(e) {
         if (e.detail.uid !== this.uniqueId) {

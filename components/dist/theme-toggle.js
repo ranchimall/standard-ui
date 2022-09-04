@@ -31,7 +31,7 @@ themeToggle.innerHTML = `
         pointer-events: none;
         transition: transform 0.3s, opacity 0.3s;
         transform: translate(-50%, -50%) scale(1.2);
-        background-color: rgba(var(--text-color), 0.12);
+        background-color: rgba(var(--text-color,inherit), 0.12);
     }
     :host(:focus-within) .theme-toggle{
         outline: none;
@@ -44,7 +44,7 @@ themeToggle.innerHTML = `
         position: absolute;
         height: 100%;
         width: 100%;
-        fill: rgba(var(--text-color), 1);
+        fill: rgba(var(--text-color,inherit), 1);
         transition: transform 0.3s, opacity 0.1s;
     }
     

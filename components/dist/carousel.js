@@ -11,15 +11,12 @@ smCarousel.innerHTML = `
     display: -webkit-box;
     display: -ms-flexbox;
     display: flex;
-    --accent-color: #4d2588;
-    --text-color: 17, 17, 17;
-    --background-color: 255, 255, 255;
     --arrow-left: 1rem;
     --arrow-right: 1rem;
     --arrow-top: auto;
     --arrow-bottom: auto;
-    --nav-icon-fill: rgba(var(--background-color), 1);
-    --nav-background-color: rgba(var(--text-color), 1);
+    --nav-icon-fill: rgba(var(--background-color, (255, 255, 255)), 1);
+    --nav-background-color: rgba(var(--text-color, (17,17,17)), 1);
     --nav-box-shadow: 0 0.2rem 0.2rem #00000020, 0 0.5rem 1rem #00000040;
     --indicator-top: auto;
     --indicator-bottom: -1.5rem;
@@ -27,7 +24,7 @@ smCarousel.innerHTML = `
     --indicator-width: 0.4rem;
     --indicator-border-radius: 0.4rem;
     --indicators-gap: 0.5rem;
-    --active-indicator-color: var(--accent-color);
+    --active-indicator-color: var(--accent-color, teal);
 }
 .carousel__button{
     position: absolute;
@@ -52,7 +49,7 @@ button:focus{
     outline: none;
 }
 button:focus-visible{
-    outline: rgba(var(--text-color), 1) 0.1rem solid;
+    outline: rgba(var(--text-color, (17,17,17)), 1) 0.1rem solid;
 }
 .carousel__button:active{
     transform: scale(0.9);
@@ -110,7 +107,7 @@ button:focus-visible{
     position: relative;
     height: var(--indicator-height);
     width: var(--indicator-width);
-    background: rgba(var(--text-color), 0.3);
+    background: rgba(var(--text-color, (17,17,17)), 0.3);
     border-radius: var(--indicator-border-radius);
     -webkit-transition: 0.2s;
     -o-transition: 0.2s;
@@ -370,14 +367,14 @@ customElements.define('sm-carousel', class extends HTMLElement {
 
         const resObs = new ResizeObserver(entries => {
             entries.forEach(entry => {
-                if(entry.contentBoxSize) {
+                if (entry.contentBoxSize) {
                     // Firefox implements `contentBoxSize` as a single content rect, rather than an array
                     const contentBoxSize = Array.isArray(entry.contentBoxSize) ? entry.contentBoxSize[0] : entry.contentBoxSize;
-                    
+
                     this.scrollDistance = contentBoxSize.inlineSize * 0.6
                 } else {
                     this.scrollDistance = entry.contentRect.width * 0.6
-                  }
+                }
             })
         })
         resObs.observe(this)

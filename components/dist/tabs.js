@@ -11,9 +11,6 @@ smTabHeader.innerHTML = `
         display: -webkit-box;
         display: -ms-flexbox;
         display: flex;
-        --accent-color: #4d2588;
-        --text-color: 17, 17, 17;
-        --background-color: 255, 255, 255;
         --gap: 1rem;
         --justify-content: flex-start;
         --tab-indicator-border-radius: 0.3rem;
@@ -41,7 +38,7 @@ smTabHeader.innerHTML = `
         bottom: 0;
         height: 0.15rem;
         border-radius: 1rem 1rem 0 0;  
-        background: var(--accent-color);
+        background: var(--accent-color, tea);
         -webkit-transition: width 0.3s, -webkit-transform 0.3s;
         transition: width 0.3s, -webkit-transform 0.3s;
         -o-transition: transform 0.3s, width 0.3s;
@@ -67,10 +64,10 @@ smTabHeader.innerHTML = `
         border-radius: 0.3rem;
     }
     :host([variant="tab"]) slot::slotted(.active){
-        color: rgba(var(--background-color), 1);
+        color: rgba(var(--background-color, (255,255,255)), 1);
     }
     slot::slotted(.active){
-        color: var(--accent-color);
+        color: var(--accent-color, tea);
         opacity: 1;
     }
     @media (any-hover: none){

@@ -1,25 +1,25 @@
 const smForm = document.createElement('template');
 smForm.innerHTML = `
-    <style>
-    *{
-        padding: 0;
-        margin: 0;
-        box-sizing: border-box;
-    }
-    :host{
-        display: flex;
-        width: 100%;
-    }
-    form{
-        display: grid;
-        gap: var(--gap, 1.5rem);
-        width: 100%;
-    }
-    </style>
-	<form part="form" onsubmit="return false">
-		<slot></slot>
-	</form>
-`;
+            <style>
+            *{
+                padding: 0;
+                margin: 0;
+                box-sizing: border-box;
+            }
+            :host{
+                display: grid;
+                width: 100%;
+            }
+            form{
+                display: inherit;
+                gap: var(--gap, 1.5rem);
+                width: 100%;
+            }
+            </style>
+            <form part="form" onsubmit="return false">
+                <slot></slot>
+            </form>
+        `;
 
 customElements.define('sm-form', class extends HTMLElement {
 	constructor() {
@@ -33,7 +33,7 @@ customElements.define('sm-form', class extends HTMLElement {
 		this.requiredElements
 		this.submitButton
 		this.resetButton
-		this.allRequiredValid = false;
+		this.invalidFields = false;
 
 		this.debounce = this.debounce.bind(this)
 		this._checkValidity = this._checkValidity.bind(this)
@@ -51,18 +51,13 @@ customElements.define('sm-form', class extends HTMLElement {
 		};
 	}
 	_checkValidity() {
-		this.allRequiredValid = this.requiredElements.every(elem => elem.isValid)
 		if (!this.submitButton) return;
-		if (this.allRequiredValid) {
-			this.submitButton.disabled = false;
-		}
-		else {
-			this.submitButton.disabled = true;
-		}
+		this.invalidFields = this.requiredElements.filter(elem => !elem.isValid)
+		this.submitButton.disabled = this.invalidFields.length;
 	}
 	handleKeydown(e) {
-		if (e.key === 'Enter' && !e.target.tagName.includes('TEXTAREA')) {
-			if (this.allRequiredValid) {
+		if (e.key === 'Enter' && e.target.tagName.includes('SM-INPUT')) {
+			if (!this.invalidFields.length) {
 				if (this.submitButton) {
 					this.submitButton.click()
 				}
@@ -70,9 +65,8 @@ customElements.define('sm-form', class extends HTMLElement {
 					bubbles: true,
 					composed: true,
 				}))
-			}
-			else {
-				this.requiredElements.find(elem => !elem.isValid).vibrate()
+			} else {
+				this.requiredElements.forEach(elem => { if (!elem.isValid) elem.vibrate() })
 			}
 		}
 	}
@@ -90,13 +84,21 @@ customElements.define('sm-form', class extends HTMLElement {
 		this._checkValidity()
 	}
 	connectedCallback() {
-		const slot = this.shadowRoot.querySelector('slot')
-		slot.addEventListener('slotchange', this.elementsChanged)
+		this.shadowRoot.querySelector('slot').addEventListener('slotchange', this.elementsChanged)
 		this.addEventListener('input', this.debounce(this._checkValidity, 100));
 		this.addEventListener('keydown', this.debounce(this.handleKeydown, 100));
+		const mutationObserver = new MutationObserver(mutations => {
+			mutations.forEach(mutation => {
+				if (mutation.type === 'childList') {
+					this.elementsChanged()
+				}
+			})
+		})
+		mutationObserver.observe(this, { childList: true, subtree: true })
 	}
 	disconnectedCallback() {
 		this.removeEventListener('input', this.debounce(this._checkValidity, 100));
 		this.removeEventListener('keydown', this.debounce(this.handleKeydown, 100));
+		mutationObserver.disconnect()
 	}
 })

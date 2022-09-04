@@ -7,12 +7,9 @@ tagsInput.innerHTML = `
     box-sizing: border-box;
   }
   :host{
-	--accent-color: #4d2588;
-    --text-color: 17, 17, 17;
-    --background-color: 255, 255, 255;
-    --danger-color: red;
+        --danger-color: red;
     --border-radius: 0.3rem;
-	--background: rgba(var(--text-color), 0.06);
+	--background: rgba(var(--text-color,(17,17,17)), 0.06);
     }
 .hide{
     display: none !important;
@@ -29,7 +26,7 @@ tagsInput.innerHTML = `
     background: var(--background);
   }
   .tags-wrapper:focus-within{
-    box-shadow: 0 0 0 0.1rem var(--accent-color) inset !important;
+    box-shadow: 0 0 0 0.1rem var(--accent-color,teal) inset !important;
   }
   
   .tag {
@@ -41,14 +38,14 @@ tagsInput.innerHTML = `
     border-radius: 0.3rem;
     padding: 0.3rem 0.5rem;
     margin: 0 0.5rem 0.5rem 0;
-    background-color: rgba(var(--text-color), 0.06);
+    background-color: rgba(var(--text-color,(17,17,17)), 0.06);
   }
   
   .icon {
     height: 1.2rem;
     width: 1.2rem;
     margin-left: 0.3rem;
-    fill: rgba(var(--text-color), 0.8);
+    fill: rgba(var(--text-color,(17,17,17)), 0.8);
   }
   
   input,
@@ -74,7 +71,7 @@ tagsInput.innerHTML = `
       top: 50%;
       font-weight: 500;
       transform: translateY(-50%);
-      color: rgba(var(--text-color), 0.6);
+      color: rgba(var(--text-color,(17,17,17)), 0.6);
   }
   </style>
   <div class="tags-wrapper">
@@ -161,7 +158,7 @@ customElements.define('tags-input', class extends HTMLElement {
 							backgroundColor: 'initial'
 						},
 						{
-							backgroundColor: 'var(--accent-color)'
+							backgroundColor: 'var(--accent-color,teal)'
 						},
 						{
 							backgroundColor: 'initial'

@@ -14,9 +14,6 @@ hamburgerMenu.innerHTML = `
     height: 100%;
     overflow-y: auto;
     scrollbar-width: thin;
-    --accent-color: #4d2588;
-    --text-color: 17, 17, 17;
-    --background-color: 255, 255, 255;
     --padding: 0 0 3rem 0;
     --backdrop-color: rgba(0,0,0,0.5);
 }
@@ -41,7 +38,7 @@ hamburgerMenu.innerHTML = `
         overflow-y: auto;  
         width: calc(100% - 4rem);
         transition: transform 0.3s;
-        background-color: rgba(var(--background-color), 1);
+        background-color: rgba(var(--background-color, (255, 255, 255)), 1);
         box-shadow: 0.5rem 0 2rem rgba(0,0,0, 0.1);
         z-index: 1;
     }
@@ -73,9 +70,9 @@ hamburgerMenu.innerHTML = `
     }
     ::-webkit-scrollbar-thumb{
         border-radius: 1rem;
-        background: rgba(var(--text-color), 0.3);
+        background: rgba(var(--text-color, (17,17,17)), 0.3);
         &:hover{
-            background: rgba(var(--text-color), 0.5);
+            background: rgba(var(--text-color, (17,17,17)), 0.5);
         }
     }
 }

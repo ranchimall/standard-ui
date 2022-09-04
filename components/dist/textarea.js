@@ -1,114 +1,111 @@
 const smTextarea = document.createElement('template')
 smTextarea.innerHTML = `
-<style>
-*,
-*::before,
-*::after { 
-    padding: 0;
-    margin: 0;
-    -webkit-box-sizing: border-box;
-            box-sizing: border-box;
-} 
-::-moz-focus-inner{
-    border: none;
-}
-.hide{
-    opacity: 0 !important;
-}
-:host{
-    display: grid;
-    --accent-color: #4d2588;
-    --text-color: 17, 17, 17;
-    --background-color: 255, 255, 255;
-    --danger-color: red;
-    --border-radius: 0.3rem;
-    --background: rgba(var(--text-color), 0.06);
-    --padding: initial;
-    --max-height: 8rem;
-}
-:host([variant="outlined"]) .textarea {
-    box-shadow: 0 0 0 0.1rem rgba(var(--text-color), 0.4) inset;
-    background: rgba(var(--background-color), 1);
-}
-.textarea{
-    display: grid;
-    position: relative;
-    cursor: text;
-    min-width: 0;
-    text-align: left;
-    overflow: hidden auto;
-    grid-template-columns: 1fr;
-    align-items: stretch;
-    max-height: var(--max-height);
-    background: var(--background);
-    border-radius: var(--border-radius);
-    padding: var(--padding);
-}
-.textarea::after,
-textarea{
-    padding: 0.7rem 1rem;
-    width: 100%;
-    min-width: 1em;
-    font: inherit;
-    color: inherit;
-    resize: none;
-    grid-area: 2/1;
-    justify-self: stretch;
-    background: none;
-    appearance: none;
-    border: none;
-    outline: none;
-    line-height: 1.5;
-    overflow: hidden;
-}
-.textarea::after{
-    content: attr(data-value) ' ';
-    visibility: hidden;
-    white-space: pre-wrap;
-    overflow-wrap: break-word;
-    word-wrap: break-word;
-    hyphens: auto;
-}
-.readonly{
-    pointer-events: none;
-}
-.textarea:focus-within:not(.readonly){
-    box-shadow: 0 0 0 0.1rem var(--accent-color) inset;
-}
-.placeholder{
-    position: absolute;
-    margin: 0.7rem 1rem;
-    opacity: .7;
-    font-weight: inherit;
-    font-size: inherit;
-    line-height: 1.5;
-    pointer-events: none;
-    user-select: none;
-}
-:host([disabled]) .textarea{
-    cursor: not-allowed;
-    opacity: 0.6;
-}
-@media (any-hover: hover){
-    ::-webkit-scrollbar{
-        width: 0.5rem;
-        height: 0.5rem;
+    <style>
+    *,
+    *::before,
+    *::after { 
+        padding: 0;
+        margin: 0;
+        -webkit-box-sizing: border-box;
+                box-sizing: border-box;
+    } 
+    ::-moz-focus-inner{
+        border: none;
     }
-    
-    ::-webkit-scrollbar-thumb{
-        background: rgba(var(--text-color), 0.3);
-        border-radius: 1rem;
-        &:hover{
-            background: rgba(var(--text-color), 0.5);
+    .hide{
+        opacity: 0 !important;
+    }
+    :host{
+        display: grid;
+        --danger-color: red;
+        --border-radius: 0.3rem;
+        --background: rgba(var(--text-color,(17,17,17)), 0.06);
+        --padding: initial;
+        --max-height: 8rem;
+    }
+    :host([variant="outlined"]) .textarea {
+        box-shadow: 0 0 0 0.1rem rgba(var(--text-color,(17,17,17)), 0.4) inset;
+        background: rgba(var(--background-color,(255,255,255)), 1);
+    }
+    .textarea{
+        display: grid;
+        position: relative;
+        cursor: text;
+        min-width: 0;
+        text-align: left;
+        overflow: hidden auto;
+        grid-template-columns: 1fr;
+        align-items: stretch;
+        max-height: var(--max-height);
+        background: var(--background);
+        border-radius: var(--border-radius);
+        padding: var(--padding);
+    }
+    .textarea::after,
+    textarea{
+        padding: 0.7rem 1rem;
+        width: 100%;
+        min-width: 1em;
+        font: inherit;
+        color: inherit;
+        resize: none;
+        grid-area: 2/1;
+        justify-self: stretch;
+        background: none;
+        appearance: none;
+        border: none;
+        outline: none;
+        line-height: 1.5;
+        overflow: hidden;
+    }
+    .textarea::after{
+        content: attr(data-value) ' ';
+        visibility: hidden;
+        white-space: pre-wrap;
+        overflow-wrap: break-word;
+        word-wrap: break-word;
+        hyphens: auto;
+    }
+    .readonly{
+        pointer-events: none;
+    }
+    .textarea:focus-within:not(.readonly){
+        box-shadow: 0 0 0 0.1rem var(--accent-color,teal) inset;
+    }
+    .placeholder{
+        position: absolute;
+        margin: 0.7rem 1rem;
+        opacity: .7;
+        font-weight: inherit;
+        font-size: inherit;
+        line-height: 1.5;
+        pointer-events: none;
+        user-select: none;
+    }
+    :host([disabled]) .textarea{
+        cursor: not-allowed;
+        opacity: 0.6;
+    }
+    @media (any-hover: hover){
+        ::-webkit-scrollbar{
+            width: 0.5rem;
+            height: 0.5rem;
+        }
+        
+        ::-webkit-scrollbar-thumb{
+            background: rgba(var(--text-color,(17,17,17)), 0.3);
+            border-radius: 1rem;
+            &:hover{
+                background: rgba(var(--text-color,(17,17,17)), 0.5);
+            }
         }
     }
-}
-</style>
-<label class="textarea" part="textarea">
-    <span class="placeholder"></span>
-    <textarea rows="1"></textarea>
-</label>
-`;
+    </style>
+    <label class="textarea" part="textarea">
+        <span class="placeholder"></span>
+        <textarea rows="1"></textarea>
+    </label>
+    `;
 customElements.define('sm-textarea',
     class extends HTMLElement {
         constructor() {

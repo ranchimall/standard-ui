@@ -7,13 +7,10 @@ fileInput.innerHTML = `
 			box-sizing: border-box;
 		}
 		:host{
-			--accent-color: #4d2588;
-			--text-color: 17, 17, 17;
-			--background-color: 255, 255, 255;
 			--border-radius: 0.3rem;
-			--button-color: rgba(var(--background-color), 1);
+			--button-color: rgba(var(--background-color, (255, 255, 255)), 1);
 			--button-font-weight: 500;
-			--button-background-color: var(--accent-color);
+			--button-background-color: var(--accent-color, teal);
 		}
 		.file-input {
 			display: flex;
@@ -44,14 +41,14 @@ fileInput.innerHTML = `
             align-items: center;
 			padding: 0.5rem 0.8rem;
 			border-radius: var(--border-radius);
-			background-color: rgba(var(--text-color), 0.06)
+			background-color: rgba(var(--text-color, (17,17,17)), 0.06)
 		}
 		.file-name{
 		}
         .file-size{
             font-size: 0.8rem;
             font-weight: 400;
-            color: rgba(var(--text-color), 0.8);
+            color: rgba(var(--text-color, (17,17,17)), 0.8);
         }
 		input[type=file] {
 			display: none;

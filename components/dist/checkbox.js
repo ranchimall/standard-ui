@@ -11,13 +11,10 @@ smCheckbox.innerHTML = `
         display: -webkit-inline-box;
         display: -ms-inline-flexbox;
         display: inline-flex;
-        --accent-color: #4d2588;
-        --text-color: 17, 17, 17;
-        --background-color: 255, 255, 255;
         --height: 1.2rem;
         --width: 1.2rem;
         --border-radius: 0.2rem;
-        --border-color: rgba(var(--text-color), 0.7);
+        --border-color: rgba(var(--text-color, (17,17,17)), 0.7);
     }
     :host([disabled]) {
         opacity: 0.6;
@@ -42,7 +39,7 @@ smCheckbox.innerHTML = `
     }
     .checkbox:active .icon,
     .checkbox:focus-within .icon{
-        box-shadow: 0 0 0 0.1rem var(--accent-color) inset;
+        box-shadow: 0 0 0 0.1rem var(--accent-color, teal) inset;
     }
     
     input {
@@ -59,11 +56,11 @@ smCheckbox.innerHTML = `
     
     :host([checked]) .checkmark {
         stroke-dashoffset: 0;
-        stroke: rgba(var(--background-color), 1);
+        stroke: rgba(var(--background-color, (255,255,255)), 1);
     }
     :host([checked]) .icon {
-        background: var(--accent-color);
-        box-shadow: 0 0 0 0.1rem var(--accent-color) inset;
+        background: var(--accent-color, teal);
+        box-shadow: 0 0 0 0.1rem var(--accent-color, teal) inset;
     }    
     .icon {
         fill: none;

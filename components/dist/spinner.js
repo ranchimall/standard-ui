@@ -7,17 +7,12 @@ spinner.innerHTML = `
     -webkit-box-sizing: border-box;
             box-sizing: border-box;
 }
-:host{
-    --accent-color: #4d2588;
-    --height: 1.6rem;
-    --width: 1.6rem;
-}
 .loader {
-    height: var(--height);
-    width: var(--weight);
+    height: var(--size, 1.5rem);
+    width: var(--size, 1.5rem);
     stroke-width: 8;
     overflow: visible;
-    stroke: var(--accent-color);
+    stroke: var(--accent-color, teal);
     fill: none;
     stroke-dashoffset: 180;
     stroke-dasharray: 180;

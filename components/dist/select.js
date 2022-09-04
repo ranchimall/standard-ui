@@ -11,10 +11,7 @@ smSelect.innerHTML = `
     display: -webkit-box;
     display: -ms-flexbox;
     display: flex;
-    --accent-color: #4d2588;
-    --text-color: 17, 17, 17;
-    --background-color: 255, 255, 255;
-    --min-width: 100%;
+    --min-width: max-content;
 }
 :host([disabled]) .select{
     opacity: 0.6;
@@ -37,7 +34,7 @@ smSelect.innerHTML = `
     height: 1.2rem;
     width: 1.2rem;
     margin-left: 0.5rem;
-    fill: rgba(var(--text-color), 0.7);
+    fill: rgba(var(--text-color, (17,17,17)), 0.7);
 }      
 .selected-option-text{
     font-size: inherit;
@@ -55,7 +52,7 @@ smSelect.innerHTML = `
     grid-template-columns: 1fr auto;
         grid-template-areas: 'heading heading' '. .';
     padding: var(--padding,0.6rem 0.8rem);
-    background: rgba(var(--text-color), 0.06);
+    background: var(--background, rgba(var(--text-color,(17,17,17)), 0.06));
     -webkit-box-align: center;
         -ms-flex-align: center;
             align-items: center;
@@ -63,8 +60,8 @@ smSelect.innerHTML = `
     z-index: 2;
 }
 .selection:focus{
-    -webkit-box-shadow: 0 0 0 0.1rem var(--accent-color);
-            box-shadow: 0 0 0 0.1rem var(--accent-color) 
+    -webkit-box-shadow: 0 0 0 0.1rem var(--accent-color, teal);
+            box-shadow: 0 0 0 0.1rem var(--accent-color, teal) 
 }
 :host([align-select="left"]) .options{
     left: 0;
@@ -88,14 +85,14 @@ smSelect.innerHTML = `
             flex-direction: column;
     min-width: var(--min-width);
     max-height: var(--max-height, auto);
-    background: rgba(var(--background-color), 1);
-    border: solid 1px rgba(var(--text-color), 0.2);
+    background: rgba(var(--foreground-color,(255,255,255)), 1);
+    border: solid 1px rgba(var(--text-color,(17,17,17)), 0.2);
     border-radius: var(--border-radius, 0.5rem);
     z-index: 1;
     -webkit-box-shadow: 0.4rem 0.8rem 1.2rem #00000030;
             box-shadow: 0.4rem 0.8rem 1.2rem #00000030;
 }
-.rotate{
+:host([open]) .toggle-icon{
     -webkit-transform: rotate(180deg);
         -ms-transform: rotate(180deg);
             transform: rotate(180deg)
@@ -110,10 +107,10 @@ smSelect.innerHTML = `
     }
     
     ::-webkit-scrollbar-thumb{
-        background: rgba(var(--text-color), 0.3);
+        background: rgba(var(--text-color,(17,17,17)), 0.3);
         border-radius: 1rem;
         &:hover{
-            background: rgba(var(--text-color), 0.5);
+            background: rgba(var(--text-color,(17,17,17)), 0.5);
         }
     }
 }
@@ -121,7 +118,7 @@ smSelect.innerHTML = `
 <div class="select">
     <div class="selection">
         <div class="selected-option-text"></div>
-        <svg class="icon toggle" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="24" height="24"><path fill="none" d="M0 0h24v24H0z"/><path d="M12 13.172l4.95-4.95 1.414 1.414L12 16 5.636 9.636 7.05 8.222z"/></svg>
+        <svg class="icon toggle-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="24" height="24"><path fill="none" d="M0 0h24v24H0z"/><path d="M12 13.172l4.95-4.95 1.414 1.414L12 16 5.636 9.636 7.05 8.222z"/></svg>
     </div>
     <div part="options" class="options hide">
         <slot></slot> 
@@ -143,9 +140,11 @@ customElements.define('sm-select', class extends HTMLElement {
         this.handleOptionSelection = this.handleOptionSelection.bind(this)
         this.handleKeydown = this.handleKeydown.bind(this)
         this.handleClickOutside = this.handleClickOutside.bind(this)
+        this.selectOption = this.selectOption.bind(this)
 
         this.availableOptions
         this.previousOption
+        this._value = undefined;
         this.isOpen = false;
         this.label = ''
         this.slideDown = [{
@@ -173,7 +172,6 @@ customElements.define('sm-select', class extends HTMLElement {
         }
 
         this.optionList = this.shadowRoot.querySelector('.options')
-        this.chevron = this.shadowRoot.querySelector('.toggle')
         this.selection = this.shadowRoot.querySelector('.selection')
         this.selectedOptionText = this.shadowRoot.querySelector('.selected-option-text')
     }
@@ -187,12 +185,7 @@ customElements.define('sm-select', class extends HTMLElement {
         const selectedOption = this.availableOptions.find(option => option.getAttribute('value') === val)
         if (selectedOption) {
             this.setAttribute('value', val)
-            this.selectedOptionText.textContent = `${this.label}${selectedOption.textContent}`;
-            if (this.previousOption) {
-                this.previousOption.classList.remove('check-selected')
-            }
-            selectedOption.classList.add('check-selected')
-            this.previousOption = selectedOption
+            this.selectOption(selectedOption)
         } else {
             console.warn(`There is no option with ${val} as value`)
         }
@@ -200,17 +193,23 @@ customElements.define('sm-select', class extends HTMLElement {
 
     reset(fire = true) {
         if (this.availableOptions[0] && this.previousOption !== this.availableOptions[0]) {
-            const firstElement = this.availableOptions[0];
-            if (this.previousOption) {
-                this.previousOption.classList.remove('check-selected')
-            }
-            firstElement.classList.add('check-selected')
-            this.value = firstElement.getAttribute('value')
-            this.selectedOptionText.textContent = `${this.label}${firstElement.textContent}`
-            this.previousOption = firstElement;
+            const selectedOption = this.availableOptions.find(option => option.hasAttribute('selected')) || this.availableOptions[0];
+            this.value = selectedOption.getAttribute('value')
             if (fire) {
                 this.fireEvent()
             }
+        }
+    }
+    selectOption(selectedOption) {
+        if (this.previousOption) {
+            this.previousOption.classList.remove('check-selected')
+            this.previousOption.removeAttribute('selected')
+        }
+        if (this.previousOption !== selectedOption) {
+            selectedOption.classList.add('check-selected')
+            selectedOption.setAttribute('selected', '')
+            this.selectedOptionText.textContent = `${this.label}${selectedOption.textContent}`;
+            this.previousOption = selectedOption
         }
     }
 
@@ -221,11 +220,11 @@ customElements.define('sm-select', class extends HTMLElement {
     open() {
         this.optionList.classList.remove('hide')
         this.optionList.animate(this.slideDown, this.animationOptions)
-        this.chevron.classList.add('rotate')
+        this.setAttribute('open', '')
         this.isOpen = true
     }
     collapse() {
-        this.chevron.classList.remove('rotate')
+        this.removeAttribute('open')
         this.optionList.animate(this.slideUp, this.animationOptions)
             .onfinish = () => {
                 this.optionList.classList.add('hide')
@@ -317,6 +316,11 @@ customElements.define('sm-select', class extends HTMLElement {
         let slot = this.shadowRoot.querySelector('slot')
         slot.addEventListener('slotchange', e => {
             this.availableOptions = slot.assignedElements()
+            this.availableOptions.forEach(elem => {
+                if (elem.hasAttribute('selected')) {
+                    this._value = elem.value;
+                }
+            });
             this.reset(false)
         });
         this.addEventListener('click', this.handleClick)
@@ -374,13 +378,13 @@ smOption.innerHTML = `
 }
 :host(:focus){
     outline: none;
-    background: rgba(var(--text-color), 0.1);
+    background: rgba(var(--text-color,(17,17,17)), 0.1);
 }
 .icon {
     opacity: 0;
     height: 1.2rem;
     width: 1.2rem;
-    fill: rgba(var(--text-color), 0.8);
+    fill: rgba(var(--text-color,(17,17,17)), 0.8);
 }
 :host(:focus) .option .icon{
     opacity: 0.4
@@ -390,7 +394,7 @@ smOption.innerHTML = `
 }
 @media (hover: hover){
     .option:hover{
-        background: rgba(var(--text-color), 0.1);
+        background: rgba(var(--text-color,(17,17,17)), 0.1);
     }
     :host(:not(.check-selected):hover) .icon{
         opacity: 0.4

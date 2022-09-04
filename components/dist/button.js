@@ -1,3 +1,4 @@
+//Button
 const smButton = document.createElement('template')
 smButton.innerHTML = `
 <style>     
@@ -10,7 +11,6 @@ smButton.innerHTML = `
 :host{
     display: inline-flex;
     width: auto;
-    --background-color: 255, 255, 255;
     --padding: 0.6rem 1.2rem;
     --border-radius: 0.3rem;
     --background: rgba(var(--text-color, (17,17,17)), 0.1);
