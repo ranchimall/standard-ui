@@ -11,7 +11,6 @@ smSelect.innerHTML = `
     display: -webkit-box;
     display: -ms-flexbox;
     display: flex;
-    --min-width: max-content;
 }
 :host([disabled]) .select{
     opacity: 0.6;
@@ -83,7 +82,8 @@ smSelect.innerHTML = `
     -webkit-box-direction: normal;
         -ms-flex-direction: column;
             flex-direction: column;
-    min-width: var(--min-width);
+    width: var(--options-width, 100%);
+    min-width: var(--min-width, auto);
     max-height: var(--max-height, auto);
     background: rgba(var(--foreground-color,(255,255,255)), 1);
     border: solid 1px rgba(var(--text-color,(17,17,17)), 0.2);
@@ -365,13 +365,11 @@ smOption.innerHTML = `
     -webkit-box-align: center;
         -ms-flex-align: center;
             align-items: center;
-    min-width: max-content;
     width: 100%;
     gap: 0.5rem;
     grid-template-columns: max-content minmax(0, 1fr);
     padding: var(--padding, 0.6rem 1rem);
     cursor: pointer;
-    white-space: nowrap;
     outline: none;
     user-select: none;
     border-radius: var(--border-radius, 0.3rem);

@@ -8,6 +8,7 @@ spinner.innerHTML = `
             box-sizing: border-box;
 }
 .loader {
+    display: flex;
     height: var(--size, 1.5rem);
     width: var(--size, 1.5rem);
     stroke-width: 8;
