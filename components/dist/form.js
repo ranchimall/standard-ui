@@ -34,6 +34,7 @@ customElements.define('sm-form', class extends HTMLElement {
 		this.submitButton
 		this.resetButton
 		this.invalidFields = false;
+		this.mutationObserver
 
 		this.debounce = this.debounce.bind(this)
 		this._checkValidity = this._checkValidity.bind(this)
@@ -87,18 +88,18 @@ customElements.define('sm-form', class extends HTMLElement {
 		this.shadowRoot.querySelector('slot').addEventListener('slotchange', this.elementsChanged)
 		this.addEventListener('input', this.debounce(this._checkValidity, 100));
 		this.addEventListener('keydown', this.debounce(this.handleKeydown, 100));
-		const mutationObserver = new MutationObserver(mutations => {
+		this.mutationObserver = new MutationObserver(mutations => {
 			mutations.forEach(mutation => {
 				if (mutation.type === 'childList') {
 					this.elementsChanged()
 				}
 			})
 		})
-		mutationObserver.observe(this, { childList: true, subtree: true })
+		this.mutationObserver.observe(this, { childList: true, subtree: true })
 	}
 	disconnectedCallback() {
 		this.removeEventListener('input', this.debounce(this._checkValidity, 100));
 		this.removeEventListener('keydown', this.debounce(this.handleKeydown, 100));
-		mutationObserver.disconnect()
+		this.mutationObserver.disconnect()
 	}
 })

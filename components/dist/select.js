@@ -144,7 +144,6 @@ customElements.define('sm-select', class extends HTMLElement {
 
         this.availableOptions
         this.previousOption
-        this._value = undefined;
         this.isOpen = false;
         this.label = ''
         this.slideDown = [{
@@ -182,7 +181,7 @@ customElements.define('sm-select', class extends HTMLElement {
         return this.getAttribute('value')
     }
     set value(val) {
-        const selectedOption = this.availableOptions.find(option => option.getAttribute('value') === val)
+        const selectedOption = this.shadowRoot.querySelector('slot').assignedElements().find(option => option.getAttribute('value') === val)
         if (selectedOption) {
             this.setAttribute('value', val)
             this.selectOption(selectedOption)
@@ -201,12 +200,8 @@ customElements.define('sm-select', class extends HTMLElement {
         }
     }
     selectOption(selectedOption) {
-        if (this.previousOption) {
-            this.previousOption.classList.remove('check-selected')
-            this.previousOption.removeAttribute('selected')
-        }
         if (this.previousOption !== selectedOption) {
-            selectedOption.classList.add('check-selected')
+            this.querySelectorAll('[selected]').forEach(option => option.removeAttribute('selected'))
             selectedOption.setAttribute('selected', '')
             this.selectedOptionText.textContent = `${this.label}${selectedOption.textContent}`;
             this.previousOption = selectedOption
@@ -316,11 +311,6 @@ customElements.define('sm-select', class extends HTMLElement {
         let slot = this.shadowRoot.querySelector('slot')
         slot.addEventListener('slotchange', e => {
             this.availableOptions = slot.assignedElements()
-            this.availableOptions.forEach(elem => {
-                if (elem.hasAttribute('selected')) {
-                    this._value = elem.value;
-                }
-            });
             this.reset(false)
         });
         this.addEventListener('click', this.handleClick)
@@ -328,6 +318,7 @@ customElements.define('sm-select', class extends HTMLElement {
         document.addEventListener('mousedown', this.handleClickOutside)
     }
     disconnectedCallback() {
+        this.removeEventListener('click', this.handleClick)
         this.removeEventListener('click', this.toggle)
         this.removeEventListener('keydown', this.handleKeydown)
         document.removeEventListener('mousedown', this.handleClickOutside)
@@ -387,14 +378,14 @@ smOption.innerHTML = `
 :host(:focus) .option .icon{
     opacity: 0.4
 }
-:host(.check-selected) .icon{
+:host([selected]) .icon{
     opacity: 1
 }
 @media (hover: hover){
     .option:hover{
         background: rgba(var(--text-color,(17,17,17)), 0.1);
     }
-    :host(:not(.check-selected):hover) .icon{
+    :host(:not([selected]):hover) .icon{
         opacity: 0.4
     }
 }
