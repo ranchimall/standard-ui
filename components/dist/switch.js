@@ -4,24 +4,22 @@ const smSwitch = document.createElement('template')
 smSwitch.innerHTML = `	
 <style>
     *{
-        -webkit-box-sizing: border-box;
-                box-sizing: border-box;
+        box-sizing: border-box;
         padding: 0;
         margin: 0;
     }
     
     :host{
-        display: -webkit-inline-box;
-        display: -ms-inline-flexbox;
         display: inline-flex;
+    }
+    :host(:active) .thumb{
+        box-shadow: 0 0.1rem 0.4rem #00000060, 0 0 0 0.2rem white inset;
     }
     label{
         display: -webkit-box;
         display: -ms-flexbox;
         display: flex;
-        -webkit-box-align: center;
-            -ms-flex-align: center;
-                align-items: center;
+        align-items: center;
         width: 100%;
         outline: none;
         cursor: pointer;
@@ -34,12 +32,8 @@ smSwitch.innerHTML = `
     }
     .switch {
         position: relative;
-        display: -webkit-box;
-        display: -ms-flexbox;
         display: flex;
-        -webkit-box-align: center;
-            -ms-flex-align: center;
-                align-items: center;
+        align-items: center;
         width: 2.4rem;
         flex-shrink: 0;
         margin-left: auto;
@@ -57,12 +51,9 @@ smSwitch.innerHTML = `
         left: 0;
         right: 0;
         height: 1.4rem;
-        -webkit-transition: background 0.3s;
-        -o-transition: background 0.3s;
         transition: background 0.3s;
         background: rgba(var(--text-color,inherit), 0.4);
-        -webkit-box-shadow: 0 0.1rem 0.3rem #00000040 inset;
-                box-shadow: 0 0.1rem 0.3rem #00000040 inset;
+        box-shadow: 0 0.1rem 0.3rem #00000040 inset;
         border-radius: 1rem;
     }
     
@@ -73,8 +64,6 @@ smSwitch.innerHTML = `
     
     .thumb::after{
         content: '';
-        display: -webkit-box;
-        display: -ms-flexbox;
         display: flex;
         position: absolute;
         height: 2.6rem;
@@ -82,39 +71,24 @@ smSwitch.innerHTML = `
         background: rgba(var(--text-color,inherit), 0.2);
         border-radius: 2rem;
         opacity: 0;
-        -webkit-transition: opacity 0.3s;
-        -o-transition: opacity 0.3s;
         transition: opacity 0.3s;
     }
     
     .thumb {
         position: relative;
-        display: -webkit-inline-box;
-        display: -ms-inline-flexbox;
         display: inline-flex;
         height: 1rem;
         width: 1rem;
-        -webkit-box-pack: center;
-            -ms-flex-pack: center;
-                justify-content: center;
-        -webkit-box-align: center;
-            -ms-flex-align: center;
-                align-items: center;
+        justify-content: center;
+        align-items: center;
         border-radius: 1rem;
-        -webkit-box-shadow: 0 0.1rem 0.4rem #00000060;
-                box-shadow: 0 0.1rem 0.4rem #00000060;
-        -webkit-transition: -webkit-transform 0.3s;
-        transition: -webkit-transform 0.3s;
-        -o-transition: transform 0.3s;
-        transition: transform 0.3s;
-        transition: transform 0.3s, -webkit-transform 0.3s;
-        border: solid 0.3rem white;
+        box-shadow: 0 0.1rem 0.4rem #00000060, 0 0 0 0.3rem white inset;
+        transition: 0.3s;
+        background-color: inherit;
     }
     
     input:checked ~ .thumb {
-        -webkit-transform: translateX(100%);
-            -ms-transform: translateX(100%);
-                transform: translateX(100%);
+        transform: translateX(100%);
     }
     
     input:checked ~ .track {

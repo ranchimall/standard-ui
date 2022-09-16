@@ -32,7 +32,7 @@ smInput.innerHTML = `
                 box-shadow: none;
     }
     ::-moz-focus-inner{
-    border: none;
+        border: none;
     }
     :host{
         display: flex;
@@ -46,6 +46,7 @@ smInput.innerHTML = `
     .hide{
        display: none !important;
     }
+
     button{
         display: flex;
         border: none;
@@ -87,6 +88,9 @@ smInput.innerHTML = `
         opacity: 0 !important;
         margin-right: -2rem;
         pointer-events: none !important;
+    }
+    .clear{
+        visibility: hidden;
     }
     .readonly{
         pointer-events: none;
@@ -194,7 +198,7 @@ smInput.innerHTML = `
             <div class="container">
                 <input type="text"/>
                 <div part="placeholder" class="label"></div>
-                <button class="clear hide" title="Clear" tabindex="-1">
+                <button class="clear" title="Clear" tabindex="-1">
                     <svg class="icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="24" height="24"><path fill="none" d="M0 0h24v24H0z"/><path d="M12 22C6.477 22 2 17.523 2 12S6.477 2 12 2s10 4.477 10 10-4.477 10-10 10zm0-11.414L9.172 7.757 7.757 9.172 10.586 12l-2.829 2.828 1.415 1.415L12 13.414l2.828 2.829 1.415-1.415L13.414 12l2.829-2.828-1.415-1.415L12 10.586z"/></svg>
                 </button>
             </div>
@@ -222,7 +226,7 @@ customElements.define('sm-input',
             this._errorText = '';
             this.isRequired = false;
             this.validationFunction = undefined;
-            this.reflectedAttributes = ['value', 'required', 'disabled', 'type', 'inputmode', 'readonly', 'min', 'max', 'pattern', 'minlength', 'maxlength', 'step'];
+            this.reflectedAttributes = ['value', 'required', 'disabled', 'type', 'inputmode', 'readonly', 'min', 'max', 'pattern', 'minlength', 'maxlength', 'step', 'list', 'autocomplete'];
 
             this.reset = this.reset.bind(this);
             this.clear = this.clear.bind(this);
@@ -235,7 +239,7 @@ customElements.define('sm-input',
         }
 
         static get observedAttributes() {
-            return ['value', 'placeholder', 'required', 'disabled', 'type', 'inputmode', 'readonly', 'min', 'max', 'pattern', 'minlength', 'maxlength', 'step', 'helper-text', 'error-text', 'hiderequired'];
+            return ['value', 'placeholder', 'required', 'disabled', 'type', 'inputmode', 'readonly', 'min', 'max', 'pattern', 'minlength', 'maxlength', 'step', 'helper-text', 'error-text'];
         }
 
         get value() {
@@ -326,6 +330,7 @@ customElements.define('sm-input',
         clear() {
             this.value = '';
             this.input.focus();
+            this.fireEvent();
         }
 
         focusIn() {
@@ -347,11 +352,7 @@ customElements.define('sm-input',
 
         checkInput(e) {
             if (!this.hasAttribute('readonly')) {
-                if (this.input.value.trim() !== '') {
-                    this.clearBtn.classList.remove('hide');
-                } else {
-                    this.clearBtn.classList.add('hide');
-                }
+                this.clearBtn.style.visibility = this.input.value !== '' ? 'visible' : 'hidden';
             }
             if (!this.hasAttribute('placeholder') || this.getAttribute('placeholder').trim() === '') return;
             if (this.input.value !== '') {
