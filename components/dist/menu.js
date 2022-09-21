@@ -98,7 +98,9 @@ smMenu.innerHTML = `
 </style>
 <div class="select">
     <div class="menu" tabindex="0">
-        <svg class="icon" xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 0 24 24" width="24px" fill="#000000"><path d="M0 0h24v24H0V0z" fill="none"/><path d="M12 8c1.1 0 2-.9 2-2s-.9-2-2-2-2 .9-2 2 .9 2 2 2zm0 2c-1.1 0-2 .9-2 2s.9 2 2 2 2-.9 2-2-.9-2-2-2zm0 6c-1.1 0-2 .9-2 2s.9 2 2 2 2-.9 2-2-.9-2-2-2z"/></svg>
+        <slot name="icon">
+            <svg class="icon" xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 0 24 24" width="24px" fill="#000000"><path d="M0 0h24v24H0V0z" fill="none"/><path d="M12 8c1.1 0 2-.9 2-2s-.9-2-2-2-2 .9-2 2 .9 2 2 2zm0 2c-1.1 0-2 .9-2 2s.9 2 2 2 2-.9 2-2-.9-2-2-2zm0 6c-1.1 0-2 .9-2 2s.9 2 2 2 2-.9 2-2-.9-2-2-2z"/></svg>
+        </slot>
     </div>
     <div class="options hide">
         <slot></slot> 
@@ -127,6 +129,7 @@ customElements.define('sm-menu', class extends HTMLElement {
         this.collapse = this.collapse.bind(this)
         this.toggle = this.toggle.bind(this)
         this.handleKeyDown = this.handleKeyDown.bind(this)
+        this.handleClick = this.handleClick.bind(this)
         this.handleClickOutside = this.handleClickOutside.bind(this)
 
     }
@@ -155,6 +158,11 @@ customElements.define('sm-menu', class extends HTMLElement {
                 .onfinish = () => {
                     this.isOpen = true
                     this.icon.classList.add('focused')
+                    document.addEventListener('mousedown', this.handleClickOutside)
+                    const firstElement = this.optionList.firstElementChild.assignedElements().find(el => el.tagName === 'MENU-OPTION')
+                    if (firstElement) {
+                        firstElement.focus()
+                    }
                 }
         }
     }
@@ -174,12 +182,20 @@ customElements.define('sm-menu', class extends HTMLElement {
                     this.isOpen = false
                     this.icon.classList.remove('focused')
                     this.optionList.classList.add('hide')
+                    document.removeEventListener('mousedown', this.handleClickOutside)
                 }
         }
     }
     toggle() {
         if (!this.isOpen) {
             this.expand()
+        } else {
+            this.collapse()
+        }
+    }
+    handleClick(e) {
+        if (e.target === this) {
+            this.toggle()
         } else {
             this.collapse()
         }
@@ -191,7 +207,7 @@ customElements.define('sm-menu', class extends HTMLElement {
                 e.preventDefault()
                 this.availableOptions[0].focus()
             }
-            else if (e.key === 'Enter' || e.key === ' ') {
+            else if (e.key === ' ') {
                 e.preventDefault()
                 this.toggle()
             }
@@ -203,18 +219,18 @@ customElements.define('sm-menu', class extends HTMLElement {
                 } else {
                     this.availableOptions[this.availableOptions.length - 1].focus()
                 }
-            }
-            else if (e.key === 'ArrowDown') {
+            } else if (e.key === 'ArrowDown') {
                 e.preventDefault()
                 if (document.activeElement.nextElementSibling) {
                     document.activeElement.nextElementSibling.focus()
                 } else {
                     this.availableOptions[0].focus()
                 }
-            }
-            else if (e.key === 'Enter' || e.key === ' ') {
+            } else if (e.key === 'Enter' || e.key === ' ') {
                 e.preventDefault()
                 e.target.click()
+                this.collapse()
+                this.menu.focus()
             }
         }
     }
@@ -231,12 +247,11 @@ customElements.define('sm-menu', class extends HTMLElement {
             this.availableOptions = e.target.assignedElements()
             this.containerDimensions = this.optionList.getBoundingClientRect()
         });
-        this.addEventListener('click', this.toggle)
+        this.addEventListener('click', this.handleClick)
         this.addEventListener('keydown', this.handleKeyDown)
-        document.addEventListener('mousedown', this.handleClickOutside)
     }
     disconnectedCallback() {
-        this.removeEventListener('click', this.toggle)
+        this.removeEventListener('click', this.handleClick)
         this.removeEventListener('keydown', this.handleKeyDown)
         document.removeEventListener('mousedown', this.handleClickOutside)
     }
@@ -249,17 +264,14 @@ menuOption.innerHTML = `
 *{
     padding: 0;
     margin: 0;
-    -webkit-box-sizing: border-box;
-            box-sizing: border-box;
+    box-sizing: border-box;
 }     
 :host{
-    display: -webkit-box;
-    display: -ms-flexbox;
     display: flex;
+    border-radius: var(--border-radius,0.3rem);
+    overflow: hidden;
 }
 .option{
-    display: -webkit-box;
-    display: -ms-flexbox;
     display: flex;
     min-width: 100%;
     padding: var(--padding, 0.6rem 1rem);
@@ -268,10 +280,7 @@ menuOption.innerHTML = `
     white-space: nowrap;
     outline: none;
     user-select: none;
-    border-radius: 0.3rem;
-    -webkit-box-align: center;
-        -ms-flex-align: center;
-            align-items: center;
+    align-items: center;
 }
 :host(:focus){
     outline: none;

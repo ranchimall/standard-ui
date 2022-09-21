@@ -234,7 +234,7 @@ customElements.define('sm-input',
             this.focusOut = this.focusOut.bind(this);
             this.fireEvent = this.fireEvent.bind(this);
             this.checkInput = this.checkInput.bind(this);
-            this.handleKeydown = this.handleKeydown.bind(this);
+            this.allowOnlyNum = this.allowOnlyNum.bind(this);
             this.vibrate = this.vibrate.bind(this);
         }
 
@@ -368,11 +368,11 @@ customElements.define('sm-input',
                 this.feedbackText.textContent = '';
             }
         }
-        handleKeydown(e) {
+        allowOnlyNum(e) {
             if (e.key.length === 1) {
-                if (!['0', '1', '2', '3', '4', '5', '6', '7', '8', '9', '.'].includes(e.key)) {
+                if (e.key === '.' && (e.target.value.includes('.') || e.target.value.length === 0)) {
                     e.preventDefault();
-                } else if (e.key === '.' && e.target.value.includes('.')) {
+                } else if (!['0', '1', '2', '3', '4', '5', '6', '7', '8', '9', '.'].includes(e.key)) {
                     e.preventDefault();
                 }
             }
@@ -418,9 +418,9 @@ customElements.define('sm-input',
                 else if (name === 'type') {
                     if (this.hasAttribute('type') && this.getAttribute('type') === 'number') {
                         this.input.setAttribute('inputmode', 'decimal');
-                        this.input.addEventListener('keydown', this.handleKeydown);
+                        this.input.addEventListener('keydown', this.allowOnlyNum);
                     } else {
-                        this.input.removeEventListener('keydown', this.handleKeydown);
+                        this.input.removeEventListener('keydown', this.allowOnlyNum);
 
                     }
                 }
@@ -459,6 +459,6 @@ customElements.define('sm-input',
         disconnectedCallback() {
             this.input.removeEventListener('input', this.checkInput);
             this.clearBtn.removeEventListener('click', this.clear);
-            this.input.removeEventListener('keydown', this.handleKeydown);
+            this.input.removeEventListener('keydown', this.allowOnlyNum);
         }
     })

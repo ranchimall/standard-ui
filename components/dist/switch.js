@@ -83,7 +83,7 @@ smSwitch.innerHTML = `
         align-items: center;
         border-radius: 1rem;
         box-shadow: 0 0.1rem 0.4rem #00000060, 0 0 0 0.3rem white inset;
-        transition: 0.3s;
+        transition: 0.3s cubic-bezier(0.68, -0.6, 0.32, 1.6);
         background-color: inherit;
     }
     
