@@ -43,7 +43,7 @@ smInput.innerHTML = `
         --min-height: 3.2rem;
         --background: rgba(var(--text-color, (17,17,17)), 0.06);
     }
-    .hide{
+    .hidden{
        display: none !important;
     }
 
@@ -186,9 +186,39 @@ smInput.innerHTML = `
     .status-icon--success{
         fill: var(--success-color);
     }
+    .datalist{
+        position: absolute;
+        top: 100%;
+        left: 0;
+        width: 100%;
+        z-index: 100;
+        background: rgba(var(--foreground-color, (255,255,255)), 1);
+        border-radius: 0 0 var(--border-radius,0.5rem) var(--border-radius,0.5rem);
+        box-shadow: 0 0.5rem 1rem rgba(0,0,0,0.1);
+        max-height: 20rem;
+        overflow-y: auto;
+        overflow-x: hidden;
+        padding: 0.3rem;
+    }
+    .datalist-item{
+        padding: 0.8rem 1rem;
+        cursor: pointer;
+        transition: background 0.2s;
+        border-radius: 0.5rem;
+        content-visibility: auto;
+    }
+    .datalist-item:focus{
+        outline: none;
+    }
+    .datalist-item:focus-visible{
+        outline: var(--accent-color, teal) solid medium;
+    }
     @media (any-hover: hover){
         .icon:hover{
             background: rgba(var(--text-color, (17,17,17)), 0.1);
+        }
+        .datalist-item:hover{
+            background: rgba(var(--text-color, (17,17,17)), 0.06);
         }
     }
     </style>
@@ -204,6 +234,7 @@ smInput.innerHTML = `
             </div>
             <slot name="right"></slot>
         </label>
+        <ul class="datalist hidden"></ul>
         <p class="feedback-text"></p>
     </div>
     `;
@@ -222,9 +253,11 @@ customElements.define('sm-input',
             this.label = this.shadowRoot.querySelector('.label');
             this.feedbackText = this.shadowRoot.querySelector('.feedback-text');
             this.outerContainer = this.shadowRoot.querySelector('.outer-container');
+            this.optionList = this.shadowRoot.querySelector('.datalist');
             this._helperText = '';
             this._errorText = '';
             this.isRequired = false;
+            this.datalist = [];
             this.validationFunction = undefined;
             this.reflectedAttributes = ['value', 'required', 'disabled', 'type', 'inputmode', 'readonly', 'min', 'max', 'pattern', 'minlength', 'maxlength', 'step', 'list', 'autocomplete'];
 
@@ -236,10 +269,13 @@ customElements.define('sm-input',
             this.checkInput = this.checkInput.bind(this);
             this.allowOnlyNum = this.allowOnlyNum.bind(this);
             this.vibrate = this.vibrate.bind(this);
+            this.handleOptionClick = this.handleOptionClick.bind(this);
+            this.handleInputNavigation = this.handleInputNavigation.bind(this);
+            this.handleDatalistNavigation = this.handleDatalistNavigation.bind(this);
         }
 
         static get observedAttributes() {
-            return ['value', 'placeholder', 'required', 'disabled', 'type', 'inputmode', 'readonly', 'min', 'max', 'pattern', 'minlength', 'maxlength', 'step', 'helper-text', 'error-text'];
+            return ['value', 'placeholder', 'required', 'disabled', 'type', 'inputmode', 'readonly', 'min', 'max', 'pattern', 'minlength', 'maxlength', 'step', 'helper-text', 'error-text', 'list'];
         }
 
         get value() {
@@ -316,9 +352,8 @@ customElements.define('sm-input',
                         this.feedbackText.classList.add('error');
                         this.feedbackText.classList.remove('success');
                         this.feedbackText.innerHTML = `
-                                <svg class="status-icon status-icon--error" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="24" height="24"><path fill="none" d="M0 0h24v24H0z"/><path d="M12 22C6.477 22 2 17.523 2 12S6.477 2 12 2s10 4.477 10 10-4.477 10-10 10zm-1-7v2h2v-2h-2zm0-8v6h2V7h-2z"/></svg>
-                            ${this._errorText}
-                            `;
+                            <svg class="status-icon status-icon--error" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="24" height="24"><path fill="none" d="M0 0h24v24H0z"/><path d="M12 22C6.477 22 2 17.523 2 12S6.477 2 12 2s10 4.477 10 10-4.477 10-10 10zm-1-7v2h2v-2h-2zm0-8v6h2V7h-2z"/></svg>
+                            ${this._errorText}`;
                     }
                 }
                 return (_isValid && _customValid);
@@ -350,6 +385,39 @@ customElements.define('sm-input',
             this.dispatchEvent(event);
         }
 
+        searchDatalist(searchKey) {
+            const filteredData = this.datalist.filter(item => item.toLowerCase().includes(searchKey.toLowerCase()));
+            // sort the filtered data based on the input value
+            filteredData.sort((a, b) => {
+                const aIndex = a.toLowerCase().indexOf(searchKey.toLowerCase());
+                const bIndex = b.toLowerCase().indexOf(searchKey.toLowerCase());
+                return aIndex - bIndex;
+            });
+            if (filteredData.length) {
+                if (this.optionList.children.length > filteredData.length) {
+                    // remove extra options
+                    const optionsToRemove = this.optionList.children.length - filteredData.length;
+                    for (let i = 0; i < optionsToRemove; i++) {
+                        this.optionList.removeChild(this.optionList.lastChild);
+                    }
+                }
+                filteredData.forEach((item, index) => {
+                    if (this.optionList.children[index]) {
+                        this.optionList.children[index].textContent = item;
+                    } else {
+                        const option = document.createElement('li');
+                        option.textContent = item;
+                        option.classList.add('datalist-item');
+                        option.setAttribute('tabindex', '0');
+                        this.optionList.appendChild(option);
+                    }
+                })
+                this.optionList.classList.remove('hidden');
+            } else {
+                this.optionList.classList.add('hidden');
+            }
+        }
+
         checkInput(e) {
             if (!this.hasAttribute('readonly')) {
                 this.clearBtn.style.visibility = this.input.value !== '' ? 'visible' : 'hidden';
@@ -359,13 +427,26 @@ customElements.define('sm-input',
                 if (this.animate)
                     this.inputParent.classList.add('animate-placeholder');
                 else
-                    this.label.classList.add('hide');
+                    this.label.classList.add('hidden');
+                if (this.datalist.length) {
+                    // debounce the search
+                    if (this.searchTimeout) {
+                        clearTimeout(this.searchTimeout);
+                    }
+                    this.searchTimeout = setTimeout(() => {
+                        this.searchDatalist(this.input.value.trim());
+                    }, 100);
+                }
             } else {
                 if (this.animate)
                     this.inputParent.classList.remove('animate-placeholder');
                 else
-                    this.label.classList.remove('hide');
+                    this.label.classList.remove('hidden');
                 this.feedbackText.textContent = '';
+                if (this.datalist.length) {
+                    this.optionList.innerHTML = '';
+                    this.optionList.classList.add('hidden');
+                }
             }
         }
         allowOnlyNum(e) {
@@ -389,13 +470,51 @@ customElements.define('sm-input',
                 easing: 'ease'
             });
         }
-
+        handleOptionClick(e) {
+            this.input.value = e.target.textContent;
+            this.optionList.classList.add('hidden');
+            this.input.focus();
+        }
+        // handle arrow key navigation on input
+        handleInputNavigation(e) {
+            if (e.key === 'ArrowDown') {
+                e.preventDefault();
+                if (this.optionList.children.length) {
+                    this.optionList.children[0].focus();
+                }
+            } else if (e.key === 'ArrowUp') {
+                e.preventDefault();
+                if (this.optionList.children.length) {
+                    this.optionList.children[this.optionList.children.length - 1].focus();
+                }
+            }
+        }
+        // handle arrow key navigation on datalist
+        handleDatalistNavigation(e) {
+            if (e.key === 'ArrowUp') {
+                e.preventDefault();
+                this.shadowRoot.activeElement.previousElementSibling ? this.shadowRoot.activeElement.previousElementSibling.focus() : this.input.focus();
+            } else if (e.key === 'ArrowDown') {
+                e.preventDefault();
+                this.shadowRoot.activeElement.nextElementSibling ? this.shadowRoot.activeElement.nextElementSibling.focus() : this.input.focus();
+            } else if (e.key === 'Enter' || e.key === ' ') {
+                e.preventDefault();
+                this.input.value = e.target.textContent;
+                this.optionList.classList.add('hidden');
+                this.input.focus();
+            }
+        }
 
         connectedCallback() {
             this.animate = this.hasAttribute('animate');
             this.setAttribute('role', 'textbox');
             this.input.addEventListener('input', this.checkInput);
             this.clearBtn.addEventListener('click', this.clear);
+            if (this.datalist.length) {
+                this.optionList.addEventListener('click', this.handleOptionClick);
+                this.input.addEventListener('keydown', this.handleInputNavigation);
+                this.optionList.addEventListener('keydown', this.handleDatalistNavigation);
+            }
         }
 
         attributeChangedCallback(name, oldValue, newValue) {
@@ -411,11 +530,9 @@ customElements.define('sm-input',
                 if (name === 'placeholder') {
                     this.label.textContent = newValue;
                     this.setAttribute('aria-label', newValue);
-                }
-                else if (this.hasAttribute('value')) {
+                } else if (this.hasAttribute('value')) {
                     this.checkInput();
-                }
-                else if (name === 'type') {
+                } else if (name === 'type') {
                     if (this.hasAttribute('type') && this.getAttribute('type') === 'number') {
                         this.input.setAttribute('inputmode', 'decimal');
                         this.input.addEventListener('keydown', this.allowOnlyNum);
@@ -423,14 +540,11 @@ customElements.define('sm-input',
                         this.input.removeEventListener('keydown', this.allowOnlyNum);
 
                     }
-                }
-                else if (name === 'helper-text') {
+                } else if (name === 'helper-text') {
                     this._helperText = this.getAttribute('helper-text');
-                }
-                else if (name === 'error-text') {
+                } else if (name === 'error-text') {
                     this._errorText = this.getAttribute('error-text');
-                }
-                else if (name === 'required') {
+                } else if (name === 'required') {
                     this.isRequired = this.hasAttribute('required');
                     if (this.isRequired) {
                         this.setAttribute('aria-required', 'true');
@@ -438,20 +552,22 @@ customElements.define('sm-input',
                     else {
                         this.setAttribute('aria-required', 'false');
                     }
-                }
-                else if (name === 'readonly') {
+                } else if (name === 'readonly') {
                     if (this.hasAttribute('readonly')) {
                         this.inputParent.classList.add('readonly');
                     } else {
                         this.inputParent.classList.remove('readonly');
                     }
-                }
-                else if (name === 'disabled') {
+                } else if (name === 'disabled') {
                     if (this.hasAttribute('disabled')) {
                         this.inputParent.classList.add('disabled');
                     }
                     else {
                         this.inputParent.classList.remove('disabled');
+                    }
+                } else if (name === 'list') {
+                    if (this.hasAttribute('list') && this.getAttribute('list').trim() !== '') {
+                        this.datalist = this.getAttribute('list').split(',');
                     }
                 }
             }
@@ -460,5 +576,8 @@ customElements.define('sm-input',
             this.input.removeEventListener('input', this.checkInput);
             this.clearBtn.removeEventListener('click', this.clear);
             this.input.removeEventListener('keydown', this.allowOnlyNum);
+            this.optionList.removeEventListener('click', this.handleOptionClick);
+            this.input.removeEventListener('keydown', this.handleInputNavigation);
+            this.optionList.removeEventListener('keydown', this.handleDatalistNavigation);
         }
     })
