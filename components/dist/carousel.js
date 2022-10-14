@@ -85,6 +85,7 @@ button:focus-visible{
     display: flex;
     max-width: 100%;
     width: 100%;
+    gap: var(--carousel-gap, 1rem);
     overflow: auto hidden;
     -ms-scroll-snap-type: x mandatory;
         scroll-snap-type: x mandatory;

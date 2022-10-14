@@ -69,7 +69,7 @@ tagsInput.innerHTML = `
       position: absolute;
       padding: 0 0.5rem;
       top: 50%;
-      font-weight: 500;
+      font-weight: inherit;
       transform: translateY(-50%);
       color: rgba(var(--text-color,(17,17,17)), 0.6);
   }

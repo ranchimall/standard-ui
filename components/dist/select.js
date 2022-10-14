@@ -44,7 +44,7 @@ smSelect.innerHTML = `
     font-weight: 500;
 }
 .selection{
-    border-radius: 0.3rem;
+    border-radius: var(--select-border-radius,0.5rem);
     display: -ms-grid;
     display: grid;
     -ms-grid-columns: 1fr auto;
@@ -57,6 +57,7 @@ smSelect.innerHTML = `
             align-items: center;
     outline: none;
     z-index: 2;
+    height: 100%;
 }
 .selection:focus{
     -webkit-box-shadow: 0 0 0 0.1rem var(--accent-color, teal);
@@ -87,16 +88,30 @@ smSelect.innerHTML = `
     max-height: var(--max-height, auto);
     background: rgba(var(--foreground-color,(255,255,255)), 1);
     border: solid 1px rgba(var(--text-color,(17,17,17)), 0.2);
-    border-radius: var(--border-radius, 0.5rem);
+    border-radius: var(--options-border-radius, 0.5rem);
     z-index: 1;
     box-shadow: 0 1rem 1.5rem rgba(0 0 0 /0.2);
 }
-:host([open]) .toggle-icon{
-    -webkit-transform: rotate(180deg);
-        -ms-transform: rotate(180deg);
-            transform: rotate(180deg)
+:host([isUnder]) .options{
+    top: auto;
+    bottom: 100%;
+    margin-top: 0;
+    margin-bottom: 0.2rem;
+    box-shadow: 0 -1rem 1.5rem rgba(0 0 0 /0.2);
 }
-.hide{
+:host([open]) .icon--expand{
+    display: none;
+}
+:host([open]) .icon--collapse{
+    display: block;
+}
+.icon--expand{
+    display: block;
+}
+.icon--collapse{
+    display: none;
+}
+.hidden{
     display: none;
 }
 @media (any-hover: hover){
@@ -117,9 +132,10 @@ smSelect.innerHTML = `
 <div class="select">
     <div class="selection">
         <div class="selected-option-text"></div>
-        <svg class="icon toggle-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="24" height="24"><path fill="none" d="M0 0h24v24H0z"/><path d="M12 13.172l4.95-4.95 1.414 1.414L12 16 5.636 9.636 7.05 8.222z"/></svg>
+        <svg class="icon icon--expand" xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 0 24 24" width="24px" fill="#000000"><path d="M0 0h24v24H0V0z" fill="none"/><path d="M12 5.83L15.17 9l1.41-1.41L12 3 7.41 7.59 8.83 9 12 5.83zm0 12.34L8.83 15l-1.41 1.41L12 21l4.59-4.59L15.17 15 12 18.17z"/></svg>
+        <svg class="icon icon--collapse" xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 0 24 24" width="24px" fill="#000000"><path d="M24 0v24H0V0h24z" fill="none" opacity=".87"/><path d="M7.41 18.59L8.83 20 12 16.83 15.17 20l1.41-1.41L12 14l-4.59 4.59zm9.18-13.18L15.17 4 12 7.17 8.83 4 7.41 5.41 12 10l4.59-4.59z"/></svg>
     </div>
-    <div part="options" class="options hide">
+    <div part="options" class="options hidden">
         <slot></slot> 
     </div>
 </div>`;
@@ -146,24 +162,7 @@ customElements.define('sm-select', class extends HTMLElement {
         this.previousOption
         this.isOpen = false;
         this.label = ''
-        this.slideDown = [{
-            transform: `translateY(-0.5rem)`,
-            opacity: 0
-        },
-        {
-            transform: `translateY(0)`,
-            opacity: 1
-        }
-        ]
-        this.slideUp = [{
-            transform: `translateY(0)`,
-            opacity: 1
-        },
-        {
-            transform: `translateY(-0.5rem)`,
-            opacity: 0
-        }
-        ]
+        this.isUnderViewport = false
         this.animationOptions = {
             duration: 300,
             fill: "forwards",
@@ -223,19 +222,47 @@ customElements.define('sm-select', class extends HTMLElement {
 
     open() {
         this.availableOptions.forEach(option => option.setAttribute('tabindex', 0))
-        this.optionList.classList.remove('hide')
-        this.optionList.animate(this.slideDown, this.animationOptions)
+        this.optionList.classList.remove('hidden')
+        this.isUnderViewport = this.getBoundingClientRect().bottom + this.optionList.getBoundingClientRect().height > window.innerHeight;
+        if (this.isUnderViewport) {
+            this.setAttribute('isUnder', '')
+        } else {
+            this.removeAttribute('isUnder')
+        }
+        this.optionList.animate([
+            {
+                transform: `translateY(${this.isUnderViewport ? '' : '-'}0.5rem)`,
+                opacity: 0
+            },
+            {
+                transform: `translateY(0)`,
+                opacity: 1
+            }
+        ], this.animationOptions)
         this.setAttribute('open', '');
+        this.style.zIndex = 1000;
         (this.availableOptions.find(option => option.hasAttribute('selected')) || this.availableOptions[0]).focus()
+        document.addEventListener('mousedown', this.handleClickOutside)
         this.isOpen = true
     }
     collapse() {
         this.removeAttribute('open')
-        this.optionList.animate(this.slideUp, this.animationOptions)
+        this.optionList.animate([
+            {
+                transform: `translateY(0)`,
+                opacity: 1
+            },
+            {
+                transform: `translateY(${this.isUnderViewport ? '' : '-'}0.5rem)`,
+                opacity: 0
+            },
+        ], this.animationOptions)
             .onfinish = () => {
                 this.availableOptions.forEach(option => option.removeAttribute('tabindex'))
-                this.optionList.classList.add('hide')
+                document.removeEventListener('mousedown', this.handleClickOutside)
+                this.optionList.classList.add('hidden')
                 this.isOpen = false
+                this.style.zIndex = 'auto';
             }
     }
     toggle() {
@@ -337,13 +364,11 @@ customElements.define('sm-select', class extends HTMLElement {
         }).observe(this)
         this.addEventListener('click', this.handleClick)
         this.addEventListener('keydown', this.handleKeydown)
-        document.addEventListener('mousedown', this.handleClickOutside)
     }
     disconnectedCallback() {
         this.removeEventListener('click', this.handleClick)
         this.removeEventListener('click', this.toggle)
         this.removeEventListener('keydown', this.handleKeydown)
-        document.removeEventListener('mousedown', this.handleClickOutside)
     }
     attributeChangedCallback(name) {
         if (name === "disabled") {
