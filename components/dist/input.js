@@ -147,8 +147,8 @@ smInput.innerHTML = `
             transform: translateY(0.6rem);
         }
       
-        :host([animate]) .input:focus-within .label,
-        .animate-placeholder .label {
+    :host([animate]) .input:focus-within .label,
+    .animate-placeholder .label {
         -webkit-transform: translateY(-0.7em) scale(0.8);
                 -ms-transform: translateY(-0.7em) scale(0.8);
             transform: translateY(-0.7em) scale(0.8);

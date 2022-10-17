@@ -19,11 +19,13 @@ tagsInput.innerHTML = `
     display: flex;
     cursor: text;
     flex-wrap: wrap;
+	gap: 0.3rem;
     justify-items: flex-start;
     align-items: center;
-    padding: 0.5rem 0.5rem 0 0.5rem;
+    padding: 0.6rem 0.8rem;
     border-radius: var(--border-radius);
     background: var(--background);
+	min-height: var(--min-height,3.2rem);
   }
   .tags-wrapper:focus-within{
     box-shadow: 0 0 0 0.1rem var(--accent-color,teal) inset !important;
@@ -37,7 +39,6 @@ tagsInput.innerHTML = `
     display: inline-flex;
     border-radius: 0.3rem;
     padding: 0.3rem 0.5rem;
-    margin: 0 0.5rem 0.5rem 0;
     background-color: rgba(var(--text-color,(17,17,17)), 0.06);
   }
   
@@ -61,13 +62,10 @@ tagsInput.innerHTML = `
     max-width: inherit;
     font-size: inherit;
     font-family: inherit;
-    padding: 0.4rem 0.5rem;
-    margin: 0 0.5rem 0.5rem 0;
     background-color: transparent;
   }
   .placeholder{
       position: absolute;
-      padding: 0 0.5rem;
       top: 50%;
       font-weight: inherit;
       transform: translateY(-50%);

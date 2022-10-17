@@ -185,6 +185,7 @@ customElements.define('sm-notifications', class extends HTMLElement {
         this.createNotification = this.createNotification.bind(this)
         this.removeNotification = this.removeNotification.bind(this)
         this.clearAll = this.clearAll.bind(this)
+        this.remove = this.remove.bind(this)
         this.handlePointerMove = this.handlePointerMove.bind(this)
 
 
@@ -206,7 +207,7 @@ customElements.define('sm-notifications', class extends HTMLElement {
 
     randString(length) {
         let result = '';
-        const characters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
+        const characters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz';
         for (let i = 0; i < length; i++)
             result += characters.charAt(Math.floor(Math.random() * characters.length));
         return result;
@@ -288,6 +289,11 @@ customElements.define('sm-notifications', class extends HTMLElement {
         ], this.animationOptions).onfinish = () => {
             notification.remove();
         };
+    }
+    remove(id) {
+        const notification = this.notificationPanel.querySelector(`#${id}`);
+        if (!notification) return;
+        this.removeNotification(notification);
     }
 
     clearAll() {

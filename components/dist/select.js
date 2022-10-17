@@ -60,8 +60,8 @@ smSelect.innerHTML = `
     height: 100%;
 }
 .selection:focus{
-    -webkit-box-shadow: 0 0 0 0.1rem var(--accent-color, teal);
-            box-shadow: 0 0 0 0.1rem var(--accent-color, teal) 
+    -webkit-box-shadow: 0 0 0 0.1rem var(--accent-color, teal) inset;
+            box-shadow: 0 0 0 0.1rem var(--accent-color, teal) inset; 
 }
 :host([align-select="left"]) .options{
     left: 0;

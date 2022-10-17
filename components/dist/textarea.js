@@ -40,10 +40,11 @@ smTextarea.innerHTML = `
         background: var(--background);
         border-radius: var(--border-radius);
         padding: var(--padding);
+        transition: opacity 0.3s, box-shadow 0.2s;
     }
     .textarea::after,
     textarea{
-        padding: 0.7rem 1rem;
+        padding: var(--padding,0.6rem 0.8rem);
         width: 100%;
         min-width: 1em;
         font: inherit;
@@ -74,7 +75,7 @@ smTextarea.innerHTML = `
     }
     .placeholder{
         position: absolute;
-        margin: 0.7rem 1rem;
+        margin: var(--padding,0.6rem 0.8rem);
         opacity: .7;
         font-weight: inherit;
         font-size: inherit;
