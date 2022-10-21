@@ -162,6 +162,7 @@ customElements.define('sm-select', class extends HTMLElement {
         this.previousOption
         this.isOpen = false;
         this.label = ''
+        this.defaultSelected = ''
         this.isUnderViewport = false
         this.animationOptions = {
             duration: 300,
@@ -200,7 +201,7 @@ customElements.define('sm-select', class extends HTMLElement {
 
     reset(fire = true) {
         if (this.availableOptions[0] && this.previousOption !== this.availableOptions[0]) {
-            const selectedOption = this.availableOptions.find(option => option.hasAttribute('selected')) || this.availableOptions[0];
+            const selectedOption = this.availableOptions.find(option => option.getAttribute('value') === this.defaultSelected) || this.availableOptions[0];
             this.value = selectedOption.getAttribute('value')
             if (fire) {
                 this.fireEvent()
@@ -349,6 +350,7 @@ customElements.define('sm-select', class extends HTMLElement {
         slot.addEventListener('slotchange', this.debounce(e => {
             this.availableOptions = slot.assignedElements()
             this.reset(false)
+            this.defaultSelected = this.value
         }, 100));
         new IntersectionObserver((entries, observer) => {
             entries.forEach(entry => {

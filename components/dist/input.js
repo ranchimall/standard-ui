@@ -272,6 +272,8 @@ customElements.define('sm-input',
             this.handleOptionClick = this.handleOptionClick.bind(this);
             this.handleInputNavigation = this.handleInputNavigation.bind(this);
             this.handleDatalistNavigation = this.handleDatalistNavigation.bind(this);
+            this.handleFocus = this.handleFocus.bind(this);
+            this.handleBlur = this.handleBlur.bind(this);
         }
 
         static get observedAttributes() {
@@ -504,6 +506,16 @@ customElements.define('sm-input',
                 this.input.focus();
             }
         }
+        handleFocus(e) {
+            if (this.datalist.length) {
+                this.searchDatalist(this.input.value.trim());
+            }
+        }
+        handleBlur(e) {
+            if (this.datalist.length) {
+                this.optionList.classList.add('hidden');
+            }
+        }
 
         connectedCallback() {
             this.animate = this.hasAttribute('animate');
@@ -515,6 +527,8 @@ customElements.define('sm-input',
                 this.input.addEventListener('keydown', this.handleInputNavigation);
                 this.optionList.addEventListener('keydown', this.handleDatalistNavigation);
             }
+            this.input.addEventListener('focusin', this.handleFocus);
+            this.input.addEventListener('focusout', this.handleBlur);
         }
 
         attributeChangedCallback(name, oldValue, newValue) {
@@ -579,5 +593,7 @@ customElements.define('sm-input',
             this.optionList.removeEventListener('click', this.handleOptionClick);
             this.input.removeEventListener('keydown', this.handleInputNavigation);
             this.optionList.removeEventListener('keydown', this.handleDatalistNavigation);
+            this.input.removeEventListener('focusin', this.handleFocus);
+            this.input.removeEventListener('focusout', this.handleBlur);
         }
     })

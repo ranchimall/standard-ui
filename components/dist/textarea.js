@@ -57,7 +57,6 @@ smTextarea.innerHTML = `
         border: none;
         outline: none;
         line-height: 1.5;
-        overflow: hidden;
     }
     .textarea::after{
         content: attr(data-value) ' ';
