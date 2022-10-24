@@ -9,20 +9,24 @@ stripSelect.innerHTML = `
     }  
     :host{
         padding: 1rem 0;
+        max-width: 100%;
     }
     .hide{
-        display: none !important;
+        opacity: 0;
+        pointer-events: none;
     }
     input[type="radio"]{
         display: none;
     }
     .scrolling-container{
         position: relative;
-        display: flex;
-        align-items: center;
+        display: grid;
+        grid-template-columns: min-content minmax(0,1fr) min-content;
+        grid-template-rows: 1fr;
     }
     .strip-select{
         position: relative;
+        grid-area: 1/1/2/-1;
     }
     :host([multiline]) .strip-select{
         display: flex;
@@ -40,32 +44,42 @@ stripSelect.innerHTML = `
     }
     .nav-button{
         display: flex;
-        top: 50%;
         z-index: 2;
         border: none;
         padding: 0.3rem;
         cursor: pointer;
-        position: absolute;
         align-items: center;
         background: rgba(var(--background-color,(255,255,255)), 1);
-        transform: translateY(-50%);
+        transition: opacity 0.2s;
+        grid-row: 1;
+    }
+    .nav-button--left{
+        grid-column: 1;
+        justify-self: start;
     }
     .nav-button--right{
-        right: 0;
+        grid-column: 3;
+        justify-self: end;
     }
     .cover{
-        position: absolute;
         z-index: 1;
         width: 5rem;
         height: 100%;
         pointer-events: none;
+        grid-row: 1;
+    }
+    .cover--left{
+        grid-column: 1;
+    }
+    .cover--right{
+        grid-column: 3;
     }
     .nav-button--right::before{
         background-color: red;
     }
     .icon{
-        height: 1.5rem;
-        width: 1.5rem;
+        height: 1.2rem;
+        width: 1.2rem;
         fill: rgba(var(--text-color,(17,17,17)), .8);
     }
     @media (hover: none){
@@ -165,11 +179,11 @@ customElements.define('strip-select', class extends HTMLElement {
         this._value = value;
         this.assignedElements.forEach(elem => {
             if (elem.value === value) {
-                elem.setAttribute('active', '');
+                elem.setAttribute('selected', '');
                 elem.scrollIntoView({ behavior: "smooth", block: "nearest", inline: "center" });
             }
             else
-                elem.removeAttribute('active')
+                elem.removeAttribute('selected')
         });
     }
 
@@ -193,34 +207,36 @@ customElements.define('strip-select', class extends HTMLElement {
         const navButtonLeft = this.shadowRoot.querySelector('.nav-button--left');
         const navButtonRight = this.shadowRoot.querySelector('.nav-button--right');
         slot.addEventListener('slotchange', e => {
-            this.assignedElements = slot.assignedElements();
-            this.assignedElements.forEach(elem => {
-                if (elem.hasAttribute('selected')) {
-                    elem.setAttribute('active', '');
-                    this._value = elem.value;
+            // debounce to wait for all elements to be assigned
+            clearTimeout(this.slotChangeTimeout);
+            this.slotChangeTimeout = setTimeout(() => {
+                this.assignedElements = slot.assignedElements();
+                this.assignedElements.forEach(elem => {
+                    if (elem.hasAttribute('selected')) {
+                        this._value = elem.value;
+                    }
+                });
+                if (!this.hasAttribute('multiline')) {
+                    if (this.assignedElements.length > 0) {
+                        firstOptionObserver.observe(this.assignedElements[0]);
+                        lastOptionObserver.observe(this.assignedElements[this.assignedElements.length - 1]);
+                    }
+                    else {
+                        navButtonLeft.classList.add('hide');
+                        navButtonRight.classList.add('hide');
+                        coverLeft.classList.add('hide');
+                        coverRight.classList.add('hide');
+                        firstOptionObserver.disconnect();
+                        lastOptionObserver.disconnect();
+                    }
                 }
-            });
-            if (!this.hasAttribute('multiline')) {
-                if (this.assignedElements.length > 0) {
-                    firstOptionObserver.observe(this.assignedElements[0]);
-                    lastOptionObserver.observe(this.assignedElements[this.assignedElements.length - 1]);
-                }
-                else {
-                    navButtonLeft.classList.add('hide');
-                    navButtonRight.classList.add('hide');
-                    coverLeft.classList.add('hide');
-                    coverRight.classList.add('hide');
-                    firstOptionObserver.disconnect();
-                    lastOptionObserver.disconnect();
-                }
-            }
+            }, 100);
         });
         const resObs = new ResizeObserver(entries => {
             entries.forEach(entry => {
                 if (entry.contentBoxSize) {
                     // Firefox implements `contentBoxSize` as a single content rect, rather than an array
                     const contentBoxSize = Array.isArray(entry.contentBoxSize) ? entry.contentBoxSize[0] : entry.contentBoxSize;
-
                     this.scrollDistance = contentBoxSize.inlineSize * 0.6;
                 } else {
                     this.scrollDistance = entry.contentRect.width * 0.6;
@@ -295,9 +311,9 @@ stripOption.innerHTML = `
         border-radius: var(--border-radius, 2rem);
         -webkit-tap-highlight-color: transparent;
     }
-    :host([active]) .strip-option{
-        color: var(--active-option-color, rgba(var(--background-color,white)));
-        background-color: var(--active-background-color, var(--accent-color,teal));
+    :host([selected]) .strip-option{
+        color: var(--selected-option-color, rgba(var(--background-color,white)));
+        background-color: var(--selected-background-color, var(--accent-color,teal));
     }
     :host(:focus-within){
         outline: none;
@@ -305,7 +321,7 @@ stripOption.innerHTML = `
     :host(:focus-within) .strip-option{
         box-shadow: 0 0 0 0.1rem var(--accent-color,teal) inset;
     }
-    :host(:hover:not([active])) .strip-option{
+    :host(:hover:not([selected])) .strip-option{
         background-color: rgba(var(--text-color,(17,17,17)), 0.06);
     }
 </style>

@@ -2394,10 +2394,11 @@
         }
         function downloadJs(componentsArray, options = { minified: true }) {
             const { minified } = options
+            const selectedComponentsList = [...getRef('components_selection_list').querySelectorAll('sm-checkbox[checked]')].map(v => v.value)
             const extension = minified ? '.min.js' : '.js'
             const element = createElement('a', {
                 attributes: {
-                    'href': 'data:application/javascript;charset=utf-8,' + encodeURIComponent(componentsArray.join("\n")),
+                    'href': 'data:application/javascript;charset=utf-8,' + encodeURIComponent(`// Components downloaded: ${selectedComponentsList.join(',')} \n ${componentsArray.join("\n")}`),
                     'download': `components${extension}`,
                     'style': 'display:none'
                 }
