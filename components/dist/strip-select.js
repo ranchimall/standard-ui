@@ -25,22 +25,18 @@ stripSelect.innerHTML = `
         grid-template-rows: 1fr;
     }
     .strip-select{
+        display: flex;
         position: relative;
         grid-area: 1/1/2/-1;
+        gap: var(--gap, 0.5rem);
+        overflow: auto hidden;
     }
     :host([multiline]) .strip-select{
-        display: flex;
         flex-wrap: wrap;
-        gap: var(--gap, 0.5rem);
-        overflow: auto hidden;
     }
     :host(:not([multiline])) .strip-select{
-        display: grid;
-        grid-auto-flow: column;
-        gap: var(--gap, 0.5rem);
         max-width: 100%;   
         align-items: center;
-        overflow: auto hidden;
     }
     .nav-button{
         display: flex;
@@ -62,11 +58,13 @@ stripSelect.innerHTML = `
         justify-self: end;
     }
     .cover{
+        position: absolute;
         z-index: 1;
         width: 5rem;
         height: 100%;
         pointer-events: none;
         grid-row: 1;
+        transition: opacity 0.2s;
     }
     .cover--left{
         grid-column: 1;
@@ -255,8 +253,7 @@ customElements.define('strip-select', class extends HTMLElement {
                 if (entry.isIntersecting) {
                     navButtonLeft.classList.add('hide');
                     coverLeft.classList.add('hide');
-                }
-                else {
+                } else {
                     navButtonLeft.classList.remove('hide');
                     coverLeft.classList.remove('hide');
                 }
@@ -271,8 +268,7 @@ customElements.define('strip-select', class extends HTMLElement {
                 if (entry.isIntersecting) {
                     navButtonRight.classList.add('hide');
                     coverRight.classList.add('hide');
-                }
-                else {
+                } else {
                     navButtonRight.classList.remove('hide');
                     coverRight.classList.remove('hide');
                 }

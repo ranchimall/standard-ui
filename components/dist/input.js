@@ -528,7 +528,7 @@ customElements.define('sm-input',
                 this.optionList.addEventListener('keydown', this.handleDatalistNavigation);
             }
             this.input.addEventListener('focusin', this.handleFocus);
-            this.input.addEventListener('focusout', this.handleBlur);
+            this.addEventListener('focusout', this.handleBlur);
         }
 
         attributeChangedCallback(name, oldValue, newValue) {
@@ -594,6 +594,6 @@ customElements.define('sm-input',
             this.input.removeEventListener('keydown', this.handleInputNavigation);
             this.optionList.removeEventListener('keydown', this.handleDatalistNavigation);
             this.input.removeEventListener('focusin', this.handleFocus);
-            this.input.removeEventListener('focusout', this.handleBlur);
+            this.removeEventListener('focusout', this.handleBlur);
         }
     })
