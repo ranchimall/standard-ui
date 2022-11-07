@@ -54,13 +54,12 @@ smPopup.innerHTML = `
     -webkit-transform: scale(0.9) translateY(-2rem) !important;
             transform: scale(0.9) translateY(-2rem) !important;
 }
-.background{
+.backdrop{
     position: absolute;
     top: 0;
     bottom: 0;
     left: 0;
     right: 0;
-    pointer-events: none;
     background: var(--backdrop-background);
     -webkit-transition: opacity 0.3s;
     -o-transition: opacity 0.3s;
@@ -165,7 +164,7 @@ smPopup.innerHTML = `
 }
 </style>
 <div class="popup-container hide" role="dialog">
-    <div part="background" class="background"></div>
+    <div part="backdrop" class="backdrop"></div>
     <div part="popup" class="popup">
         <div part="popup-header" class="popup-top">
             <div class="handle"></div>
@@ -186,7 +185,6 @@ customElements.define('sm-popup', class extends HTMLElement {
 
         this.allowClosing = false;
         this.isOpen = false;
-        this.pinned = false;
         this.offset = 0;
         this.touchStartY = 0;
         this.touchEndY = 0;
@@ -198,7 +196,7 @@ customElements.define('sm-popup', class extends HTMLElement {
         this.mutationObserver
 
         this.popupContainer = this.shadowRoot.querySelector('.popup-container');
-        this.backdrop = this.shadowRoot.querySelector('.background');
+        this.backdrop = this.shadowRoot.querySelector('.backdrop');
         this.dialogBox = this.shadowRoot.querySelector('.popup');
         this.popupBodySlot = this.shadowRoot.querySelector('.popup-body slot');
         this.popupHeader = this.shadowRoot.querySelector('.popup-top');
@@ -211,6 +209,7 @@ customElements.define('sm-popup', class extends HTMLElement {
         this.handleTouchMove = this.handleTouchMove.bind(this);
         this.handleTouchEnd = this.handleTouchEnd.bind(this);
         this.detectFocus = this.detectFocus.bind(this);
+        this.handleSoftDismiss = this.handleSoftDismiss.bind(this);
     }
 
     static get observedAttributes() {
@@ -260,44 +259,47 @@ customElements.define('sm-popup', class extends HTMLElement {
 
     show(options = {}) {
         const { pinned = false } = options;
-        if (!this.isOpen) {
-            const animOptions = {
-                duration: 300,
-                easing: 'ease'
-            }
-            popupStack.push({
-                popup: this,
-                permission: pinned
-            });
-            if (popupStack.items.length > 1) {
-                this.animateTo(popupStack.items[popupStack.items.length - 2].popup.shadowRoot.querySelector('.popup'), [
-                    { transform: 'none' },
-                    { transform: (window.innerWidth > 640) ? 'scale(0.95)' : 'translateY(-1.5rem)' },
-                ], animOptions)
-            }
-            this.popupContainer.classList.remove('hide');
-            if (!this.offset)
-                this.backdrop.animate([
-                    { opacity: 0 },
-                    { opacity: 1 },
-                ], animOptions)
-            this.setStateOpen()
-            this.dispatchEvent(
-                new CustomEvent("popupopened", {
-                    bubbles: true,
-                    detail: {
-                        popup: this,
-                    }
-                })
-            );
-            this.pinned = pinned;
-            this.isOpen = true;
-            document.body.style.overflow = 'hidden';
-            document.body.style.top = `-${window.scrollY}px`;
-            const elementToFocus = this.autoFocus || this.focusable[0];
+        if (this.isOpen) return;
+        const animOptions = {
+            duration: 300,
+            easing: 'ease'
+        }
+        popupStack.push({
+            popup: this,
+            permission: pinned
+        });
+        if (popupStack.items.length > 1) {
+            this.animateTo(popupStack.items[popupStack.items.length - 2].popup.shadowRoot.querySelector('.popup'), [
+                { transform: 'none' },
+                { transform: (window.innerWidth > 640) ? 'scale(0.95)' : 'translateY(-1.5rem)' },
+            ], animOptions)
+        }
+        this.popupContainer.classList.remove('hide');
+        if (!this.offset)
+            this.backdrop.animate([
+                { opacity: 0 },
+                { opacity: 1 },
+            ], animOptions)
+        this.setStateOpen()
+        this.dispatchEvent(
+            new CustomEvent("popupopened", {
+                bubbles: true,
+            })
+        );
+        this.pinned = pinned;
+        this.isOpen = true;
+        document.body.style.overflow = 'hidden';
+        document.body.style.top = `-${window.scrollY}px`;
+        const elementToFocus = this.autoFocus || this.focusable[0];
+        if (elementToFocus)
             elementToFocus.tagName.includes('SM-') ? elementToFocus.focusIn() : elementToFocus.focus();
-            if (!this.hasAttribute('open'))
-                this.setAttribute('open', '');
+        if (!this.hasAttribute('open')) {
+            this.setAttribute('open', '');
+            this.addEventListener('keydown', this.detectFocus);
+            this.resizeObserver.observe(this);
+            this.mutationObserver.observe(this, { attributes: true, childList: true, subtree: true })
+            this.popupHeader.addEventListener('touchstart', this.handleTouchStart, { passive: true });
+            this.backdrop.addEventListener('mousedown', this.handleSoftDismiss);
         }
     }
     hide() {
@@ -343,10 +345,14 @@ customElements.define('sm-popup', class extends HTMLElement {
                 { transform: (window.innerWidth > 640) ? 'scale(0.95)' : 'translateY(-1.5rem)' },
                 { transform: 'none' },
             ], animOptions)
-
         } else {
             this.resumeScrolling();
         }
+        this.resizeObserver.disconnect();
+        this.mutationObserver.disconnect()
+        this.removeEventListener('keydown', this.detectFocus);
+        this.popupHeader.removeEventListener('touchstart', this.handleTouchStart, { passive: true });
+        this.backdrop.removeEventListener('mousedown', this.handleSoftDismiss);
     }
 
     handleTouchStart(e) {
@@ -414,21 +420,29 @@ customElements.define('sm-popup', class extends HTMLElement {
         this.autoFocus = this.querySelector('[autofocus]')
     }
 
+    handleSoftDismiss() {
+        if (this.pinned) {
+            this.dialogBox.animate([
+                { transform: 'translateX(-1rem)' },
+                { transform: 'translateX(1rem)' },
+                { transform: 'translateX(-0.5rem)' },
+                { transform: 'translateX(0.5rem)' },
+                { transform: 'translateX(0)' },
+            ], {
+                duration: 300,
+                easing: 'ease'
+            });
+        } else {
+            this.hide();
+        }
+    }
+
     connectedCallback() {
         this.popupBodySlot.addEventListener('slotchange', () => {
             this.forms = this.querySelectorAll('sm-form');
             this.updateFocusableList()
         });
-        this.popupContainer.addEventListener('mousedown', e => {
-            if (e.target === this.popupContainer && !this.pinned) {
-                if (this.pinned) {
-                    this.setStateOpen();
-                } else
-                    this.hide();
-            }
-        });
-
-        const resizeObserver = new ResizeObserver(entries => {
+        this.resizeObserver = new ResizeObserver(entries => {
             for (let entry of entries) {
                 if (entry.contentBoxSize) {
                     // Firefox implements `contentBoxSize` as a single content rect, rather than an array
@@ -439,21 +453,17 @@ customElements.define('sm-popup', class extends HTMLElement {
                 }
             }
         });
-        resizeObserver.observe(this);
 
         this.mutationObserver = new MutationObserver(entries => {
             this.updateFocusableList()
         })
-        this.mutationObserver.observe(this, { attributes: true, childList: true, subtree: true })
-
-        this.addEventListener('keydown', this.detectFocus);
-        this.popupHeader.addEventListener('touchstart', this.handleTouchStart, { passive: true });
     }
     disconnectedCallback() {
-        this.removeEventListener('keydown', this.detectFocus);
-        resizeObserver.unobserve();
+        this.resizeObserver.disconnect();
         this.mutationObserver.disconnect()
+        this.removeEventListener('keydown', this.detectFocus);
         this.popupHeader.removeEventListener('touchstart', this.handleTouchStart, { passive: true });
+        this.backdrop.removeEventListener('mousedown', this.handleSoftDismiss);
     }
     attributeChangedCallback(name) {
         if (name === 'open') {

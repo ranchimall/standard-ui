@@ -268,7 +268,6 @@ customElements.define('sm-input',
             this.fireEvent = this.fireEvent.bind(this);
             this.checkInput = this.checkInput.bind(this);
             this.allowOnlyNum = this.allowOnlyNum.bind(this);
-            this.vibrate = this.vibrate.bind(this);
             this.handleOptionClick = this.handleOptionClick.bind(this);
             this.handleInputNavigation = this.handleInputNavigation.bind(this);
             this.handleDatalistNavigation = this.handleDatalistNavigation.bind(this);
@@ -459,18 +458,6 @@ customElements.define('sm-input',
                     e.preventDefault();
                 }
             }
-        }
-        vibrate() {
-            this.outerContainer.animate([
-                { transform: 'translateX(-1rem)' },
-                { transform: 'translateX(1rem)' },
-                { transform: 'translateX(-0.5rem)' },
-                { transform: 'translateX(0.5rem)' },
-                { transform: 'translateX(0)' },
-            ], {
-                duration: 300,
-                easing: 'ease'
-            });
         }
         handleOptionClick(e) {
             this.input.value = e.target.textContent;

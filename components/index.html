@@ -1205,7 +1205,7 @@
 &lt;script&gt;
     const mySelect = document.getElementById('my_select')
     mySelect.addEventListener('change', event =&gt; {
-        console.log(event.detail.value) // logs out value of selected option
+        console.log(event.target.value) // logs out value of selected option
     })
 &lt;/script&gt;
 </code>
@@ -1238,7 +1238,7 @@
                             Whenever a different options is selected by user the this event is
                             fired. <br>
                             You can listen to this event and access the current value with event object <span
-                                class="highlight">event.detail.value</span>
+                                class="highlight">event.target.value</span>
                         </p>
                     </div>
                 </section>
@@ -1332,28 +1332,28 @@
                 </section>
             </section>
 
-            <section id="strip_select_page" class="page hide-completely">
-                <h1 class="page__title">Strip select</h1>
+            <section id="chips_page" class="page hide-completely">
+                <h1 class="page__title">Chips</h1>
                 <p>
-                    This is a modern interpritation of classical HTML <span class="highlight">select</span> tag. More
+                    This is a modern interpretation of classical HTML <span class="highlight">select</span> tag. More
                     suitable for touch devices,
                 </p>
                 <h2>Interactive demo</h2>
                 <span>Sort by </span>
-                <strip-select id="sort_by">
-                    <strip-option value="relevance" selected>Relevance</strip-option>
-                    <strip-option value="popularity">Popularity</strip-option>
-                    <strip-option value="price">Price</strip-option>
-                    <strip-option value="rating">Rating</strip-option>
-                </strip-select>
+                <sm-chips id="sort_by">
+                    <sm-chip value="relevance" selected>Relevance</sm-chip>
+                    <sm-chip value="popularity">Popularity</sm-chip>
+                    <sm-chip value="price">Price</sm-chip>
+                    <sm-chip value="rating">Rating</sm-chip>
+                </sm-chips>
                 <pre>
 <code>
-&lt;strip-select id="sort_by"&gt;
-    &lt;strip-option value="relevance" selected&gt;Relevance&lt;/strip-option&gt;
-    &lt;strip-option value="popularity"&gt;Popularity&lt;/strip-option&gt;
-    &lt;strip-option value="price"&gt;Price&lt;/strip-option&gt;
-    &lt;strip-option value="rating"&gt;Rating&lt;/strip-option&gt;
-&lt;/strip-select&gt; 
+&lt;sm-chips id="sort_by"&gt;
+    &lt;sm-chip value="relevance" selected&gt;Relevance&lt;/sm-chip&gt;
+    &lt;sm-chip value="popularity"&gt;Popularity&lt;/sm-chip&gt;
+    &lt;sm-chip value="price"&gt;Price&lt;/sm-chip&gt;
+    &lt;sm-chip value="rating"&gt;Rating&lt;/sm-chip&gt;
+&lt;/sm-chips&gt; 
 </code>
 </pre>
                 <h2>Custom attributes</h2>
@@ -1396,23 +1396,23 @@
                             Whenever a different options is selected by user the this event is
                             fired. <br>
                             You can listen to this event and access the current value with event object <span
-                                class="highlight">event.detail.value</span>
+                                class="highlight">event.target.value</span>
                         </p>
                     </div>
                 </section>
                 <h2>Usage</h2>
                 <pre>
 <code>
-&lt;strip-select id="sort_by"&gt;
-    &lt;strip-option value="relevance" selected&gt;Relevance&lt;/strip-option&gt;
-    &lt;strip-option value="popularity"&gt;Popularity&lt;/strip-option&gt;
-    &lt;strip-option value="price"&gt;Price&lt;/strip-option&gt;
-    &lt;strip-option value="rating"&gt;Rating&lt;/strip-option&gt;
-&lt;/strip-select&gt; 
+&lt;sm-chips id="sort_by"&gt;
+    &lt;sm-chip value="relevance" selected&gt;Relevance&lt;/sm-chip&gt;
+    &lt;sm-chip value="popularity"&gt;Popularity&lt;/sm-chip&gt;
+    &lt;sm-chip value="price"&gt;Price&lt;/sm-chip&gt;
+    &lt;sm-chip value="rating"&gt;Rating&lt;/sm-chip&gt;
+&lt;/sm-chips&gt; 
 &lt;script&gt;
     const sortBy = document.getElementById('sort_by')
     sortBy.addEventListener('change', event =&gt; {
-        console.log(event.detail.value) // logs out value of selected option
+        console.log(event.target.value) // logs out value of selected option
     })
 &lt;/script&gt;
 </code>
@@ -1760,7 +1760,7 @@
 &lt;script&gt;
     const nameField = document.getElementById('name_field')
     nameField.addEventListener('change', event =&gt; {
-        console.log(event.detail.value) // logs out new value set by user
+        console.log(event.target.value) // logs out new value set by user
         console.log(nameField.value) // Accessing value directly with getter
     })
 &lt;/script&gt;
@@ -1914,31 +1914,31 @@
         </sm-checkbox>
     </template>
     <script src="assets/prism.js"></script>
-    <script src="dist/button.js"></script>
-    <script src="dist/carousel.js"></script>
-    <script src="dist/checkbox.js"></script>
-    <script src="dist/copy.js"></script>
-    <script src="dist/file-input.js"></script>
-    <script src="dist/form.js"></script>
-    <script src="dist/hamburger-menu.js"></script>
-    <script src="dist/input.js"></script>
-    <script src="dist/menu.js"></script>
-    <script src="dist/notifications.js"></script>
-    <script src="dist/popup.js"></script>
-    <script src="dist/radio.js"></script>
-    <script src="dist/select.js"></script>
-    <script src="dist/spinner.js"></script>
-    <script src="dist/strip-select.js"></script>
-    <script src="dist/switch.js"></script>
-    <script src="dist/tabs.js"></script>
-    <script src="dist/tags-input.js"></script>
-    <script src="dist/text-field.js"></script>
-    <script src="dist/textarea.js"></script>
-    <script src="dist/theme-toggle.js"></script>
+    <script src="dist/button.min.js"></script>
+    <script src="dist/carousel.min.js"></script>
+    <script src="dist/checkbox.min.js"></script>
+    <script src="dist/chips.min.js"></script>
+    <script src="dist/copy.min.js"></script>
+    <script src="dist/file-input.min.js"></script>
+    <script src="dist/form.min.js"></script>
+    <script src="dist/hamburger-menu.min.js"></script>
+    <script src="dist/input.min.js"></script>
+    <script src="dist/menu.min.js"></script>
+    <script src="dist/notifications.min.js"></script>
+    <script src="dist/popup.min.js"></script>
+    <script src="dist/radio.min.js"></script>
+    <script src="dist/select.min.js"></script>
+    <script src="dist/spinner.min.js"></script>
+    <script src="dist/switch.min.js"></script>
+    <script src="dist/tabs.min.js"></script>
+    <script src="dist/tags-input.min.js"></script>
+    <script src="dist/text-field.min.js"></script>
+    <script src="dist/textarea.min.js"></script>
+    <script src="dist/theme-toggle.min.js"></script>
 
     <script id="default_ui_library">
         const domRefs = {};
-        const appPages = ["overview_page", "quick_start_page", "global_styling_page", "button_page", "carousel_page", "checkbox_page", "copy_page", "file_input_page", "form_page", "hamburger_menu_page", "input_page", "menu_page", "notifications_page", "popup_page", "radio_page", "select_page", "spinner_page", "switch_page", "strip_select_page", "tabs_page", "tags_input_page", "textarea_page", "text_field_page", "theme_toggle_page"]
+        const appPages = ["overview_page", "quick_start_page", "global_styling_page", "button_page", "carousel_page", "checkbox_page", "copy_page", "file_input_page", "form_page", "hamburger_menu_page", "input_page", "menu_page", "notifications_page", "popup_page", "radio_page", "select_page", "spinner_page", "switch_page", "chips_page", "tabs_page", "tags_input_page", "textarea_page", "text_field_page", "theme_toggle_page"]
 
         function getRef(elementId) {
             if (!domRefs.hasOwnProperty(elementId)) {
@@ -2257,6 +2257,10 @@
                 pageId: 'checkbox_page'
             },
             {
+                name: 'Chips',
+                pageId: 'chips_page'
+            },
+            {
                 name: 'Copy',
                 pageId: 'copy_page'
             },
@@ -2303,10 +2307,6 @@
             {
                 name: 'Spinner',
                 pageId: 'spinner_page'
-            },
-            {
-                name: 'Strip select',
-                pageId: 'strip_select_page'
             },
             {
                 name: 'Tabs',

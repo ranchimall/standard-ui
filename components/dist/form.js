@@ -30,7 +30,7 @@ customElements.define('sm-form', class extends HTMLElement {
 
 		this.form = this.shadowRoot.querySelector('form');
 		this.formElements
-		this.requiredElements
+		this._requiredElements = [];
 		this.submitButton
 		this.resetButton
 		this.invalidFields = false;
@@ -53,11 +53,11 @@ customElements.define('sm-form', class extends HTMLElement {
 	}
 	_checkValidity() {
 		if (!this.submitButton) return;
-		this.invalidFields = this.requiredElements.filter(elem => !elem.isValid)
-		this.submitButton.disabled = this.invalidFields.length;
+		this.invalidFields = this._requiredElements.filter(([elem, isWC]) => isWC ? !elem.isValid : !elem.checkValidity())
+		this.submitButton.disabled = this.invalidFields.length > 0;
 	}
 	handleKeydown(e) {
-		if (e.key === 'Enter' && e.target.tagName.includes('SM-INPUT')) {
+		if (e.key === 'Enter' && e.target.tagName.includes('INPUT')) {
 			if (!this.invalidFields.length) {
 				if (this.submitButton) {
 					this.submitButton.click()
@@ -67,7 +67,24 @@ customElements.define('sm-form', class extends HTMLElement {
 					composed: true,
 				}))
 			} else {
-				this.requiredElements.forEach(elem => { if (!elem.isValid) elem.vibrate() })
+				for (const [elem, isWC] of this._requiredElements) {
+					const invalid = isWC ? !elem.isValid : !elem.checkValidity()
+					if (invalid) {
+						(elem?.shadowRoot?.lastElementChild || elem).animate([
+							{ transform: 'translateX(-1rem)' },
+							{ transform: 'translateX(1rem)' },
+							{ transform: 'translateX(-0.5rem)' },
+							{ transform: 'translateX(0.5rem)' },
+							{ transform: 'translateX(0)' },
+						], {
+							duration: 300,
+							easing: 'ease'
+						});
+						if (isWC) elem.focusIn()
+						else elem.focus()
+						break;
+					}
+				}
 			}
 		}
 	}
@@ -75,8 +92,12 @@ customElements.define('sm-form', class extends HTMLElement {
 		this.formElements.forEach(elem => elem.reset())
 	}
 	elementsChanged() {
-		this.formElements = [...this.querySelectorAll('sm-input, sm-textarea, sm-checkbox, tags-input, file-input, sm-switch, sm-radio')]
-		this.requiredElements = this.formElements.filter(elem => elem.hasAttribute('required'));
+		this.formElements = [...this.querySelectorAll('input, sm-input, sm-textarea, sm-checkbox, tags-input, file-input, sm-switch, sm-radio')]
+		this.formElements.forEach(elem => {
+			if (elem.hasAttribute('required')) {
+				this._requiredElements.push([elem, elem.tagName.includes('-')])
+			}
+		});
 		this.submitButton = this.querySelector('[variant="primary"], [type="submit"]');
 		this.resetButton = this.querySelector('[type="reset"]');
 		if (this.resetButton) {
