@@ -30,7 +30,6 @@ customElements.define('sm-form', class extends HTMLElement {
 
 		this.form = this.shadowRoot.querySelector('form');
 		this.formElements
-		this._requiredElements = [];
 		this.submitButton
 		this.resetButton
 		this.invalidFields = false;
@@ -92,6 +91,7 @@ customElements.define('sm-form', class extends HTMLElement {
 		this.formElements.forEach(elem => elem.reset())
 	}
 	elementsChanged() {
+		this._requiredElements = [];
 		this.formElements = [...this.querySelectorAll('input, sm-input, sm-textarea, sm-checkbox, tags-input, file-input, sm-switch, sm-radio')]
 		this.formElements.forEach(elem => {
 			if (elem.hasAttribute('required')) {
