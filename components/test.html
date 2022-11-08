@@ -34,15 +34,29 @@
 </head>
 
 <body>
-    <collapsed-text>
-        Lorem ipsum dolor sit amet consectetur adipisicing elit. Architecto minima maiores autem iusto porro, odit iure
-        ea eveniet enim soluta ex a nihil? Dicta ducimus dolor itaque unde sequi, reprehenderit ex aperiam dignissimos
-        inventore? Totam aliquid repellendus nulla culpa nemo perspiciatis tempora. Vel obcaecati asperiores nam,
-        ratione sint itaque temporibus incidunt officiis iusto cumque reiciendis ab repellendus quaerat ducimus
-        quibusdam quia maxime nostrum atque ad sequi eveniet est error ipsam voluptatem. Architecto molestiae ex et
-        minima praesentium quasi ea, ad enim consequuntur at nisi nostrum. Quisquam nostrum, accusamus neque, fugiat
-        esse deleniti ex vitae totam asperiores odit quaerat sunt voluptates.
-    </collapsed-text>
+    <button>Show popup</button>
+    <sm-popup>
+        <input type="text" placeholder="fds">
+        <button>dsfsd</button>
+        <collapsed-text>
+            Lorem ipsum dolor sit amet consectetur adipisicing elit. Architecto minima maiores autem iusto porro, odit
+            iure
+            ea eveniet enim soluta ex a nihil? Dicta ducimus dolor itaque unde sequi, reprehenderit ex aperiam
+            dignissimos
+            inventore? Totam aliquid repellendus nulla culpa nemo perspiciatis tempora. Vel obcaecati asperiores nam,
+            ratione sint itaque temporibus incidunt officiis iusto cumque reiciendis ab repellendus quaerat ducimus
+            quibusdam quia maxime nostrum atque ad sequi eveniet est error ipsam voluptatem. Architecto molestiae ex et
+            minima praesentium quasi ea, ad enim consequuntur at nisi nostrum. Quisquam nostrum, accusamus neque, fugiat
+            esse deleniti ex vitae totam asperiores odit quaerat sunt voluptates.
+        </collapsed-text>
+    </sm-popup>
 </body>
+<script>
+    const popup = document.querySelector('sm-popup');
+    popup.show();
+    document.querySelector('button').addEventListener('click', () => {
+        popup.show();
+    });
+</script>
 
 </html>

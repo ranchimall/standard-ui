@@ -279,20 +279,23 @@ customElements.define('sm-popup', class extends HTMLElement {
             this.backdrop.animate([
                 { opacity: 0 },
                 { opacity: 1 },
-            ], animOptions)
+            ], animOptions).onfinish = () => {
+                this.dispatchEvent(
+                    new CustomEvent("popupopened", {
+                        bubbles: true,
+                    })
+                );
+                document.body.style.overflow = 'hidden';
+                document.body.style.top = `-${window.scrollY}px`;
+            }
         this.setStateOpen()
-        this.dispatchEvent(
-            new CustomEvent("popupopened", {
-                bubbles: true,
-            })
-        );
         this.pinned = pinned;
         this.isOpen = true;
-        document.body.style.overflow = 'hidden';
-        document.body.style.top = `-${window.scrollY}px`;
-        const elementToFocus = this.autoFocus || this.focusable[0];
-        if (elementToFocus)
-            elementToFocus.tagName.includes('SM-') ? elementToFocus.focusIn() : elementToFocus.focus();
+        setTimeout(() => {
+            const elementToFocus = this.autoFocus || this.focusable?.[0] || this.dialogBox;
+            if (elementToFocus)
+                elementToFocus.tagName.includes('-') ? elementToFocus.focusIn() : elementToFocus.focus();
+        }, 0);
         if (!this.hasAttribute('open')) {
             this.setAttribute('open', '');
             this.addEventListener('keydown', this.detectFocus);
@@ -436,12 +439,21 @@ customElements.define('sm-popup', class extends HTMLElement {
             this.hide();
         }
     }
+    debounce(callback, wait) {
+        let timeoutId = null;
+        return (...args) => {
+            window.clearTimeout(timeoutId);
+            timeoutId = window.setTimeout(() => {
+                callback.apply(null, args);
+            }, wait);
+        };
+    }
 
     connectedCallback() {
-        this.popupBodySlot.addEventListener('slotchange', () => {
+        this.popupBodySlot.addEventListener('slotchange', this.debounce(() => {
             this.forms = this.querySelectorAll('sm-form');
             this.updateFocusableList()
-        });
+        }, 0));
         this.resizeObserver = new ResizeObserver(entries => {
             for (let entry of entries) {
                 if (entry.contentBoxSize) {
