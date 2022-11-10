@@ -22,12 +22,13 @@ collapsedText.innerHTML = `
             bottom: 0;
             right: 0;   
             cursor: pointer;
-            font-weight: 700;
-            background: var(--button-background-color, #fff);
+            font-weight: 500;
+            background: var(--button-background, #fff);
             border: none;
             outline: none;
             color: var(--accent-color,teal);
             font-size: inherit;
+            font-family: inherit;
             z-index: 1;
         }
     </style>

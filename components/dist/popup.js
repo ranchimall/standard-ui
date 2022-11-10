@@ -275,19 +275,19 @@ customElements.define('sm-popup', class extends HTMLElement {
             ], animOptions)
         }
         this.popupContainer.classList.remove('hide');
-        if (!this.offset)
+        if (!this.offset) {
             this.backdrop.animate([
                 { opacity: 0 },
                 { opacity: 1 },
-            ], animOptions).onfinish = () => {
-                this.dispatchEvent(
-                    new CustomEvent("popupopened", {
-                        bubbles: true,
-                    })
-                );
-                document.body.style.overflow = 'hidden';
-                document.body.style.top = `-${window.scrollY}px`;
-            }
+            ], animOptions)
+            this.dispatchEvent(
+                new CustomEvent("popupopened", {
+                    bubbles: true,
+                })
+            );
+            document.body.style.overflow = 'hidden';
+            document.body.style.top = `-${window.scrollY}px`;
+        }
         this.setStateOpen()
         this.pinned = pinned;
         this.isOpen = true;

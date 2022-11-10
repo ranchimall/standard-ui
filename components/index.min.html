@@ -326,7 +326,7 @@
     })
 &lt;/script&gt;
 </code>
-</pre></section></article></main><template id="nav_item_template"><li><a class="list__item interact"></a></li></template><template id="comp_checkbox_template"><sm-checkbox><span class="comp-checkbox__title"></span></sm-checkbox></template><script src="assets/prism.js"></script><script src="dist/button.min.js"></script><script src="dist/carousel.min.js"></script><script src="dist/checkbox.min.js"></script><script src="dist/chips.min.js"></script><script src="dist/copy.min.js"></script><script src="dist/file-input.min.js"></script><script src="dist/form.min.js"></script><script src="dist/hamburger-menu.min.js"></script><script src="dist/input.min.js"></script><script src="dist/menu.min.js"></script><script src="dist/notifications.min.js"></script><script src="dist/popup.min.js"></script><script src="dist/radio.min.js"></script><script src="dist/select.min.js"></script><script src="dist/spinner.min.js"></script><script src="dist/switch.min.js"></script><script src="dist/tabs.min.js"></script><script src="dist/tags-input.min.js"></script><script src="dist/text-field.min.js"></script><script src="dist/textarea.min.js"></script><script src="dist/theme-toggle.min.js"></script><script id="default_ui_library">const domRefs = {};
+</pre></section></article></main><template id="nav_item_template"><li><a class="list__item interact"></a></li></template><template id="comp_checkbox_template"><sm-checkbox><span class="comp-checkbox__title"></span></sm-checkbox></template><script src="assets/prism.js" defer></script><script src="dist/button.min.js" defer></script><script src="dist/carousel.min.js" defer></script><script src="dist/checkbox.min.js" defer></script><script src="dist/chips.min.js" defer></script><script src="dist/copy.min.js" defer></script><script src="dist/file-input.min.js" defer></script><script src="dist/form.min.js" defer></script><script src="dist/hamburger-menu.min.js" defer></script><script src="dist/input.min.js" defer></script><script src="dist/menu.min.js" defer></script><script src="dist/notifications.min.js" defer></script><script src="dist/popup.min.js" defer></script><script src="dist/radio.min.js" defer></script><script src="dist/select.min.js" defer></script><script src="dist/spinner.min.js" defer></script><script src="dist/switch.min.js" defer></script><script src="dist/tabs.min.js" defer></script><script src="dist/tags-input.min.js" defer></script><script src="dist/text-field.min.js" defer></script><script src="dist/textarea.min.js" defer></script><script src="dist/theme-toggle.min.js" defer></script><script id="default_ui_library">const domRefs = {};
         const appPages = ["overview_page", "quick_start_page", "global_styling_page", "button_page", "carousel_page", "checkbox_page", "copy_page", "file_input_page", "form_page", "hamburger_menu_page", "input_page", "menu_page", "notifications_page", "popup_page", "radio_page", "select_page", "spinner_page", "switch_page", "chips_page", "tabs_page", "tags_input_page", "textarea_page", "text_field_page", "theme_toggle_page"]
 
         function getRef(elementId) {
@@ -749,14 +749,13 @@
             });
             return await Promise.all(filesList)
         }
-
         async function downloadComponents() {
             const selectedComponents = await getSelectedComponents()
             if (selectedComponents.length) {
                 downloadJs(selectedComponents, { minified: getRef('get_minified').checked })
             }
             else {
-                notify('Please select atleast one component', 'error')
+                notify('Please select at least one component', 'error')
             }
         }
 

@@ -79,12 +79,12 @@ smCheckbox.innerHTML = `
         box-shadow: 0 0 0 0.1rem var(--border-color) inset;
     }
 </style>
-<label class="checkbox">
+<div class="checkbox">
     <svg class="icon" viewBox="0 0 64 64">
         <path class="checkmark" d="M50.52,19.56,26,44.08,13.48,31.56" />
     </svg>
     <slot></slot>
-</label>`
+</div>`
 customElements.define('sm-checkbox', class extends HTMLElement {
     constructor() {
         super()
@@ -155,7 +155,7 @@ customElements.define('sm-checkbox', class extends HTMLElement {
     handleKeyDown(e) {
         if (e.key === ' ') {
             e.preventDefault()
-            this.click()
+            this.toggleAttribute('checked')
         }
     }
     handleClick(e) {

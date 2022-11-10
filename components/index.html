@@ -1913,28 +1913,28 @@
             <span class="comp-checkbox__title"></span>
         </sm-checkbox>
     </template>
-    <script src="assets/prism.js"></script>
-    <script src="dist/button.min.js"></script>
-    <script src="dist/carousel.min.js"></script>
-    <script src="dist/checkbox.min.js"></script>
-    <script src="dist/chips.min.js"></script>
-    <script src="dist/copy.min.js"></script>
-    <script src="dist/file-input.min.js"></script>
-    <script src="dist/form.min.js"></script>
-    <script src="dist/hamburger-menu.min.js"></script>
-    <script src="dist/input.min.js"></script>
-    <script src="dist/menu.min.js"></script>
-    <script src="dist/notifications.min.js"></script>
-    <script src="dist/popup.min.js"></script>
-    <script src="dist/radio.min.js"></script>
-    <script src="dist/select.min.js"></script>
-    <script src="dist/spinner.min.js"></script>
-    <script src="dist/switch.min.js"></script>
-    <script src="dist/tabs.min.js"></script>
-    <script src="dist/tags-input.min.js"></script>
-    <script src="dist/text-field.min.js"></script>
-    <script src="dist/textarea.min.js"></script>
-    <script src="dist/theme-toggle.min.js"></script>
+    <script src="assets/prism.js" defer></script>
+    <script src="dist/button.min.js" defer></script>
+    <script src="dist/carousel.min.js" defer></script>
+    <script src="dist/checkbox.min.js" defer></script>
+    <script src="dist/chips.min.js" defer></script>
+    <script src="dist/copy.min.js" defer></script>
+    <script src="dist/file-input.min.js" defer></script>
+    <script src="dist/form.min.js" defer></script>
+    <script src="dist/hamburger-menu.min.js" defer></script>
+    <script src="dist/input.min.js" defer></script>
+    <script src="dist/menu.min.js" defer></script>
+    <script src="dist/notifications.min.js" defer></script>
+    <script src="dist/popup.min.js" defer></script>
+    <script src="dist/radio.min.js" defer></script>
+    <script src="dist/select.min.js" defer></script>
+    <script src="dist/spinner.min.js" defer></script>
+    <script src="dist/switch.min.js" defer></script>
+    <script src="dist/tabs.min.js" defer></script>
+    <script src="dist/tags-input.min.js" defer></script>
+    <script src="dist/text-field.min.js" defer></script>
+    <script src="dist/textarea.min.js" defer></script>
+    <script src="dist/theme-toggle.min.js" defer></script>
 
     <script id="default_ui_library">
         const domRefs = {};
@@ -2363,14 +2363,13 @@
             });
             return await Promise.all(filesList)
         }
-
         async function downloadComponents() {
             const selectedComponents = await getSelectedComponents()
             if (selectedComponents.length) {
                 downloadJs(selectedComponents, { minified: getRef('get_minified').checked })
             }
             else {
-                notify('Please select atleast one component', 'error')
+                notify('Please select at least one component', 'error')
             }
         }
 
