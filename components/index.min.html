@@ -740,10 +740,11 @@
             const extension = getRef('get_minified').checked ? '.min.js' : '.js'
             const filesList = []
             selectedComponents.forEach(async component => {
-                for (let compObj in allComponentsObj) {
+                for (const compObj in allComponentsObj) {
                     const { name, download_url } = allComponentsObj[compObj]
                     if (name === `${component}${extension}`) {
                         filesList.push(fetch(download_url).then(async res => await res.text()))
+                        break;
                     }
                 }
             });
@@ -753,8 +754,7 @@
             const selectedComponents = await getSelectedComponents()
             if (selectedComponents.length) {
                 downloadJs(selectedComponents, { minified: getRef('get_minified').checked })
-            }
-            else {
+            } else {
                 notify('Please select at least one component', 'error')
             }
         }
@@ -774,7 +774,7 @@
 
         let allComponentsObj = []
         async function getComponents() {
-            const files = await fetch('https://api.github.com/repos/ranchimall/standard-visual-design-system/contents/components/dist')
+            const files = await fetch('https://api.github.com/repos/ranchimall/standard-ui/contents/components/dist')
             allComponentsObj = await files.json()
         }
         function downloadJs(componentsArray, options = { minified: true }) {
