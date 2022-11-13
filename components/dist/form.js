@@ -83,16 +83,16 @@ customElements.define('sm-form', class extends HTMLElement {
 		}
 	}
 	reset() {
-		this.formElements.forEach(elem => elem.reset());
+		this.formElements.forEach(([elem, isWC]) => {
+			if (isWC) elem.reset();
+			else elem.value = '';
+		});
 	}
 	elementsChanged() {
-		this._requiredElements = [];
-		this.formElements = [...this.querySelectorAll('input, sm-input, sm-textarea, sm-checkbox, tags-input, file-input, sm-switch, sm-radio')];
-		this.formElements.forEach(elem => {
-			if (elem.hasAttribute('required')) {
-				this._requiredElements.push([elem, elem.tagName.includes('-')]);
-			}
+		this.formElements = [...this.querySelectorAll('input, sm-input, sm-textarea, sm-checkbox, tags-input, file-input, sm-switch, sm-radio')].map(elem => {
+			return [elem, elem.tagName.includes('-')];
 		});
+		this._requiredElements = this.formElements.filter(([elem]) => elem.hasAttribute('required'));
 		this.submitButton = this.querySelector('[variant="primary"], [type="submit"]');
 		this.resetButton = this.querySelector('[type="reset"]');
 		if (this.resetButton) {

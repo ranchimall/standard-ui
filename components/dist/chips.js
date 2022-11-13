@@ -126,7 +126,7 @@ smChips.innerHTML = `
     <button class="nav-button nav-button--left hide">
         <svg class="icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="24" height="24"><path fill="none" d="M0 0h24v24H0z"/><path d="M10.828 12l4.95 4.95-1.414 1.414L8 12l6.364-6.364 1.414 1.414z"/></svg>
     </button>
-    <section class="sm-chips">
+    <section class="sm-chips" part="chips-wrapper">
         <slot></slot>
     </section>
     <button class="nav-button nav-button--right hide">
@@ -298,16 +298,6 @@ smChip.innerHTML = `
         -webkit-box-sizing: border-box;
                 box-sizing: border-box;
     }  
-    .sm-chip{
-        display: flex;
-        flex-shrink: 0;
-        cursor: pointer;
-        white-space: nowrap;
-        padding: var(--padding, 0.4rem 0.6rem);
-        transition: background 0.3s;
-        border-radius: var(--border-radius, 2rem);
-        -webkit-tap-highlight-color: transparent;
-    }
     :host([selected]) .sm-chip{
         color: var(--selected-option-color, rgba(var(--background-color,white)));
         background-color: var(--selected-background-color, var(--accent-color,teal));
@@ -321,10 +311,21 @@ smChip.innerHTML = `
     :host(:hover:not([selected])) .sm-chip{
         background-color: rgba(var(--text-color,(17,17,17)), 0.06);
     }
+    .sm-chip{
+        display: flex;
+        flex-shrink: 0;
+        cursor: pointer;
+        white-space: nowrap;
+        padding: var(--padding, 0.5rem 0.8rem);
+        transition: background 0.3s;
+        border-radius: var(--border-radius, 0.5rem);
+        -webkit-tap-highlight-color: transparent;
+        background: var(--background,inherit);
+    }
 </style>
-<label class="sm-chip">
+<span class="sm-chip" part="chip">
     <slot></slot>
-</label>
+</span>
 `;
 customElements.define('sm-chip', class extends HTMLElement {
     constructor() {

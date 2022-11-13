@@ -258,12 +258,13 @@ customElements.define('sm-popup', class extends HTMLElement {
     }
 
     show(options = {}) {
-        const { pinned = false } = options;
+        const { pinned = false, payload } = options;
         if (this.isOpen) return;
         const animOptions = {
             duration: 300,
             easing: 'ease'
         }
+        this.payload = payload;
         popupStack.push({
             popup: this,
             permission: pinned
@@ -279,10 +280,16 @@ customElements.define('sm-popup', class extends HTMLElement {
             this.backdrop.animate([
                 { opacity: 0 },
                 { opacity: 1 },
-            ], animOptions)
+            ], animOptions).onfinish = () => {
+                this.resolveOpen(this.payload);
+            }
             this.dispatchEvent(
                 new CustomEvent("popupopened", {
                     bubbles: true,
+                    composed: true,
+                    detail: {
+                        payload: this.payload
+                    }
                 })
             );
             document.body.style.overflow = 'hidden';
@@ -304,8 +311,17 @@ customElements.define('sm-popup', class extends HTMLElement {
             this.popupHeader.addEventListener('touchstart', this.handleTouchStart, { passive: true });
             this.backdrop.addEventListener('mousedown', this.handleSoftDismiss);
         }
+        return {
+            opened: new Promise((resolve) => {
+                this.resolveOpen = resolve;
+            }),
+            closed: new Promise((resolve) => {
+                this.resolveClose = resolve;
+            })
+        }
     }
-    hide() {
+    hide(options = {}) {
+        const { payload } = options;
         const animOptions = {
             duration: 150,
             easing: 'ease'
@@ -335,11 +351,13 @@ customElements.define('sm-popup', class extends HTMLElement {
                 this.dispatchEvent(
                     new CustomEvent("popupclosed", {
                         bubbles: true,
+                        composed: true,
                         detail: {
-                            popup: this,
+                            payload: payload || this.payload
                         }
                     })
                 );
+                this.resolveClose(payload || this.payload);
                 this.isOpen = false;
             })
         popupStack.pop();
