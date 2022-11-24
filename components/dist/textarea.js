@@ -33,7 +33,6 @@ smTextarea.innerHTML = `
         cursor: text;
         min-width: 0;
         text-align: left;
-        overflow: hidden auto;
         grid-template-columns: 1fr;
         align-items: stretch;
         max-height: var(--max-height);
@@ -57,6 +56,7 @@ smTextarea.innerHTML = `
         border: none;
         outline: none;
         line-height: 1.5;
+        overflow: hidden auto;
     }
     .textarea::after{
         content: attr(data-value) ' ';
@@ -73,7 +73,6 @@ smTextarea.innerHTML = `
         box-shadow: 0 0 0 0.1rem var(--accent-color,teal) inset;
     }
     .placeholder{
-        position: absolute;
         margin: var(--padding,0.6rem 0.8rem);
         opacity: .7;
         font-weight: inherit;
@@ -81,6 +80,8 @@ smTextarea.innerHTML = `
         line-height: 1.5;
         pointer-events: none;
         user-select: none;
+        grid-area: 2/1;
+        align-self: center;
     }
     :host([disabled]) .textarea{
         cursor: not-allowed;

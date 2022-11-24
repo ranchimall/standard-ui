@@ -18,9 +18,8 @@ collapsedText.innerHTML = `
             -webkit-line-clamp: unset;
         }
         .toggle-button {
-            position: absolute;
-            bottom: 0;
-            right: 0;   
+            margin-top: 0.5rem;
+            margin-right: auto;
             cursor: pointer;
             font-weight: 500;
             background: var(--button-background, #fff);

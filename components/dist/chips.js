@@ -298,10 +298,6 @@ smChip.innerHTML = `
         -webkit-box-sizing: border-box;
                 box-sizing: border-box;
     }  
-    :host([selected]) .sm-chip{
-        color: var(--selected-option-color, rgba(var(--background-color,white)));
-        background-color: var(--selected-background-color, var(--accent-color,teal));
-    }
     :host(:focus-within){
         outline: none;
     }
