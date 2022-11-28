@@ -201,7 +201,7 @@ customElements.define('sm-select', class extends HTMLElement {
 
     reset(fire = true) {
         if (this.availableOptions[0] && this.previousOption !== this.availableOptions[0]) {
-            const selectedOption = this.availableOptions.find(option => option.getAttribute('value') === this.defaultSelected) || this.availableOptions[0];
+            const selectedOption = this.availableOptions.find(option => option.hasAttribute('selected')) || this.availableOptions[0];
             this.value = selectedOption.getAttribute('value')
             if (fire) {
                 this.fireEvent()
