@@ -80,16 +80,6 @@ smMenu.innerHTML = `
 .hide{
     display: none;
 }
-@media screen and (max-width: 640px){
-    .options{
-        position: fixed;
-        left: 0;
-        right: 0;
-        bottom: 0;
-        top: auto;
-        border-radius: 0.5rem 0.5rem 0 0;
-    }
-}
 @media (hover: hover){
     .menu:hover .icon{
         background: rgba(var(--text-color), 0.1); 
@@ -147,7 +137,7 @@ customElements.define('sm-menu', class extends HTMLElement {
             this.optionList.classList.remove('hide')
             this.optionList.animate([
                 {
-                    transform: window.innerWidth < 640 ? 'translateY(1.5rem)' : 'translateY(-1rem)',
+                    transform: 'translateY(-1rem)',
                     opacity: '0'
                 },
                 {
@@ -174,7 +164,7 @@ customElements.define('sm-menu', class extends HTMLElement {
                     opacity: '1'
                 },
                 {
-                    transform: window.innerWidth < 640 ? 'translateY(1.5rem)' : 'translateY(-1rem)',
+                    transform: 'translateY(-1rem)',
                     opacity: '0'
                 },
             ], this.animOptions)

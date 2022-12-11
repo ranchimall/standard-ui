@@ -1938,7 +1938,6 @@
 
     <script id="default_ui_library">
         const domRefs = {};
-        const appPages = ["overview_page", "quick_start_page", "global_styling_page", "button_page", "carousel_page", "checkbox_page", "copy_page", "file_input_page", "form_page", "hamburger_menu_page", "input_page", "menu_page", "notifications_page", "popup_page", "radio_page", "select_page", "spinner_page", "switch_page", "chips_page", "tabs_page", "tags_input_page", "textarea_page", "text_field_page", "theme_toggle_page"]
 
         function getRef(elementId) {
             if (!domRefs.hasOwnProperty(elementId)) {
@@ -2212,7 +2211,7 @@
             else {
                 pageId = targetPage.includes('#') ? targetPage.split('#')[1] : targetPage
             }
-            if (!appPages.includes(pageId)) return
+            if (!getRef(pageId).classList.contains('page')) return
             document.querySelector('.page:not(.hide-completely)').classList.add('hide-completely')
             document.querySelector('.list__item--active').classList.remove('list__item--active')
             getRef(pageId).classList.remove('hide-completely')
@@ -2365,24 +2364,36 @@
             return await Promise.all(filesList)
         }
         async function downloadComponents() {
-            const selectedComponents = await getSelectedComponents()
-            if (selectedComponents.length) {
-                downloadJs(selectedComponents, { minified: getRef('get_minified').checked })
+            const sourceCode = await getFormattedSourceCode()
+            if (sourceCode) {
+                downloadJs(sourceCode, { minified: getRef('get_minified').checked })
             } else {
                 notify('Please select at least one component', 'error')
             }
         }
 
         async function copySourceCode() {
-            const selectedComponents = await getSelectedComponents()
-            if (selectedComponents.length) {
-                const sourceCode = selectedComponents.join("\n")
+            const sourceCode = await getFormattedSourceCode()
+            if (sourceCode) {
+                // replace all whitespace with single space and remove new line characters
                 window.navigator.clipboard.writeText(sourceCode).then(success => {
                     notify('Copied components source code')
                 }).catch(err => console.error(error))
             }
             else {
-                notify('Please select atleast one component', 'error')
+                notify('Please select at least one component', 'error')
+            }
+        }
+
+        async function getFormattedSourceCode(components) {
+            const selectedComponents = await getSelectedComponents()
+            if (selectedComponents.length) {
+                const selectedComponentsList = [...getRef('components_selection_list').querySelectorAll('sm-checkbox[checked]')].map(v => v.value)
+                // replace all whitespace with single space and remove new line characters
+                const componentsSourceCode = selectedComponents.map(v => v.replace(/\s+/g, ' ').replace(/\\n/g, '')).join("\n")
+                return `// Components downloaded: ${selectedComponentsList.join(',')}\n${componentsSourceCode}`
+            } else {
+                return false
             }
         }
 
@@ -2391,22 +2402,18 @@
             const files = await fetch('https://api.github.com/repos/ranchimall/standard-ui/contents/components/dist')
             allComponentsObj = await files.json()
         }
-        function downloadJs(componentsArray, options = { minified: true }) {
+        function downloadJs(sourceCode, options = { minified: true }) {
             const { minified } = options
-            const selectedComponentsList = [...getRef('components_selection_list').querySelectorAll('sm-checkbox[checked]')].map(v => v.value)
             const extension = minified ? '.min.js' : '.js'
             const element = createElement('a', {
                 attributes: {
-                    'href': 'data:application/javascript;charset=utf-8,' + encodeURIComponent(`// Components downloaded: ${selectedComponentsList.join(',')} \n ${componentsArray.join("\n")}`),
+                    'href': 'data:application/javascript;charset=utf-8,' + encodeURIComponent(sourceCode),
                     'download': `components${extension}`,
                     'style': 'display:none'
                 }
             });
-
             document.body.appendChild(element);
-
             element.click();
-
             document.body.removeChild(element);
         }
     </script>
