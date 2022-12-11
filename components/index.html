@@ -2366,7 +2366,7 @@
         async function downloadComponents() {
             const sourceCode = await getFormattedSourceCode()
             if (sourceCode) {
-                downloadJs(sourceCode, { minified: getRef('get_minified').checked })
+                downloadJs(sourceCode)
             } else {
                 notify('Please select at least one component', 'error')
             }
@@ -2375,7 +2375,6 @@
         async function copySourceCode() {
             const sourceCode = await getFormattedSourceCode()
             if (sourceCode) {
-                // replace all whitespace with single space and remove new line characters
                 window.navigator.clipboard.writeText(sourceCode).then(success => {
                     notify('Copied components source code')
                 }).catch(err => console.error(error))
@@ -2389,9 +2388,13 @@
             const selectedComponents = await getSelectedComponents()
             if (selectedComponents.length) {
                 const selectedComponentsList = [...getRef('components_selection_list').querySelectorAll('sm-checkbox[checked]')].map(v => v.value)
-                // replace all whitespace with single space and remove new line characters
-                const componentsSourceCode = selectedComponents.map(v => v.replace(/\s+/g, ' ').replace(/\\n/g, '')).join("\n")
-                return `// Components downloaded: ${selectedComponentsList.join(',')}\n${componentsSourceCode}`
+                const minified = getRef('get_minified').checked
+                let componentsSourceCode = selectedComponents
+                if (minified) {
+                    // replace all whitespace with single space and remove new line characters
+                    componentsSourceCode = selectedComponents.map(v => v.replace(/\s+/g, ' ').replace(/\\n/g, ''))
+                }
+                return `// Components downloaded: ${selectedComponentsList.join(',')}\n${componentsSourceCode.join("\n")}`
             } else {
                 return false
             }
@@ -2402,8 +2405,8 @@
             const files = await fetch('https://api.github.com/repos/ranchimall/standard-ui/contents/components/dist')
             allComponentsObj = await files.json()
         }
-        function downloadJs(sourceCode, options = { minified: true }) {
-            const { minified } = options
+        function downloadJs(sourceCode) {
+            const minified = getRef('get_minified').checked
             const extension = minified ? '.min.js' : '.js'
             const element = createElement('a', {
                 attributes: {
