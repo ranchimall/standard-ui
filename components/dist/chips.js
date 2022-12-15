@@ -318,6 +318,10 @@ smChip.innerHTML = `
         -webkit-tap-highlight-color: transparent;
         background: var(--background,inherit);
     }
+    .sm-chip[selected]{
+        background-color: var(--accent-color,teal);
+        color: rgba(var(--background-color, (255,255,255)), 1);
+    }
 </style>
 <span class="sm-chip" part="chip">
     <slot></slot>
