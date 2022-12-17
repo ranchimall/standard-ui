@@ -49,6 +49,16 @@ customElements.define('sm-form', class extends HTMLElement {
 		if (!this.submitButton) return;
 		this.invalidFields = this._requiredElements.filter(([elem, isWC]) => isWC ? !elem.isValid : !elem.checkValidity());
 		this.submitButton.disabled = this.invalidFields.length > 0;
+		if (this.invalidFields.length > 0)
+			this.dispatchEvent(new CustomEvent('invalid', {
+				bubbles: true,
+				composed: true,
+			}));
+		else
+			this.dispatchEvent(new CustomEvent('valid', {
+				bubbles: true,
+				composed: true,
+			}));
 	}
 	handleKeydown(e) {
 		if (e.key === 'Enter' && e.target.tagName.includes('INPUT')) {
@@ -101,13 +111,14 @@ customElements.define('sm-form', class extends HTMLElement {
 		this._checkValidity();
 	}
 	connectedCallback() {
-		this.shadowRoot.querySelector('slot').addEventListener('slotchange', this.elementsChanged);
+		const updateFormDecedents = this.debounce(this.elementsChanged, 100);
+		this.shadowRoot.querySelector('slot').addEventListener('slotchange', updateFormDecedents);
 		this.addEventListener('input', this.debounce(this._checkValidity, 100));
 		this.addEventListener('keydown', this.debounce(this.handleKeydown, 100));
 		this.mutationObserver = new MutationObserver(mutations => {
 			mutations.forEach(mutation => {
 				if (mutation.type === 'childList') {
-					this.elementsChanged();
+					updateFormDecedents();
 				}
 			});
 		});
