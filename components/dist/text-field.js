@@ -29,7 +29,7 @@ textField.innerHTML = `
     :host([editable]) .text{
         border-bottom: 0.15rem solid rgba(var(--text-color, 17,17,17), 0.6);
     }
-    :host(:focus-within)  .text{
+    :host([editable]:focus-within)  .text{
         border-bottom: 0.15rem solid var(--accent-color);
     }
     .edit-button{
