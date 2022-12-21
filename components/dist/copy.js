@@ -48,11 +48,6 @@ smCopy.innerHTML = `
 .copy-button:active{
     background-color: var(--button-background-color);
 }
-.icon{
-    height: 1.2rem;
-    width: 1.2rem;
-    fill: rgba(var(--text-color, (17,17,17)), 0.8);
-}
 @media (any-hover: hover){
     .copy:hover .copy-button{
         opacity: 1;
