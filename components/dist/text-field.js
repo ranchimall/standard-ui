@@ -26,9 +26,11 @@ textField.innerHTML = `
         outline: none;
         border-bottom: 0.15rem solid var(--accent-color);
     }
-    .text:focus-visible{
-        outline: none;
-        background: solid rgba(var(--text-color), 0.06);
+    :host([editable]) .text{
+        border-bottom: 0.15rem solid rgba(var(--text-color, 17,17,17), 0.6);
+    }
+    :host(:focus-within)  .text{
+        border-bottom: 0.15rem solid var(--accent-color);
     }
     .edit-button{
         display: inline-flex;
@@ -48,17 +50,14 @@ textField.innerHTML = `
         margin-left: 0.3rem;
     }
     .edit-button:active{
-        background-color: var(--button-background-color);
-    }
-    :host([editable]){
-        border-bottom: 0.15rem solid rgba(var(--text-color), 0.6);
+        background-color: rgba(var(--text-color, (17,17,17)), 0.1);
     }
     .hide{
         display: none;
     }
     @media (any-hover: hover){
         .edit-button:hover{
-            background-color: var(--button-background-color);
+            background-color: rgba(var(--text-color, (17,17,17)), 0.1);
         }
     }
 </style>
