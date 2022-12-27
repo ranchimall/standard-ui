@@ -30,11 +30,20 @@ customElements.define('sm-form', class extends HTMLElement {
 
 		this.form = this.shadowRoot.querySelector('form');
 		this.invalidFields = false;
+		this.skipSubmit = false;
+		this.isFormValid = false;
+		this.supportedElements = new Set(['INPUT', 'SM-INPUT', 'SM-TEXTAREA', 'SM-CHECKBOX', 'TAGS-INPUT', 'FILE-INPUT', 'SM-SWITCH', 'SM-RADIO']);
 		this.debounce = this.debounce.bind(this);
 		this._checkValidity = this._checkValidity.bind(this);
 		this.handleKeydown = this.handleKeydown.bind(this);
 		this.reset = this.reset.bind(this);
 		this.elementsChanged = this.elementsChanged.bind(this);
+	}
+	static get observedAttributes() {
+		return ['skip-submit'];
+	}
+	get validity() {
+		return this.isFormValid;
 	}
 	debounce(callback, wait) {
 		let timeoutId = null;
@@ -48,14 +57,16 @@ customElements.define('sm-form', class extends HTMLElement {
 	_checkValidity() {
 		if (!this.submitButton) return;
 		this.invalidFields = this._requiredElements.filter(([elem, isWC]) => isWC ? !elem.isValid : !elem.checkValidity());
-		this.submitButton.disabled = this.invalidFields.length > 0;
-		if (this.invalidFields.length > 0)
-			this.dispatchEvent(new CustomEvent('invalid', {
+		this.isFormValid = this.invalidFields.length === 0;
+		if (!this.skipSubmit)
+			this.submitButton.disabled = !this.isFormValid;
+		if (this.isFormValid)
+			this.dispatchEvent(new CustomEvent('valid', {
 				bubbles: true,
 				composed: true,
 			}));
 		else
-			this.dispatchEvent(new CustomEvent('valid', {
+			this.dispatchEvent(new CustomEvent('invalid', {
 				bubbles: true,
 				composed: true,
 			}));
@@ -117,13 +128,19 @@ customElements.define('sm-form', class extends HTMLElement {
 		this.addEventListener('keydown', this.debounce(this.handleKeydown, 100));
 		this.mutationObserver = new MutationObserver(mutations => {
 			mutations.forEach(mutation => {
-				if (mutation.type === 'childList') {
+				if (mutation.type === 'childList' && [...mutation.addedNodes].some(node => this.supportedElements.has(node.tagName)) || [...mutation.removedNodes].some(node => this.supportedElements.has(node.tagName))) {
 					updateFormDecedents();
 				}
 			});
 		});
 		this.mutationObserver.observe(this, { childList: true, subtree: true });
 	}
+	attributeChangedCallback(name, oldValue, newValue) {
+		if (name === 'skip-submit') {
+			this.skipSubmit = newValue !== null;
+		}
+	}
+
 	disconnectedCallback() {
 		this.removeEventListener('input', this.debounce(this._checkValidity, 100));
 		this.removeEventListener('keydown', this.debounce(this.handleKeydown, 100));
