@@ -424,14 +424,28 @@ customElements.define('sm-popup', class extends HTMLElement {
 
     detectFocus(e) {
         if (e.key === 'Tab') {
-            const lastElement = this.focusable[this.focusable.length - 1];
-            const firstElement = this.focusable[0];
-            if (e.shiftKey && document.activeElement === firstElement) {
+            // go through the focusable list and find the first and last element that is not disabled
+            if (!this.focusable.length) return;
+            if (!this.firstFocusable)
+                for (let i = 0; i < this.focusable.length; i++) {
+                    if (!this.focusable[i].disabled) {
+                        this.firstFocusable = this.focusable[i];
+                        break;
+                    }
+                }
+            if (!this.lastFocusable)
+                for (let i = this.focusable.length - 1; i >= 0; i--) {
+                    if (!this.focusable[i].disabled) {
+                        this.lastFocusable = this.focusable[i];
+                        break;
+                    }
+                }
+            if (e.shiftKey && document.activeElement === this.firstFocusable) {
                 e.preventDefault();
-                lastElement.tagName.includes('SM-') ? lastElement.focusIn() : lastElement.focus();
-            } else if (!e.shiftKey && document.activeElement === lastElement) {
+                this.lastFocusable.tagName.includes('SM-') ? this.lastFocusable.focusIn() : this.lastFocusable.focus();
+            } else if (!e.shiftKey && document.activeElement === this.lastFocusable) {
                 e.preventDefault();
-                firstElement.tagName.includes('SM-') ? firstElement.focusIn() : firstElement.focus();
+                this.firstFocusable.tagName.includes('SM-') ? this.firstFocusable.focusIn() : this.firstFocusable.focus();
             }
         }
     }
@@ -439,6 +453,8 @@ customElements.define('sm-popup', class extends HTMLElement {
     updateFocusableList() {
         this.focusable = this.querySelectorAll('sm-button:not([disabled]), button:not([disabled]), [href], sm-input, input:not([readonly]), sm-select, select, sm-checkbox, sm-textarea, textarea, [tabindex]:not([tabindex="-1"])')
         this.autoFocus = this.querySelector('[autofocus]')
+        this.firstFocusable = null
+        this.lastFocusable = null
     }
 
     handleSoftDismiss() {
@@ -468,12 +484,12 @@ customElements.define('sm-popup', class extends HTMLElement {
     }
 
     connectedCallback() {
-        this.popupBodySlot.addEventListener('slotchange', this.debounce(() => {
+        this.popupBodySlot.addEventListener('slotchange', debounce(() => {
             this.forms = this.querySelectorAll('sm-form');
             this.updateFocusableList()
         }, 0));
         this.resizeObserver = new ResizeObserver(entries => {
-            for (let entry of entries) {
+            entries.forEach(entry => {
                 if (entry.contentBoxSize) {
                     // Firefox implements `contentBoxSize` as a single content rect, rather than an array
                     const contentBoxSize = Array.isArray(entry.contentBoxSize) ? entry.contentBoxSize[0] : entry.contentBoxSize;
@@ -481,7 +497,7 @@ customElements.define('sm-popup', class extends HTMLElement {
                 } else {
                     this.threshold = entry.contentRect.height * 0.3;
                 }
-            }
+            })
         });
 
         this.mutationObserver = new MutationObserver(entries => {
