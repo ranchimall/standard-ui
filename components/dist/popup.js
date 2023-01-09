@@ -210,6 +210,7 @@ customElements.define('sm-popup', class extends HTMLElement {
         this.handleTouchEnd = this.handleTouchEnd.bind(this);
         this.detectFocus = this.detectFocus.bind(this);
         this.handleSoftDismiss = this.handleSoftDismiss.bind(this);
+        this.debounce = this.debounce.bind(this);
     }
 
     static get observedAttributes() {
@@ -484,7 +485,7 @@ customElements.define('sm-popup', class extends HTMLElement {
     }
 
     connectedCallback() {
-        this.popupBodySlot.addEventListener('slotchange', debounce(() => {
+        this.popupBodySlot.addEventListener('slotchange', this.debounce(() => {
             this.forms = this.querySelectorAll('sm-form');
             this.updateFocusableList()
         }, 0));
