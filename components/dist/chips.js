@@ -46,7 +46,6 @@ smChips.innerHTML = `
         cursor: pointer;
         align-items: center;
         background: rgba(var(--background-color,(255,255,255)), 1);
-        transition: opacity 0.2s;
         grid-row: 1;
     }
     .nav-button--left{
@@ -64,7 +63,6 @@ smChips.innerHTML = `
         height: 100%;
         pointer-events: none;
         grid-row: 1;
-        transition: opacity 0.2s;
     }
     .cover--left{
         grid-column: 1;
@@ -205,32 +203,20 @@ customElements.define('sm-chips', class extends HTMLElement {
 
         const slot = this.shadowRoot.querySelector('slot');
         slot.addEventListener('slotchange', e => {
+            firstOptionObserver.disconnect();
+            lastOptionObserver.disconnect();
+            this.observeSelf.disconnect();
             // debounce to wait for all elements to be assigned
             clearTimeout(this.slotChangeTimeout);
             this.slotChangeTimeout = setTimeout(() => {
-                firstOptionObserver.disconnect();
-                lastOptionObserver.disconnect();
                 this.assignedElements = slot.assignedElements();
                 this.assignedElements.forEach(elem => {
                     if (elem.hasAttribute('selected')) {
                         this._value = elem.value;
                     }
                 });
-                if (!this.hasAttribute('multiline')) {
-                    if (this.assignedElements.length > 0) {
-                        firstOptionObserver.observe(this.assignedElements[0]);
-                        lastOptionObserver.observe(this.assignedElements[this.assignedElements.length - 1]);
-                    }
-                    else {
-                        this.navButtonLeft.classList.add('hide');
-                        this.navButtonRight.classList.add('hide');
-                        this.coverLeft.classList.add('hide');
-                        this.coverRight.classList.add('hide');
-                        firstOptionObserver.disconnect();
-                        lastOptionObserver.disconnect();
-                    }
-                }
-            }, 100);
+                this.observeSelf.observe(this);
+            }, 0);
         });
         const resObs = new ResizeObserver(entries => {
             entries.forEach(entry => {
@@ -244,6 +230,17 @@ customElements.define('sm-chips', class extends HTMLElement {
             });
         });
         resObs.observe(this);
+
+        this.observeSelf = new IntersectionObserver(entries => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting && !this.hasAttribute('multiline') && this.assignedElements.length > 0) {
+                    firstOptionObserver.observe(this.assignedElements[0]);
+                    lastOptionObserver.observe(this.assignedElements[this.assignedElements.length - 1]);
+                }
+            });
+        }, {
+            threshold: 1,
+        });
         this.chipsWrapper.addEventListener('option-clicked', e => {
             if (this._value !== e.target.value) {
                 this.setSelectedOption(e.target.value);
@@ -262,7 +259,7 @@ customElements.define('sm-chips', class extends HTMLElement {
             });
         },
             {
-                threshold: 0.9,
+                threshold: 1,
                 root: this
             });
         const lastOptionObserver = new IntersectionObserver(entries => {
@@ -277,7 +274,7 @@ customElements.define('sm-chips', class extends HTMLElement {
             });
         },
             {
-                threshold: 0.9,
+                threshold: 1,
                 root: this
             });
         this.navButtonLeft.addEventListener('click', this.scrollLeft);
