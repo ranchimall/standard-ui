@@ -47,6 +47,7 @@ smChips.innerHTML = `
         align-items: center;
         background: rgba(var(--background-color,(255,255,255)), 1);
         grid-row: 1;
+        transition: opacity 0.2s;
     }
     .nav-button--left{
         grid-column: 1;
@@ -63,6 +64,7 @@ smChips.innerHTML = `
         height: 100%;
         pointer-events: none;
         grid-row: 1;
+        transition: opacity 0.2s;
     }
     .cover--left{
         grid-column: 1;
