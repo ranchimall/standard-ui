@@ -81,7 +81,6 @@ smTextarea.innerHTML = `
         pointer-events: none;
         user-select: none;
         grid-area: 2/1;
-        align-self: center;
     }
     :host([disabled]) .textarea{
         cursor: not-allowed;
