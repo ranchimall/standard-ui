@@ -233,16 +233,12 @@ customElements.define('sm-chips', class extends HTMLElement {
         });
         resObs.observe(this);
 
-        this.observeSelf = new IntersectionObserver(entries => {
+        this.observeSelf = new IntersectionObserver((entries, observer) => {
             entries.forEach(entry => {
                 if (entry.isIntersecting && !this.hasAttribute('multiline') && this.assignedElements.length > 0) {
                     firstOptionObserver.observe(this.assignedElements[0]);
                     lastOptionObserver.observe(this.assignedElements[this.assignedElements.length - 1]);
-                } else {
-                    this.navButtonLeft.classList.add('hide');
-                    this.navButtonRight.classList.add('hide');
-                    this.coverLeft.classList.add('hide');
-                    this.coverRight.classList.add('hide');
+                    observer.unobserve(this);
                 }
             });
         }, {
