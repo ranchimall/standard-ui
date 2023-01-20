@@ -60,16 +60,10 @@ customElements.define('sm-form', class extends HTMLElement {
 		this.isFormValid = this.invalidFields.length === 0;
 		if (!this.skipSubmit)
 			this.submitButton.disabled = !this.isFormValid;
-		if (this.isFormValid)
-			this.dispatchEvent(new CustomEvent('valid', {
-				bubbles: true,
-				composed: true,
-			}));
-		else
-			this.dispatchEvent(new CustomEvent('invalid', {
-				bubbles: true,
-				composed: true,
-			}));
+		this.dispatchEvent(new CustomEvent(this.isFormValid ? 'valid' : 'invalid', {
+			bubbles: true,
+			composed: true,
+		}));
 	}
 	handleKeydown(e) {
 		if (e.key === 'Enter' && e.target.tagName.includes('INPUT')) {

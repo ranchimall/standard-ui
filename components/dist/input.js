@@ -265,6 +265,7 @@ customElements.define('sm-input',
             this.focusOut = this.focusOut.bind(this);
             this.fireEvent = this.fireEvent.bind(this);
             this.checkInput = this.checkInput.bind(this);
+            this.showError = this.showError.bind(this);
             this.allowOnlyNum = this.allowOnlyNum.bind(this);
             this.handleOptionClick = this.handleOptionClick.bind(this);
             this.handleInputNavigation = this.handleInputNavigation.bind(this);
@@ -306,7 +307,6 @@ customElements.define('sm-input',
         get validity() {
             return this.input.validity;
         }
-
         get disabled() {
             return this.hasAttribute('disabled');
         }
@@ -332,6 +332,13 @@ customElements.define('sm-input',
         set errorText(val) {
             this._errorText = val;
         }
+        showError() {
+            this.feedbackText.className = 'feedback-text error';
+            this.feedbackText.innerHTML = `
+                <svg class="status-icon status-icon--error" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="24" height="24"><path fill="none" d="M0 0h24v24H0z"/><path d="M12 22C6.477 22 2 17.523 2 12S6.477 2 12 2s10 4.477 10 10-4.477 10-10 10zm-1-7v2h2v-2h-2zm0-8v6h2V7h-2z"/></svg>
+                ${this._errorText}`;
+        }
+
         set helperText(val) {
             this._helperText = val;
         }
@@ -343,16 +350,11 @@ customElements.define('sm-input',
                     _customValid = Boolean(this.validationFunction(this.input.value));
                 }
                 if (_isValid && _customValid) {
-                    this.feedbackText.classList.remove('error');
-                    this.feedbackText.classList.add('success');
+                    this.feedbackText.className = 'feedback-text success';
                     this.feedbackText.textContent = '';
                 } else {
                     if (this._errorText) {
-                        this.feedbackText.classList.add('error');
-                        this.feedbackText.classList.remove('success');
-                        this.feedbackText.innerHTML = `
-                            <svg class="status-icon status-icon--error" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="24" height="24"><path fill="none" d="M0 0h24v24H0z"/><path d="M12 22C6.477 22 2 17.523 2 12S6.477 2 12 2s10 4.477 10 10-4.477 10-10 10zm-1-7v2h2v-2h-2zm0-8v6h2V7h-2z"/></svg>
-                            ${this._errorText}`;
+                        this.showError();
                     }
                 }
                 return (_isValid && _customValid);
