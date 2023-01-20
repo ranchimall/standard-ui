@@ -32,7 +32,7 @@ customElements.define('sm-form', class extends HTMLElement {
 		this.invalidFields;
 		this.skipSubmit = false;
 		this.isFormValid = false;
-		this.supportedElements = new Set(['INPUT', 'SM-INPUT', 'SM-TEXTAREA', 'SM-CHECKBOX', 'TAGS-INPUT', 'FILE-INPUT', 'SM-SWITCH', 'SM-RADIO']);
+		this.supportedElements = 'input, sm-input, sm-textarea, sm-checkbox, tags-input, file-input, sm-switch, sm-radio';
 		this.debounce = this.debounce.bind(this);
 		this._checkValidity = this._checkValidity.bind(this);
 		this.handleKeydown = this.handleKeydown.bind(this);
@@ -55,13 +55,13 @@ customElements.define('sm-form', class extends HTMLElement {
 		};
 	}
 	_checkValidity() {
-		if (!this.submitButton) return;
+		if (!this.submitButton || this._requiredElements.length === 0) return;
 		this.invalidFields = 0
 		this._requiredElements.forEach(([elem, isWC]) => {
 			if (isWC && !elem.isValid || !isWC && !elem.checkValidity())
 				this.invalidFields++;
 		});
-		this.isFormValid = this.invalidFields.length === 0;
+		this.isFormValid = this.invalidFields === 0;
 		if (!this.skipSubmit)
 			this.submitButton.disabled = !this.isFormValid;
 		this.dispatchEvent(new CustomEvent(this.isFormValid ? 'valid' : 'invalid', {
@@ -71,7 +71,7 @@ customElements.define('sm-form', class extends HTMLElement {
 	}
 	handleKeydown(e) {
 		if (e.key === 'Enter' && e.target.tagName.includes('INPUT')) {
-			if (!this.invalidFields.length) {
+			if (this.invalidFields === 0) {
 				if (this.submitButton) {
 					this.submitButton.click();
 				}
@@ -108,7 +108,7 @@ customElements.define('sm-form', class extends HTMLElement {
 		});
 	}
 	elementsChanged() {
-		this.formElements = [...this.querySelectorAll('input, sm-input, sm-textarea, sm-checkbox, tags-input, file-input, sm-switch, sm-radio')].map(elem => {
+		this.formElements = [...this.querySelectorAll(this.supportedElements)].map(elem => {
 			return [elem, elem.tagName.includes('-')];
 		});
 		this._requiredElements = this.formElements.filter(([elem]) => elem.hasAttribute('required'));
@@ -121,12 +121,15 @@ customElements.define('sm-form', class extends HTMLElement {
 	}
 	connectedCallback() {
 		const updateFormDecedents = this.debounce(this.elementsChanged, 100);
-		this.shadowRoot.querySelector('slot').addEventListener('slotchange', updateFormDecedents);
 		this.addEventListener('input', this.debounce(this._checkValidity, 100));
 		this.addEventListener('keydown', this.debounce(this.handleKeydown, 100));
 		this.mutationObserver = new MutationObserver(mutations => {
 			mutations.forEach(mutation => {
-				if (mutation.type === 'childList' && [...mutation.addedNodes].some(node => this.supportedElements.has(node.tagName)) || [...mutation.removedNodes].some(node => this.supportedElements.has(node.tagName))) {
+				if (
+					mutation.type === 'childList' &&
+					[...mutation.addedNodes].some(node => node.nodeType === 1 && node.querySelector(this.supportedElements)) ||
+					[...mutation.removedNodes].some(node => node.nodeType === 1 && node.querySelector(this.supportedElements))
+				) {
 					updateFormDecedents();
 				}
 			});
