@@ -29,7 +29,7 @@ customElements.define('sm-form', class extends HTMLElement {
 		}).append(smForm.content.cloneNode(true));
 
 		this.form = this.shadowRoot.querySelector('form');
-		this.invalidFields = false;
+		this.invalidFields;
 		this.skipSubmit = false;
 		this.isFormValid = false;
 		this.supportedElements = new Set(['INPUT', 'SM-INPUT', 'SM-TEXTAREA', 'SM-CHECKBOX', 'TAGS-INPUT', 'FILE-INPUT', 'SM-SWITCH', 'SM-RADIO']);
@@ -56,7 +56,11 @@ customElements.define('sm-form', class extends HTMLElement {
 	}
 	_checkValidity() {
 		if (!this.submitButton) return;
-		this.invalidFields = this._requiredElements.filter(([elem, isWC]) => isWC ? !elem.isValid : !elem.checkValidity());
+		this.invalidFields = 0
+		this._requiredElements.forEach(([elem, isWC]) => {
+			if (isWC && !elem.isValid || !isWC && !elem.checkValidity())
+				this.invalidFields++;
+		});
 		this.isFormValid = this.invalidFields.length === 0;
 		if (!this.skipSubmit)
 			this.submitButton.disabled = !this.isFormValid;
