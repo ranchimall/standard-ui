@@ -124,6 +124,7 @@ customElements.define('sm-form', class extends HTMLElement {
 		const updateFormDecedents = this.debounce(this.elementsChanged, 100);
 		this.addEventListener('input', this.debounce(this._checkValidity, 100));
 		this.addEventListener('keydown', this.debounce(this.handleKeydown, 100));
+		this.shadowRoot.querySelector('slot').addEventListener('slotchange', updateFormDecedents);
 		this.mutationObserver = new MutationObserver(mutations => {
 			mutations.forEach(mutation => {
 				if (
