@@ -31,7 +31,7 @@ customElements.define('sm-form', class extends HTMLElement {
 		this.form = this.shadowRoot.querySelector('form');
 		this.invalidFieldsCount;
 		this.skipSubmit = false;
-		this.isFormValid = false;
+		this.isFormValid = undefined;
 		this.supportedElements = 'input, sm-input, sm-textarea, sm-checkbox, tags-input, file-input, sm-switch, sm-radio';
 		this._requiredElements = []
 		this.debounce = this.debounce.bind(this);
@@ -62,12 +62,12 @@ customElements.define('sm-form', class extends HTMLElement {
 			if (isWC && !elem.isValid || !isWC && !elem.checkValidity())
 				this.invalidFieldsCount++;
 		});
-		if (this.isFormValid === this.invalidFieldsCount === 0) return;
+		if (this.isFormValid === (this.invalidFieldsCount === 0)) return;
+		this.isFormValid = this.invalidFieldsCount === 0;
 		this.dispatchEvent(new CustomEvent(this.isFormValid ? 'valid' : 'invalid', {
 			bubbles: true,
 			composed: true,
 		}));
-		this.isFormValid = this.invalidFieldsCount === 0;
 		if (!this.skipSubmit)
 			this.submitButton.disabled = !this.isFormValid;
 	}
