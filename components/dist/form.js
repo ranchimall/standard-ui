@@ -29,7 +29,7 @@ customElements.define('sm-form', class extends HTMLElement {
 		}).append(smForm.content.cloneNode(true));
 
 		this.form = this.shadowRoot.querySelector('form');
-		this.invalidFields;
+		this.invalidFieldsCount;
 		this.skipSubmit = false;
 		this.isFormValid = false;
 		this.supportedElements = 'input, sm-input, sm-textarea, sm-checkbox, tags-input, file-input, sm-switch, sm-radio';
@@ -57,22 +57,23 @@ customElements.define('sm-form', class extends HTMLElement {
 	}
 	_checkValidity() {
 		if (!this.submitButton || this._requiredElements.length === 0) return;
-		this.invalidFields = 0
+		this.invalidFieldsCount = 0
 		this._requiredElements.forEach(([elem, isWC]) => {
 			if (isWC && !elem.isValid || !isWC && !elem.checkValidity())
-				this.invalidFields++;
+				this.invalidFieldsCount++;
 		});
-		this.isFormValid = this.invalidFields === 0;
-		if (!this.skipSubmit)
-			this.submitButton.disabled = !this.isFormValid;
+		if (this.isFormValid === this.invalidFieldsCount === 0) return;
 		this.dispatchEvent(new CustomEvent(this.isFormValid ? 'valid' : 'invalid', {
 			bubbles: true,
 			composed: true,
 		}));
+		this.isFormValid = this.invalidFieldsCount === 0;
+		if (!this.skipSubmit)
+			this.submitButton.disabled = !this.isFormValid;
 	}
 	handleKeydown(e) {
 		if (e.key === 'Enter' && e.target.tagName.includes('INPUT')) {
-			if (this.invalidFields === 0) {
+			if (this.invalidFieldsCount === 0) {
 				if (this.submitButton) {
 					this.submitButton.click();
 				}

@@ -129,15 +129,17 @@ const uiUtils = {
     }
 };
 //Checks for internet connection status
+uiGlobals.connectionErrorNotification = []
 if (!navigator.onLine)
-    uiGlobals.connectionErrorNotification = notify('There seems to be a problem connecting to the internet, Please check you internet connection.', 'error')
+    uiGlobals.connectionErrorNotification.push(notify('There seems to be a problem connecting to the internet, Please check you internet connection.', 'error'))
 window.addEventListener('offline', () => {
-    uiGlobals.connectionErrorNotification = notify('There seems to be a problem connecting to the internet, Please check you internet connection.', 'error')
+    uiGlobals.connectionErrorNotification.push(notify('There seems to be a problem connecting to the internet, Please check you internet connection.', 'error'))
 })
 window.addEventListener('online', () => {
-    getRef('notification_drawer').remove(uiGlobals.connectionErrorNotification)
+    uiGlobals.connectionErrorNotification.forEach(notification => notification.remove())
     notify('We are back online.', 'success')
     location.reload()
+    uiGlobals.connectionErrorNotification = []
 })
 let zIndex = 50
 // function required for popups or modals to appear
