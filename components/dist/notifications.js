@@ -62,6 +62,7 @@ smNotifications.innerHTML = `
                 margin-right: 0.5rem;
                 height: var(--icon-height);
                 width: var(--icon-width);
+                flex-shrink: 0;
             }
             h4:first-letter,
             p:first-letter{
