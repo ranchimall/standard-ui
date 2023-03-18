@@ -311,10 +311,13 @@ customElements.define('sm-input',
             return this.hasAttribute('disabled');
         }
         set disabled(value) {
-            if (value)
+            if (value) {
                 this.inputParent.classList.add('disabled');
-            else
+                this.setAttribute('disabled', '');
+            } else {
                 this.inputParent.classList.remove('disabled');
+                this.removeAttribute('disabled');
+            }
         }
         get readOnly() {
             return this.hasAttribute('readonly');
@@ -527,8 +530,7 @@ customElements.define('sm-input',
                 if (this.reflectedAttributes.includes(name)) {
                     if (this.hasAttribute(name)) {
                         this.input.setAttribute(name, this.getAttribute(name) ? this.getAttribute(name) : '');
-                    }
-                    else {
+                    } else {
                         this.input.removeAttribute(name);
                     }
                 }

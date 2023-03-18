@@ -59,7 +59,7 @@ customElements.define('sm-form', class extends HTMLElement {
 		if (!this.submitButton || this._requiredElements.length === 0) return;
 		this.invalidFieldsCount = 0
 		this._requiredElements.forEach(([elem, isWC]) => {
-			if (isWC && !elem.isValid || !isWC && !elem.checkValidity())
+			if (!elem.disabled && isWC && !elem.isValid || !isWC && !elem.checkValidity())
 				this.invalidFieldsCount++;
 		});
 		if (this.isFormValid === (this.invalidFieldsCount === 0)) return;
