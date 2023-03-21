@@ -498,7 +498,7 @@ async function routeTo(targetPage, options = {}) {
 // class based lazy loading
 class LazyLoader {
     constructor(container, elementsToRender, renderFn, options = {}) {
-        const { batchSize = 10, freshRender, bottomFirst = false, domUpdated } = options
+        const { batchSize = 10, freshRender, bottomFirst = false, onEnd } = options
 
         this.elementsToRender = elementsToRender
         this.arrayOfElements = (typeof elementsToRender === 'function') ? this.elementsToRender() : elementsToRender || []
@@ -507,8 +507,8 @@ class LazyLoader {
 
         this.batchSize = batchSize
         this.freshRender = freshRender
-        this.domUpdated = domUpdated
         this.bottomFirst = bottomFirst
+        this.onEnd = onEnd
 
         this.shouldLazyLoad = false
         this.lastScrollTop = 0
@@ -525,6 +525,10 @@ class LazyLoader {
         return this.arrayOfElements
     }
     init() {
+        if (this.mutationObserver)
+            this.mutationObserver.disconnect()
+        if (this.intersectionObserver)
+            this.intersectionObserver.disconnect()
         this.intersectionObserver = new IntersectionObserver((entries, observer) => {
             entries.forEach(entry => {
                 if (entry.isIntersecting) {
@@ -592,8 +596,18 @@ class LazyLoader {
             this.lastScrollTop += this.lazyContainer.scrollHeight - this.lastScrollHeight
             this.lazyContainer.scrollTo({ top: this.lastScrollTop })
             this.lastScrollHeight = this.lazyContainer.scrollHeight
+            if (this.updateStartIndex <= 0 && this.onEnd) {
+                this.mutationObserver.disconnect()
+                this.intersectionObserver.disconnect()
+                this.onEnd()
+            }
         } else {
             this.lazyContainer.append(frag)
+            if (this.updateEndIndex >= this.arrayOfElements.length && this.onEnd) {
+                this.mutationObserver.disconnect()
+                this.intersectionObserver.disconnect()
+                this.onEnd()
+            }
         }
         if (!lazyLoad && this.bottomFirst) {
             this.lazyContainer.scrollTop = this.lazyContainer.scrollHeight
