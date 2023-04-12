@@ -721,7 +721,7 @@ function showChildElement(id, index, options = {}) {
     })
 }
 function buttonLoader(id, show) {
-    const button = typeof id === 'string' ? getRef(id) : id;
+    const button = typeof id === 'string' ? document.getElementById(id) : id;
     button.disabled = show;
     const animOptions = {
         duration: 200,
@@ -729,6 +729,7 @@ function buttonLoader(id, show) {
         easing: 'ease'
     }
     if (show) {
+        button.parentNode.append(createElement('sm-spinner'))
         button.animate([
             {
                 clipPath: 'circle(100%)',
@@ -736,13 +737,9 @@ function buttonLoader(id, show) {
             {
                 clipPath: 'circle(0)',
             },
-        ], animOptions).onfinish = e => {
-            e.target.commitStyles()
-            e.target.cancel()
-        }
-        button.parentNode.append(createElement('sm-spinner'))
+        ], animOptions)
     } else {
-        button.style = ''
+        button.getAnimations().forEach(anim => anim.cancel())
         const potentialTarget = button.parentNode.querySelector('sm-spinner')
         if (potentialTarget) potentialTarget.remove();
     }
