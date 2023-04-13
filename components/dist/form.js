@@ -33,6 +33,7 @@ customElements.define('sm-form', class extends HTMLElement {
 		this.skipSubmit = false;
 		this.isFormValid = undefined;
 		this.supportedElements = 'input, sm-input, sm-textarea, sm-checkbox, tags-input, file-input, sm-switch, sm-radio';
+		this.formElements = [];
 		this._requiredElements = []
 		this.debounce = this.debounce.bind(this);
 		this._checkValidity = this._checkValidity.bind(this);
