@@ -347,8 +347,10 @@ customElements.define('sm-select', class extends HTMLElement {
     }
     connectedCallback() {
         this.setAttribute('role', 'listbox')
-        if (!this.hasAttribute('disabled')) {
+        if (!this.hasAttribute('disabled') && !this.hasAttribute('readonly')) {
             this.selection.setAttribute('tabindex', '0')
+            this.addEventListener('click', this.handleClick)
+            this.addEventListener('keydown', this.handleKeydown)
         }
         let slot = this.shadowRoot.querySelector('slot')
         slot.addEventListener('slotchange', this.debounce(e => {
