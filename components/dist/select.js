@@ -16,6 +16,10 @@ smSelect.innerHTML = `
     opacity: 0.6;
     cursor: not-allowed;
 }
+:host([readonly]) .select{
+    cursor: default;
+    pointer-events: none;
+}
 .select{
     position: relative;
     display: -webkit-box;
@@ -175,7 +179,7 @@ customElements.define('sm-select', class extends HTMLElement {
         this.selectedOptionText = this.shadowRoot.querySelector('.selected-option-text')
     }
     static get observedAttributes() {
-        return ['disabled', 'label']
+        return ['disabled', 'label', 'readonly']
     }
     get value() {
         return this.getAttribute('value')
@@ -364,20 +368,21 @@ customElements.define('sm-select', class extends HTMLElement {
                 }
             })
         }).observe(this)
-        this.addEventListener('click', this.handleClick)
-        this.addEventListener('keydown', this.handleKeydown)
     }
     disconnectedCallback() {
         this.removeEventListener('click', this.handleClick)
-        this.removeEventListener('click', this.toggle)
         this.removeEventListener('keydown', this.handleKeydown)
     }
     attributeChangedCallback(name) {
-        if (name === "disabled") {
-            if (this.hasAttribute('disabled')) {
+        if (name === "disabled" || name === "readonly") {
+            if (this.hasAttribute('disabled') || this.hasAttribute('readonly')) {
                 this.selection.removeAttribute('tabindex')
+                this.removeEventListener('click', this.handleClick)
+                this.removeEventListener('keydown', this.handleKeydown)
             } else {
                 this.selection.setAttribute('tabindex', '0')
+                this.addEventListener('click', this.handleClick)
+                this.addEventListener('keydown', this.handleKeydown)
             }
         } else if (name === 'label') {
             this.label = this.hasAttribute('label') ? `${this.getAttribute('label')} ` : ''
