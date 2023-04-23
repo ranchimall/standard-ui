@@ -454,7 +454,7 @@ smOption.innerHTML = `
     }
 }
 </style>
-<div class="option">
+<div class="option" part="option">
     <slot></slot> 
 </div>`;
 customElements.define('sm-option', class extends HTMLElement {
