@@ -161,6 +161,7 @@ customElements.define('sm-select', class extends HTMLElement {
         this.handleClickOutside = this.handleClickOutside.bind(this)
         this.selectOption = this.selectOption.bind(this)
         this.debounce = this.debounce.bind(this)
+        this.elementsChanged = this.elementsChanged.bind(this)
 
         this.availableOptions = []
         this.previousOption
@@ -185,7 +186,7 @@ customElements.define('sm-select', class extends HTMLElement {
         return this.getAttribute('value')
     }
     set value(val) {
-        const selectedOption = this.shadowRoot.querySelector('slot').assignedElements().find(option => option.getAttribute('value') === val)
+        const selectedOption = this.availableOptions.find(option => option.getAttribute('value') === val)
         if (selectedOption) {
             this.setAttribute('value', val)
             this.selectOption(selectedOption)
@@ -345,6 +346,11 @@ customElements.define('sm-select', class extends HTMLElement {
             this.collapse()
         }
     }
+    elementsChanged() {
+        this.availableOptions = [...this.querySelectorAll('sm-option')];
+        this.reset(false)
+        this.defaultSelected = this.value
+    }
     connectedCallback() {
         this.setAttribute('role', 'listbox')
         if (!this.hasAttribute('disabled') && !this.hasAttribute('readonly')) {
@@ -352,12 +358,27 @@ customElements.define('sm-select', class extends HTMLElement {
             this.addEventListener('click', this.handleClick)
             this.addEventListener('keydown', this.handleKeydown)
         }
-        let slot = this.shadowRoot.querySelector('slot')
-        slot.addEventListener('slotchange', this.debounce(e => {
-            this.availableOptions = slot.assignedElements()
-            this.reset(false)
-            this.defaultSelected = this.value
-        }, 100));
+        const updateDecedents = this.debounce(this.elementsChanged, 100);
+        this.shadowRoot.querySelector('slot').addEventListener('slotchange', updateDecedents);
+        this.mutationObserver = new MutationObserver(mutations => {
+            let attributesChanged = false;
+            mutations.forEach(mutation => {
+                switch (mutation.type) {
+                    case 'childList':
+                        updateDecedents();
+                        break;
+                    case 'attributes':
+                        attributesChanged = true;
+                        break;
+                }
+            });
+            if (attributesChanged) {
+                const selectedOption = this.availableOptions.find(option => option.hasAttribute('selected')) || this.availableOptions[0];
+                this.selectedOptionText.textContent = `${this.label}${selectedOption.textContent}`;
+                this.setAttribute('value', selectedOption.getAttribute('value'));
+            }
+        });
+        this.mutationObserver.observe(this, { subtree: true, childList: true, attributeFilter: ["selected"] });
         new IntersectionObserver((entries, observer) => {
             entries.forEach(entry => {
                 if (entry.isIntersecting) {
