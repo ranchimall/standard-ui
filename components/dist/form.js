@@ -109,6 +109,7 @@ customElements.define('sm-form', class extends HTMLElement {
 			if (isWC) elem.reset();
 			else elem.value = '';
 		});
+		this._checkValidity();
 	}
 	elementsChanged() {
 		this.formElements = [...this.querySelectorAll(this.supportedElements)].map(elem => {
