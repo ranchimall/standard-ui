@@ -534,48 +534,56 @@ customElements.define('sm-input',
                         this.input.removeAttribute(name);
                     }
                 }
-                if (name === 'placeholder') {
-                    this.label.textContent = newValue;
-                    this.setAttribute('aria-label', newValue);
-                } else if (this.hasAttribute('value')) {
-                    this.checkInput();
-                } else if (name === 'type') {
-                    if (this.hasAttribute('type') && this.getAttribute('type') === 'number') {
-                        this.input.setAttribute('inputmode', 'decimal');
-                        this.input.addEventListener('keydown', this.allowOnlyNum);
-                    } else {
-                        this.input.removeEventListener('keydown', this.allowOnlyNum);
-
-                    }
-                } else if (name === 'helper-text') {
-                    this._helperText = this.getAttribute('helper-text');
-                } else if (name === 'error-text') {
-                    this._errorText = this.getAttribute('error-text');
-                } else if (name === 'required') {
-                    this.isRequired = this.hasAttribute('required');
-                    if (this.isRequired) {
-                        this.setAttribute('aria-required', 'true');
-                    }
-                    else {
-                        this.setAttribute('aria-required', 'false');
-                    }
-                } else if (name === 'readonly') {
-                    if (this.hasAttribute('readonly')) {
-                        this.inputParent.classList.add('readonly');
-                    } else {
-                        this.inputParent.classList.remove('readonly');
-                    }
-                } else if (name === 'disabled') {
-                    if (this.hasAttribute('disabled')) {
-                        this.inputParent.classList.add('disabled');
-                    }
-                    else {
-                        this.inputParent.classList.remove('disabled');
-                    }
-                } else if (name === 'list') {
-                    if (this.hasAttribute('list') && this.getAttribute('list').trim() !== '') {
-                        this.datalist = this.getAttribute('list').split(',');
-                    }
+                switch (name) {
+                    case 'placeholder':
+                        this.label.textContent = newValue;
+                        this.setAttribute('aria-label', newValue);
+                        break;
+                    case 'value':
+                        this.checkInput();
+                        break;
+                    case 'type':
+                        if (this.hasAttribute('type') && this.getAttribute('type') === 'number') {
+                            this.input.setAttribute('inputmode', 'decimal');
+                            this.input.addEventListener('keydown', this.allowOnlyNum);
+                        } else {
+                            this.input.removeEventListener('keydown', this.allowOnlyNum);
+                        }
+                        break;
+                    case 'helper-text':
+                        this._helperText = newValue;
+                        break;
+                    case 'error-text':
+                        this._errorText = newValue;
+                        break;
+                    case 'required':
+                        this.isRequired = this.hasAttribute('required');
+                        if (this.isRequired) {
+                            this.setAttribute('aria-required', 'true');
+                        } else {
+                            this.setAttribute('aria-required', 'false');
+                        }
+                        break;
+                    case 'readonly':
+                        if (this.hasAttribute('readonly')) {
+                            this.inputParent.classList.add('readonly');
+                        } else {
+                            this.inputParent.classList.remove('readonly');
+                        }
+                        break;
+                    case 'disabled':
+                        if (this.hasAttribute('disabled')) {
+                            this.inputParent.classList.add('disabled');
+                        }
+                        else {
+                            this.inputParent.classList.remove('disabled');
+                        }
+                        break;
+                    case 'list':
+                        if (this.hasAttribute('list') && this.getAttribute('list').trim() !== '') {
+                            this.datalist = this.getAttribute('list').split(',');
+                        }
+                        break;
                 }
             }
         }
