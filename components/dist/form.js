@@ -107,7 +107,17 @@ customElements.define('sm-form', class extends HTMLElement {
 	reset() {
 		this.formElements.forEach(([elem, isWC]) => {
 			if (isWC) elem.reset();
-			else elem.value = '';
+			else {
+				switch (elem.type) {
+					case 'checkbox':
+					case 'radio':
+						elem.checked = false;
+						break;
+					default:
+						elem.value = '';
+						break;
+				}
+			}
 		});
 		this._checkValidity();
 	}
