@@ -58,7 +58,9 @@ smCopy.innerHTML = `
 }
 </style>
 <section class="copy">
-    <p class="copy-content"></p>
+    <p class="copy-content">
+        <slot></slot>
+    </p>
     <button part="button" class="copy-button" title="copy">
         <slot name="copy-icon">
         COPY
@@ -98,7 +100,7 @@ customElements.define('sm-copy',
             );
         }
         copy() {
-            navigator.clipboard.writeText(this.copyContent.textContent)
+            navigator.clipboard.writeText(this.getAttribute('value'))
                 .then(res => this.fireEvent())
                 .catch(err => console.error(err));
         }
@@ -107,7 +109,8 @@ customElements.define('sm-copy',
         }
         attributeChangedCallback(name, oldValue, newValue) {
             if (name === 'value') {
-                this.copyContent.textContent = newValue;
+                if (this.copyContent.querySelector('slot').assignedNodes().length === 0)
+                    this.copyContent.textContent = newValue;
             }
         }
         disconnectedCallback() {
