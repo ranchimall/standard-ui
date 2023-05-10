@@ -432,13 +432,12 @@ smOption.innerHTML = `
 }
 .option{
     position: relative;
-    display: grid;
+    display: flex;
     -webkit-box-align: center;
     -ms-flex-align: center;
     align-items: center;
     width: 100%;
     gap: 0.5rem;
-    grid-template-columns: max-content minmax(0, 1fr);
     padding: var(--padding, 0.6rem 1rem);
     cursor: pointer;
     outline: none;
