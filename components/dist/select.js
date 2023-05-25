@@ -449,6 +449,7 @@ smOption.innerHTML = `
     display: block;
     width: 0.2rem;
     height: 1em;
+    left: 0;
     border-radius: 0 1em 1em 0;
     background: rgba(var(--text-color,(17,17,17)), 0.5);
     transition: all 0.2s ease-in-out;
