@@ -1,16 +1,18 @@
-# Standard UI
+# [Standard UI](https://ranchimall.github.io/standard-ui/)
 
-### What is Standard UI
-Suppose you want to start a web project. Instead of doing the UI from scratch, you want to start with pre-built UI which is responsive, which takes care of good fonts, which has nice visual elements. We have frameworks like bootstraps available, but they do not provide inbuilt default page layout. RanchiMall Standard UI solves that problem. It provides out of box page layouts, and also provides native web components. A normal developer who is not good at UI skills will find the most of UI work already done in Standard UI, and the developer has to just customize. This reduces development time by a large degree. 
+### So what is Standard UI?
+Suppose you want to start a web project. Instead of doing the UI from scratch, you want to start with pre-built UI which is responsive, which takes care of good fonts, which has nice visual elements. We have frameworks like bootstraps available, but they do not provide inbuilt default page layout. 
 
-### How is Standard UI different than frameworks like Bootstrap
-Bootstrap just provides additional CSS classes. Standard UI goes much beyond and provides fully responsive working page layouts, extra HTML tags, and extra Javascript functions. 
+RanchiMall Standard UI solves that problem. It provides out of box page layouts, and also provides native web components. A normal developer who is not good at UI skills will find the most of UI work already done in Standard UI, and the developer has to just customize them as he wish. This reduces development time by a large degree and avoids re-inventing the wheel. 
 
-### How to use Standard UI
-1. Pick your layout from Layouts folder https://github.com/ranchimall/standard-ui/tree/master/Layouts
-2. Add the additional components by selecting the components you need, downloading the js file and adding it into your project. Select and download components from https://ranchimall.github.io/standard-ui/components/
-3. You also need Standard Operations for Cryptographic, blockchain and cloud operations. They are included by default in each of the layouts. But you need to read about it to understand @ https://github.com/ranchimall/Standard_Operations
-4. Start building code
+### How is Standard UI different than frameworks like Bootstrap?
+As Bootstrap just provides additional CSS classes. Standard UI goes much beyond this and provides fully responsive working page layouts, extra HTML tags, and extra Javascript functions.
+
+### How to use Standard UI?
+1. Pick your layout from `Layouts` folder [`https://github.com/ranchimall/standard-ui/tree/master/Layouts`](https://github.com/ranchimall/standard-ui/tree/master/Layouts)
+2. Add the additional components by selecting the components you need, downloading the `.js` files and adding them to your project. Select and download components from [`https://ranchimall.github.io/standard-ui/components/`](https://ranchimall.github.io/standard-ui/components/)
+3. You also need Standard Operations for Cryptographic, blockchain and cloud operations. They are included by default in each of the layouts. But you need to read about it to understand at [`https://github.com/ranchimall/Standard_Operations`](https://github.com/ranchimall/Standard_Operations)
+4. Start building the code!
 
 
 ### Layouts Available
@@ -22,7 +24,7 @@ This layout comes with a sidebar of menu items on the desktop size screen which 
 A layout suitable for long-form content with mainly one page like landing pages or articles. This is the simplest layout of the bunch. Every landing page consists of many sections, each of which can be populated as per the functionality
 
 #### Side-bar layout
-This layout is similar to boxes layout such that it also has a sidebar when on a bigger screen estate. the main difference can be seen on smaller screens. The side-bar is hidden by default which acts as classic hamburger menu on small screen devices which can be accessed by hamburger icon in the header. This should be used when the nmber of pages is more than 5. Our components explanation page uses Sidebar layout https://ranchimall.github.io/standard-ui/components/ 
+This layout is similar to boxes layout such that it also has a sidebar when on a bigger screen estate. the main difference can be seen on smaller screens. The side-bar is hidden by default which acts as classic hamburger menu on small screen devices which can be accessed by hamburger icon in the header. This should be used when the nmber of pages is more than 5. Our components explanation page uses Sidebar layout [`https://ranchimall.github.io/standard-ui/components/`](https://ranchimall.github.io/standard-ui/components/)
 
 #### Tabs layout
 This layout is more suitable for small screen devices with a limited number of main screens that can be traversed with swipe gestures, Example of the type of apps that uses this layout would be messaging apps like WhatsApp.
