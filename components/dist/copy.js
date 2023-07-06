@@ -109,8 +109,12 @@ customElements.define('sm-copy',
         }
         attributeChangedCallback(name, oldValue, newValue) {
             if (name === 'value') {
-                if (this.copyContent.querySelector('slot').assignedNodes() && this.copyContent.querySelector('slot').assignedNodes().length === 0)
+                const slot = this.copyContent.querySelector('slot');
+                if (!slot) return;
+                const assignedNodes = slot.assignedNodes();
+                if (!assignedNodes || !assignedNodes.length) {
                     this.copyContent.textContent = newValue;
+                }
             }
         }
         disconnectedCallback() {
