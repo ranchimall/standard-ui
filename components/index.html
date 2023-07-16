@@ -2240,6 +2240,7 @@
                     duration: 300,
                     easing: 'ease'
                 })
+            getRef(pageId).parentNode.scroll(0, 0)
             const targetListItem = document.querySelector(`.list__item[href="#${pageId}"]`)
             targetListItem.classList.add('list__item--active')
             if (firstLoad && window.innerWidth > 640 && targetListItem.getBoundingClientRect().top > getRef('side_nav').getBoundingClientRect().height) {
