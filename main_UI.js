@@ -350,42 +350,48 @@ class Router {
         this.state = state
         this.routingStart = routingStart
         this.routingEnd = routingEnd
+        this.lastPage = null
         window.addEventListener('hashchange', e => this.routeTo(window.location.hash))
     }
     addRoute(route, callback) {
         this.routes[route] = callback
     }
-    set state(state) {
-        this._state = state
-    }
     async routeTo(path) {
-        let page
-        let wildcards = []
-        let queryString
-        let params
-        [path, queryString] = path.split('?');
-        if (path.includes('#'))
-            path = path.split('#')[1];
-        if (path.includes('/'))
-            [, page, ...wildcards] = path.split('/')
-        else
-            page = path
-        this.state = { page, wildcards }
-        if (queryString) {
-            params = new URLSearchParams(queryString)
-            this.state.params = Object.fromEntries(params)
-        }
-        if (this.routingStart) {
-            this.routingStart(this.state)
-        }
-        if (this.routes[page]) {
-            await this.routes[page](this.state)
-            this.state.lastPage = page
-        } else {
-            this.routes['404'](this.state)
-        }
-        if (this.routingEnd) {
-            this.routingEnd(this.state)
+        try {
+            let page
+            let wildcards = []
+            let queryString
+            let params
+            [path, queryString] = path.split('?');
+            if (path.includes('#'))
+                path = path.split('#')[1];
+            if (path.includes('/'))
+                [, page, ...wildcards] = path.split('/')
+            else
+                page = path
+            this.state = { page, wildcards, lastPage: this.lastPage }
+            if (queryString) {
+                params = new URLSearchParams(queryString)
+                this.state.params = Object.fromEntries(params)
+            }
+            if (this.routingStart) {
+                this.routingStart(this.state)
+            }
+            if (this.routes[page]) {
+                await this.routes[page](this.state)
+                this.lastPage = page
+            } else {
+                if (this.routes['404']) {
+                    this.routes['404'](this.state);
+                } else {
+                    console.error(`No route found for '${page}' and no '404' route is defined.`);
+                }
+            }
+            if (this.routingEnd) {
+                this.routingEnd(this.state)
+            }
+        } catch (e) {
+            console.error(e)
         }
     }
 }
