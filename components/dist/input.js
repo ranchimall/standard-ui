@@ -336,11 +336,11 @@ customElements.define('sm-input',
         set errorText(val) {
             this._errorText = val;
         }
-        showError() {
+        showError(errorText) {
             this.feedbackText.className = 'feedback-text error';
             this.feedbackText.innerHTML = `
                 <svg class="status-icon status-icon--error" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="24" height="24"><path fill="none" d="M0 0h24v24H0z"/><path d="M12 22C6.477 22 2 17.523 2 12S6.477 2 12 2s10 4.477 10 10-4.477 10-10 10zm-1-7v2h2v-2h-2zm0-8v6h2V7h-2z"/></svg>
-                ${this._errorText}`;
+                ${errorText}`;
         }
 
         set helperText(val) {
@@ -349,16 +349,16 @@ customElements.define('sm-input',
         get isValid() {
             if (this.input.value !== '') {
                 const _isValid = this.input.checkValidity();
-                let _customValid = true;
+                let _validity
                 if (this.validationFunction) {
-                    _customValid = Boolean(this.validationFunction(this.input.value));
+                    _validity = Boolean(this.validationFunction(this.input.value));
                 }
-                if (_isValid && _customValid) {
+                if (_isValid && _validity.isValid) {
                     this.feedbackText.className = 'feedback-text success';
                     this.feedbackText.textContent = '';
                 } else {
-                    if (this._errorText) {
-                        this.showError();
+                    if (_validity.errorText || this._errorText) {
+                        this.showError(_validity.errorText || this._errorText);
                     }
                 }
                 return (_isValid && _customValid);
