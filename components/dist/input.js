@@ -361,7 +361,7 @@ customElements.define('sm-input',
                         this.showError(_validity.errorText || this._errorText);
                     }
                 }
-                return (_isValid && _customValid);
+                return (_isValid && _validity.isValid);
             }
         }
         reset() {
