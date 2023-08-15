@@ -351,7 +351,7 @@ customElements.define('sm-input',
                 const _isValid = this.input.checkValidity();
                 let _validity
                 if (this.validationFunction) {
-                    _validity = Boolean(this.validationFunction(this.input.value));
+                    _validity = this.validationFunction(this.input.value);
                 }
                 if (_isValid && _validity.isValid) {
                     this.feedbackText.className = 'feedback-text success';
