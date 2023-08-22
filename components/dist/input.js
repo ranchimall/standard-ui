@@ -349,7 +349,10 @@ customElements.define('sm-input',
         get isValid() {
             if (this.input.value !== '') {
                 const _isValid = this.input.checkValidity();
-                let _validity
+                let _validity = {
+                    isValid: _isValid,
+                    errorText: ''
+                }
                 if (this.validationFunction) {
                     _validity = this.validationFunction(this.input.value);
                 }
