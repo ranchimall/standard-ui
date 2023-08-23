@@ -318,8 +318,8 @@ smChip.innerHTML = `
         -webkit-tap-highlight-color: transparent;
         background: var(--background,inherit);
     }
-    .sm-chip[selected="true"]{
-        background-color: var(--accent-color,teal);
+    :host([selected="true"]) .sm-chip{
+        background-color: var(--accent-color, teal);
         color: rgba(var(--background-color, (255,255,255)), 1);
     }
 </style>
