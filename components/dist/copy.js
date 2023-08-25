@@ -75,7 +75,6 @@ customElements.define('sm-copy',
             this.attachShadow({
                 mode: 'open'
             }).append(smCopy.content.cloneNode(true));
-
             this.copyContent = this.shadowRoot.querySelector('.copy-content');
             this.copyButton = this.shadowRoot.querySelector('.copy-button');
 
@@ -113,7 +112,7 @@ customElements.define('sm-copy',
                 if (!slot) return;
                 const assignedNodes = slot.assignedNodes();
                 if (!assignedNodes || !assignedNodes.length) {
-                    this.copyContent.textContent = newValue;
+                    slot.textContent = newValue;
                 }
             }
         }
