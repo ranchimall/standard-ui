@@ -178,6 +178,7 @@ smInput.innerHTML = `
     }
     .status-icon{
         margin-right: 0.2rem;
+        flex-shrink: 0;
     }
     .status-icon--error{
         fill: var(--danger-color);
@@ -254,7 +255,7 @@ customElements.define('sm-input',
             this.outerContainer = this.shadowRoot.querySelector('.outer-container');
             this.optionList = this.shadowRoot.querySelector('.datalist');
             this._helperText = '';
-            this._errorText = '';
+            this._errorText = 'Invalid';
             this.isRequired = false;
             this.datalist = [];
             this.validationFunction = undefined;
