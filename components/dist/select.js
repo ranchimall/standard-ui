@@ -4,12 +4,9 @@ smSelect.innerHTML = `
 *{
     padding: 0;
     margin: 0;
-    -webkit-box-sizing: border-box;
-            box-sizing: border-box;
+    box-sizing: border-box;
 } 
 :host{
-    display: -webkit-box;
-    display: -ms-flexbox;
     display: flex;
 }
 :host([disabled]) .select{
@@ -22,12 +19,7 @@ smSelect.innerHTML = `
 }
 .select{
     position: relative;
-    display: -webkit-box;
-    display: -ms-flexbox;
     display: flex;
-    -webkit-box-orient: vertical;
-    -webkit-box-direction: normal;
-    -ms-flex-direction: column;
     flex-direction: column;
     cursor: pointer;
     width: 100%;
@@ -42,30 +34,25 @@ smSelect.innerHTML = `
 .selected-option-text{
     font-size: inherit;
     overflow: hidden;
-    -o-text-overflow: ellipsis;
-       text-overflow: ellipsis;
+    text-overflow: ellipsis;
     white-space: nowrap;
     font-weight: 500;
 }
 .selection{
     border-radius: var(--select-border-radius,0.5rem);
-    display: -ms-grid;
     display: grid;
-    -ms-grid-columns: 1fr auto;
     grid-template-columns: 1fr auto;
-        grid-template-areas: 'heading heading' '. .';
+    grid-template-areas: 'heading heading' '. .';
     padding: var(--padding,0.6rem 0.8rem);
     background: var(--background, rgba(var(--text-color,(17,17,17)), 0.06));
-    -webkit-box-align: center;
-        -ms-flex-align: center;
-            align-items: center;
+    align-items: center;
     outline: none;
     z-index: 2;
     height: 100%;
+    align-content: center;
 }
 .selection:focus{
-    -webkit-box-shadow: 0 0 0 0.1rem var(--accent-color, teal) inset;
-            box-shadow: 0 0 0 0.1rem var(--accent-color, teal) inset; 
+    box-shadow: 0 0 0 0.1rem var(--accent-color, teal) inset; 
 }
 :host([align-select="left"]) .options{
     left: 0;
@@ -80,13 +67,8 @@ smSelect.innerHTML = `
     overflow: hidden auto;
     position: absolute;
     grid-area: options;
-    display: -webkit-box;
-    display: -ms-flexbox;
     display: flex;
-    -webkit-box-orient: vertical;
-    -webkit-box-direction: normal;
-        -ms-flex-direction: column;
-            flex-direction: column;
+    flex-direction: column;
     width: var(--options-width, 100%);
     min-width: var(--min-width, auto);
     max-height: var(--max-height, auto);
@@ -134,7 +116,7 @@ smSelect.innerHTML = `
 }
 </style>
 <div class="select">
-    <div class="selection">
+    <div class="selection" part="button">
         <div class="selected-option-text"></div>
         <svg class="icon icon--expand" xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 0 24 24" width="24px" fill="#000000"><path d="M0 0h24v24H0V0z" fill="none"/><path d="M12 5.83L15.17 9l1.41-1.41L12 3 7.41 7.59 8.83 9 12 5.83zm0 12.34L8.83 15l-1.41 1.41L12 21l4.59-4.59L15.17 15 12 18.17z"/></svg>
         <svg class="icon icon--collapse" xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 0 24 24" width="24px" fill="#000000"><path d="M24 0v24H0V0h24z" fill="none" opacity=".87"/><path d="M7.41 18.59L8.83 20 12 16.83 15.17 20l1.41-1.41L12 14l-4.59 4.59zm9.18-13.18L15.17 4 12 7.17 8.83 4 7.41 5.41 12 10l4.59-4.59z"/></svg>
