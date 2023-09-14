@@ -206,7 +206,7 @@ customElements.define('sm-select', class extends HTMLElement {
 
     reset(fire = true) {
         if (this.availableOptions[0] && this.previousOption !== this.availableOptions[0]) {
-            const selectedOption = this.availableOptions.find(option => option.hasAttribute('selected')) || this.availableOptions[0];
+            const selectedOption = this.availableOptions.find(option => option.hasAttribute('selected') && option.getAttribute('selected') === 'true') || this.availableOptions[0];
             this.value = selectedOption.getAttribute('value')
             if (fire) {
                 this.fireEvent()
@@ -215,9 +215,9 @@ customElements.define('sm-select', class extends HTMLElement {
     }
     selectOption(selectedOption) {
         if (this.previousOption !== selectedOption) {
-            this.querySelectorAll('[selected]').forEach(option => option.removeAttribute('selected'))
+            this.querySelectorAll('[selected="true"]').forEach(option => option.removeAttribute('selected'))
             this.selectedOptionText.textContent = `${this.label}${selectedOption.textContent}`;
-            selectedOption.setAttribute('selected', '')
+            selectedOption.setAttribute('selected', 'true')
             this.previousOption = selectedOption
         }
     }
@@ -247,7 +247,7 @@ customElements.define('sm-select', class extends HTMLElement {
         ], this.animationOptions)
         this.setAttribute('open', '');
         this.style.zIndex = 1000;
-        (this.availableOptions.find(option => option.hasAttribute('selected')) || this.availableOptions[0]).focus()
+        (this.availableOptions.find(option => option.hasAttribute('selected') && option.getAttribute('selected') === 'true') || this.availableOptions[0]).focus()
         document.addEventListener('mousedown', this.handleClickOutside)
         this.isOpen = true
     }
@@ -325,7 +325,7 @@ customElements.define('sm-select', class extends HTMLElement {
         if (e.target === this) {
             if (this.isOpen && e.key === 'ArrowDown') {
                 e.preventDefault();
-                (this.availableOptions.find(option => option.hasAttribute('selected')) || this.availableOptions[0]).focus()
+                (this.availableOptions.find(option => option.hasAttribute('selected') && option.getAttribute('selected') === 'true') || this.availableOptions[0]).focus()
                 this.handleOptionSelection(e)
             } else if (e.key === ' ') {
                 e.preventDefault()
@@ -373,7 +373,7 @@ customElements.define('sm-select', class extends HTMLElement {
                 }
             });
             if (attributesChanged) {
-                const selectedOption = this.availableOptions.find(option => option.hasAttribute('selected')) || this.availableOptions[0];
+                const selectedOption = this.availableOptions.find(option => option.hasAttribute('selected') && option.getAttribute('selected') === 'true') || this.availableOptions[0];
                 this.selectedOptionText.textContent = `${this.label}${selectedOption.textContent}`;
                 this.setAttribute('value', selectedOption.getAttribute('value'));
             }
@@ -462,7 +462,7 @@ smOption.innerHTML = `
 :host(:focus) .option::before{
     opacity: 1
 }
-:host([selected]) .option::before{
+:host([selected="true"]) .option::before{
     opacity: 1;
     background: var(--accent-color, teal);
 }
@@ -470,7 +470,7 @@ smOption.innerHTML = `
     .option:hover{
         background: rgba(var(--text-color,(17,17,17)), 0.1);
     }
-    :host(:not([selected]):hover) .option::before{
+    :host(:not([selected="true"]):hover) .option::before{
         opacity: 1
     }
 }
