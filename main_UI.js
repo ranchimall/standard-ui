@@ -184,6 +184,14 @@ window.addEventListener('popstate', e => {
 })
 
 // displays a popup for asking permission. Use this instead of JS confirm
+/**
+@param {string} title - Title of the popup
+@param {object} options - Options for the popup 
+@param {string} options.message - Message to be displayed in the popup
+@param {string} options.cancelText - Text for the cancel button
+@param {string} options.confirmText - Text for the confirm button
+@param {boolean} options.danger - If true, confirm button will be red
+*/
 const getConfirmation = (title, options = {}) => {
     return new Promise(resolve => {
         const { message = '', cancelText = 'Cancel', confirmText = 'OK', danger = false } = options
@@ -215,6 +223,16 @@ const getConfirmation = (title, options = {}) => {
     })
 }
 // displays a popup for asking user input. Use this instead of JS prompt
+/**
+ * @param {string} title - Title of the popup
+ * @param {object} options - Options for the popup
+ * @param {string} options.message - Message to be displayed in the popup
+ * @param {string} options.placeholder - Placeholder for the input field
+ * @param {boolean} options.isPassword - If true, input field will be of type password
+ * @param {string} options.cancelText - Text for the cancel button
+ * @param {string} options.confirmText - Text for the confirm button
+ * @returns {Promise<string>} - Promise that resolves to the value of the input field
+ */
 function getPromptInput(title, message = '', options = {}) {
     let { placeholder = '', isPassword = false, cancelText = 'Cancel', confirmText = 'OK' } = options
     getRef('prompt_title').innerText = title;
@@ -243,6 +261,12 @@ function getPromptInput(title, message = '', options = {}) {
 }
 
 //Function for displaying toast notifications. pass in error for mode param if you want to show an error.
+/**
+ * @param {string} message - Message to be displayed in the notification
+ * @param {string} mode - Mode of the notification. Can be 'success' or 'error' or ''
+ * @param {object} options - Options for the notification
+ * @param {boolean} options.pinned - If true, notification will not be dismissed automatically
+ */
 function notify(message, mode, options = {}) {
     let icon
     switch (mode) {
@@ -344,6 +368,13 @@ function createRipple(event, target) {
 }
 
 class Router {
+    /**
+     * @constructor {object} options - options for the router
+     * @param {object} options.routes - routes for the router
+     * @param {object} options.state - initial state for the router
+     * @param {function} options.routingStart - function to be called before routing
+     * @param {function} options.routingEnd - function to be called after routing
+     */
     constructor(options = {}) {
         const { routes = {}, state = {}, routingStart, routingEnd } = options
         this.routes = routes
@@ -353,9 +384,16 @@ class Router {
         this.lastPage = null
         window.addEventListener('hashchange', e => this.routeTo(window.location.hash))
     }
+    /**
+     * @param {string} route - route to be added
+     * @param {function} callback - function to be called when route is matched
+     */
     addRoute(route, callback) {
         this.routes[route] = callback
     }
+    /**
+     * @param {string} route
+     */
     async routeTo(path) {
         try {
             let page
@@ -378,8 +416,18 @@ class Router {
                 this.routingStart(this.state)
             }
             if (this.routes[page]) {
-                await this.routes[page](this.state)
-                this.lastPage = page
+                // Fallback for browsers that don't support View transition API:
+                if (!document.startViewTransition) {
+                    await this.routes[page](this.state)
+                    this.lastPage = page
+                    return;
+                }
+
+                // With a transition:
+                document.startViewTransition(async () => {
+                    await this.routes[page](this.state)
+                    this.lastPage = page
+                });
             } else {
                 if (this.routes['404']) {
                     this.routes['404'](this.state);
@@ -395,20 +443,6 @@ class Router {
         }
     }
 }
-const router = new Router({
-    routingStart(state) {
-        loading()
-        if ("scrollRestoration" in history) {
-            history.scrollRestoration = "manual";
-        }
-        window.scrollTo(0, 0);
-        if (state.page !== 'home')
-            getRef("page_header").classList.remove("hidden");
-    },
-    routingEnd() {
-        loading(false)
-    }
-})
 
 const appState = {
     params: {},
@@ -503,6 +537,17 @@ async function routeTo(targetPage, options = {}) {
 }
 // class based lazy loading
 class LazyLoader {
+    /**
+     * @constructor {object} options - options for the lazy loader
+     * @param {string} container - container for the lazy loader
+     * @param {array} elementsToRender - elements to be rendered
+     * @param {function} renderFn - function to be called for rendering each element
+     * @param {object} options - options for the lazy loader
+     * @param {number} options.batchSize - number of elements to be rendered at a time
+     * @param {function} options.freshRender - function to be called when elements are rendered for first time
+     * @param {boolean} options.bottomFirst - if true, elements will be rendered from bottom to top
+     * @param {function} options.onEnd - function to be called when all elements are rendered
+     */
     constructor(container, elementsToRender, renderFn, options = {}) {
         const { batchSize = 10, freshRender, bottomFirst = false, onEnd } = options
 
@@ -693,7 +738,15 @@ const slideOutUp = [
         transform: 'translateY(-1.5rem)'
     },
 ]
-
+/**
+ * @param {HTMLElement} id - parent element
+ * @param {number} index - index of child element to be shown
+ * @param {object} options - options for the animation
+ * @param {object} options.entry - entry animation
+ * @param {object} options.exit - exit animation
+ * @param {boolean} options.mobileView - if true, only mobile view will be affected
+ * @returns {Promise} - promise that resolves when animation is finished
+ */
 function showChildElement(id, index, options = {}) {
     return new Promise((resolve) => {
         const { mobileView = false, entry, exit } = options
