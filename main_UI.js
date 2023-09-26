@@ -126,6 +126,11 @@ const uiUtils = {
             console.error(e);
             return timestamp;
         }
+    },
+    formatAmount(amount = 0, currency = 'inr') {
+        if (!amount)
+            return '0';
+        return amount.toLocaleString(undefined, { currency, maximumFractionDigits: 8, minimumFractionDigits: 0 });
     }
 };
 //Checks for internet connection status
@@ -802,4 +807,25 @@ function buttonLoader(id, show) {
         const potentialTarget = button.parentNode.querySelector('sm-spinner')
         if (potentialTarget) potentialTarget.remove();
     }
+}
+
+/**
+ * Creates a signal and returns getter, setter and domNode
+ * @param {string|number} initialState 
+ * @param {function} callback 
+ * @returns {[function, function, function]} [getter, setter, domNode]
+ */
+function $signal(initialState, callback) {
+    let state = initialState;
+    function changeState(newState) {
+        if (newState === state) return;
+        state = newState;
+        callback && callback(newState);
+    }
+    return [
+        () => state,
+        (state) => {
+            changeState(state);
+        }
+    ]
 }
