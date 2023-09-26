@@ -102,8 +102,15 @@ class ThemeToggle extends HTMLElement {
     }
 
     toggleState() {
-        this.toggleAttribute('checked');
-        this.fireEvent();
+        if (!document.startViewTransition) {
+            this.toggleAttribute('checked');
+            this.fireEvent();
+            return;
+        }
+        document.startViewTransition(() => {
+            this.toggleAttribute('checked');
+            this.fireEvent();
+        });
     }
     handleKeyDown(e) {
         if (e.key === ' ') {
