@@ -125,6 +125,9 @@ smNotifications.innerHTML = `
                 cursor: pointer;
             }
             @media screen and (max-width: 640px){
+                .close{
+                    display: none;
+                }
                 .notification-panel:not(:empty){
                     padding-bottom: 3rem;
                 }
@@ -220,17 +223,17 @@ customElements.define('sm-notifications', class extends HTMLElement {
             ${icon ? `<div class="icon-container">${icon}</div>` : ''}
             <output>${message}</output>
             ${action ? `<button class="action">${action.label}</button>` : ''}
-            ${pinned ? `<button class="close">
+            <button class="close">
                 <svg class="icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="24" height="24"><path fill="none" d="M0 0h24v24H0z"/><path d="M12 10.586l4.95-4.95 1.414 1.414-4.95 4.95 4.95 4.95-1.414 1.414-4.95-4.95-4.95 4.95-1.414-1.414 4.95-4.95-4.95-4.95L7.05 5.636z"/></svg>
-            </button>` : ''}
+            </button>
         `;
         if (action) {
             notification.querySelector('.action').addEventListener('click', action.callback)
         }
+        notification.querySelector('.close').addEventListener('click', () => {
+            this.removeNotification(notification);
+        });
         if (pinned) {
-            notification.querySelector('.close').addEventListener('click', () => {
-                this.removeNotification(notification);
-            });
         } else {
             setTimeout(() => {
                 this.removeNotification(notification, this.isBigViewport ? 'left' : 'top');
