@@ -43,9 +43,7 @@ smNotifications.innerHTML = `
                 overflow: hidden;
                 overflow-wrap: break-word;
                 word-wrap: break-word;
-                word-break: break-all;
                 word-break: break-word;
-                hyphens: auto;
                 padding: max(1rem,1.5vw);
                 align-items: center;
                 box-shadow: 0 0.5rem 1rem 0 rgba(0,0,0,0.14);
