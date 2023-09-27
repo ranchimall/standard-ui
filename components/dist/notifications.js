@@ -46,7 +46,6 @@ smNotifications.innerHTML = `
                 word-break: break-all;
                 word-break: break-word;
                 hyphens: auto;
-                max-width: 100%;
                 padding: max(1rem,1.5vw);
                 align-items: center;
                 box-shadow: 0 0.5rem 1rem 0 rgba(0,0,0,0.14);
@@ -134,9 +133,11 @@ smNotifications.innerHTML = `
                 .notification-panel{
                     top: auto;
                     bottom: 0;
+                    max-width: max-content;
                 }
                 .notification{
                     width: auto;
+                    max-width: max-content; 
                     border: solid 1px rgba(var(--text-color, (17,17,17)), 0.2);
                 }
             }
@@ -244,6 +245,7 @@ customElements.define('sm-notifications', class extends HTMLElement {
             this.notificationPanel.append(notification);
         else
             this.notificationPanel.prepend(notification);
+        notification.scrollIntoView({ behavior: 'smooth' });
         this.notificationPanel.animate(
             [
                 {
