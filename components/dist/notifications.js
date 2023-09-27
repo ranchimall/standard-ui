@@ -20,7 +20,7 @@ smNotifications.innerHTML = `
             }
             .notification-panel{
                 display: grid;
-                width: 100%;
+                width: min(26rem, 100%);
                 gap: 0.5rem;
                 position: fixed;
                 left: 0;
@@ -29,64 +29,54 @@ smNotifications.innerHTML = `
                 max-height: 100%;
                 padding: 1rem;
                 overflow: hidden auto;
-                -ms-scroll-chaining: none;
-                    overscroll-behavior: contain;
+                overscroll-behavior: contain;
                 touch-action: none;
             }
             .notification-panel:empty{
                 display:none;
             }
             .notification{
-                display: -webkit-box;
-                display: -ms-flexbox;
                 display: flex;
                 position: relative;
-                border-radius: 0.3rem;
+                border-radius: 0.5rem;
                 background: rgba(var(--foreground-color, (255,255,255)), 1);
                 overflow: hidden;
                 overflow-wrap: break-word;
                 word-wrap: break-word;
-                -ms-word-break: break-all;
                 word-break: break-all;
                 word-break: break-word;
-                -ms-hyphens: auto;
-                -webkit-hyphens: auto;
                 hyphens: auto;
                 max-width: 100%;
-                padding: 1rem;
+                padding: max(1rem,1.5vw);
                 align-items: center;
                 box-shadow: 0 0.5rem 1rem 0 rgba(0,0,0,0.14);
                 touch-action: none;
+            }
+            .notification:not(.pinned)::before{
+                content: '';
+                position: absolute;
+                bottom: 0;
+                left: 0;
+                height: 0.2rem;
+                width: 100%;
+                background-color: var(--accent-color, teal);
+                transform: scaleX(0);
+                animation: loading var(--timeout, 5000ms) linear forwards;
+                transform-origin: left;
+            }
+            @keyframes loading{
+                0%{
+                    transform: scaleX(0);
+                }
+                100%{
+                    transform: scaleX(1);
+                }
             }
             .icon-container:not(:empty){
                 margin-right: 0.5rem;
                 height: var(--icon-height);
                 width: var(--icon-width);
                 flex-shrink: 0;
-            }
-            h4:first-letter,
-            p:first-letter{
-                text-transform: uppercase;
-            }
-            h4{
-                font-weight: 400;
-            }
-            p{
-                line-height: 1.6;
-                -webkit-box-flex: 1;
-                    -ms-flex: 1;
-                        flex: 1;
-                color: rgba(var(--text-color, (17,17,17)), 0.9);
-                overflow-wrap: break-word;
-                overflow-wrap: break-word;
-                word-wrap: break-word;
-                -ms-word-break: break-all;
-                word-break: break-all;
-                word-break: break-word;
-                -ms-hyphens: auto;
-                -webkit-hyphens: auto;
-                hyphens: auto;
-                max-width: 100%;
             }
             .notification:last-of-type{
                 margin-bottom: 0;
@@ -98,11 +88,14 @@ smNotifications.innerHTML = `
             }
             .icon--success {
                 fill: var(--green);
-              }
-              .icon--failure,
-              .icon--error {
-                fill: var(--danger-color);
-              }
+            }
+            .icon--failure,
+            .icon--error {
+            fill: var(--danger-color);
+            }
+            output{
+                width: 100%;
+            }
             .close{
                 height: 2rem;
                 width: 2rem;
@@ -139,8 +132,6 @@ smNotifications.innerHTML = `
             }
             @media screen and (min-width: 640px){
                 .notification-panel{
-                    max-width: 28rem;
-                    width: max-content;
                     top: auto;
                     bottom: 0;
                 }
@@ -187,7 +178,7 @@ customElements.define('sm-notifications', class extends HTMLElement {
         this.removeNotification = this.removeNotification.bind(this)
         this.clearAll = this.clearAll.bind(this)
         this.remove = this.remove.bind(this)
-        this.handlePointerMove = this.handlePointerMove.bind(this)
+        this.handleTouchMove = this.handleTouchMove.bind(this)
 
 
         this.startX = 0;
@@ -200,12 +191,16 @@ customElements.define('sm-notifications', class extends HTMLElement {
         this.swipeTime = 0;
         this.swipeTimeThreshold = 200;
         this.currentTarget = null;
+        this.notificationTimeout = 5000;
 
         this.mediaQuery = window.matchMedia('(min-width: 640px)')
         this.handleOrientationChange = this.handleOrientationChange.bind(this)
-        this.isLandscape = false
+        this.isBigViewport = false
     }
-
+    set timeout(value) {
+        if (isNaN(value)) return;
+        this.notificationTimeout = value;
+    }
     randString(length) {
         let result = '';
         const characters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz';
@@ -215,46 +210,44 @@ customElements.define('sm-notifications', class extends HTMLElement {
     }
 
     createNotification(message, options = {}) {
-        const { pinned = false, icon = '', action } = options;
+        const { pinned = false, icon, action, timeout = this.notificationTimeout } = options;
         const notification = document.createElement('div')
         notification.id = this.randString(8)
         notification.className = `notification ${pinned ? 'pinned' : ''}`
-        const iconContainer = document.createElement('div')
-        iconContainer.className = 'icon-container'
-        iconContainer.innerHTML = icon
-        const output = document.createElement('output')
-        output.textContent = message
-        notification.append(iconContainer, output)
+        notification.style.setProperty('--timeout', `${timeout}ms`);
+        notification.innerHTML = `
+            ${icon ? `<div class="icon-container">${icon}</div>` : ''}
+            <output>${message}</output>
+            ${action ? `<button class="action">${action.label}</button>` : ''}
+            ${pinned ? `<button class="close">
+                <svg class="icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="24" height="24"><path fill="none" d="M0 0h24v24H0z"/><path d="M12 10.586l4.95-4.95 1.414 1.414-4.95 4.95 4.95 4.95-1.414 1.414-4.95-4.95-4.95 4.95-1.414-1.414 4.95-4.95-4.95-4.95L7.05 5.636z"/></svg>
+            </button>` : ''}
+        `;
         if (action) {
-            const button = document.createElement('button')
-            button.className = 'action'
-            button.innerText = action.label
-            button.addEventListener('click', action.callback)
+            notification.querySelector('.action').addEventListener('click', action.callback)
         }
         if (pinned) {
-            const button = document.createElement('button')
-            button.className = 'close'
-            button.innerHTML = `
-                <svg class="icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="24" height="24"><path fill="none" d="M0 0h24v24H0z"/><path d="M12 10.586l4.95-4.95 1.414 1.414-4.95 4.95 4.95 4.95-1.414 1.414-4.95-4.95-4.95 4.95-1.414-1.414 4.95-4.95-4.95-4.95L7.05 5.636z"/></svg>
-            `
-            button.addEventListener('click', () => {
-                this.remove(notification.id)
-            })
-            notification.append(button)
+            notification.querySelector('.close').addEventListener('click', () => {
+                this.removeNotification(notification);
+            });
+        } else {
+            setTimeout(() => {
+                this.removeNotification(notification, this.isBigViewport ? 'left' : 'top');
+            }, timeout);
         }
         return notification;
     }
 
     push(message, options = {}) {
         const notification = this.createNotification(message, options);
-        if (this.isLandscape)
+        if (this.isBigViewport)
             this.notificationPanel.append(notification);
         else
             this.notificationPanel.prepend(notification);
         this.notificationPanel.animate(
             [
                 {
-                    transform: `translateY(${this.isLandscape ? '' : '-'}${notification.clientHeight}px)`,
+                    transform: `translateY(${this.isBigViewport ? '' : '-'}${notification.clientHeight}px)`,
                 },
                 {
                     transform: `none`,
@@ -274,26 +267,40 @@ customElements.define('sm-notifications', class extends HTMLElement {
             e.target.commitStyles()
             e.target.cancel()
         }
-        if (notification.querySelector('.action'))
-            notification.querySelector('.action').addEventListener('click', options.action.callback)
         return notification.id;
     }
 
     removeNotification(notification, direction = 'left') {
         if (!notification) return;
-        const sign = direction === 'left' ? '-' : '+';
-        notification.animate([
-            {
-                transform: this.currentX ? `translateX(${this.currentX}px)` : `none`,
-                opacity: '1'
-            },
-            {
-                transform: `translateX(calc(${sign}${Math.abs(this.currentX)}px ${sign} 1rem))`,
-                opacity: '0'
-            }
-        ], this.animationOptions).onfinish = () => {
-            notification.remove();
-        };
+        const sign = direction === 'left' || direction === 'top' ? '-' : '+';
+
+        if (!this.isBigViewport && direction === 'top') {
+            notification.animate([
+                {
+                    transform: this.currentX ? `translateY(${this.currentX}px)` : `none`,
+                    opacity: '1'
+                },
+                {
+                    transform: `translateY(calc(${sign}${Math.abs(this.currentX)}px ${sign} 1rem))`,
+                    opacity: '0'
+                }
+            ], this.animationOptions).onfinish = () => {
+                notification.remove();
+            };
+        } else {
+            notification.animate([
+                {
+                    transform: this.currentX ? `translateX(${this.currentX}px)` : `none`,
+                    opacity: '1'
+                },
+                {
+                    transform: `translateX(calc(${sign}${Math.abs(this.currentX)}px ${sign} 1rem))`,
+                    opacity: '0'
+                }
+            ], this.animationOptions).onfinish = () => {
+                notification.remove();
+            };
+        }
     }
     remove(id) {
         const notification = this.notificationPanel.querySelector(`#${id}`);
@@ -307,13 +314,13 @@ customElements.define('sm-notifications', class extends HTMLElement {
         });
     }
 
-    handlePointerMove(e) {
-        this.currentX = e.clientX - this.startX;
+    handleTouchMove(e) {
+        this.currentX = e.touches[0].clientX - this.startX;
         this.currentTarget.style.transform = `translateX(${this.currentX}px)`;
     }
 
     handleOrientationChange(e) {
-        this.isLandscape = e.matches
+        this.isBigViewport = e.matches
         if (e.matches) {
             // landscape
 
@@ -326,22 +333,21 @@ customElements.define('sm-notifications', class extends HTMLElement {
         this.handleOrientationChange(this.mediaQuery);
 
         this.mediaQuery.addEventListener('change', this.handleOrientationChange);
-        this.notificationPanel.addEventListener('pointerdown', e => {
+        this.notificationPanel.addEventListener('touchstart', e => {
             if (e.target.closest('.close')) {
                 this.removeNotification(e.target.closest('.notification'));
             } else if (e.target.closest('.notification')) {
                 this.swipeThreshold = e.target.closest('.notification').getBoundingClientRect().width / 2;
                 this.currentTarget = e.target.closest('.notification');
-                this.currentTarget.setPointerCapture(e.pointerId);
                 this.startTime = Date.now();
-                this.startX = e.clientX;
-                this.startY = e.clientY;
-                this.notificationPanel.addEventListener('pointermove', this.handlePointerMove);
+                this.startX = e.touches[0].clientX;
+                this.startY = e.touches[0].clientY;
+                this.notificationPanel.addEventListener('touchmove', this.handleTouchMove, { passive: true });
             }
-        });
-        this.notificationPanel.addEventListener('pointerup', e => {
-            this.endX = e.clientX;
-            this.endY = e.clientY;
+        }, { passive: true });
+        this.notificationPanel.addEventListener('touchend', e => {
+            this.endX = e.changedTouches[0].clientX;
+            this.endY = e.changedTouches[0].clientY;
             this.swipeDistance = Math.abs(this.endX - this.startX);
             this.swipeTime = Date.now() - this.startTime;
             if (this.endX > this.startX) {
@@ -369,23 +375,8 @@ customElements.define('sm-notifications', class extends HTMLElement {
                     }
                 }
             }
-            this.notificationPanel.removeEventListener('pointermove', this.handlePointerMove)
-            this.notificationPanel.releasePointerCapture(e.pointerId);
+            this.notificationPanel.removeEventListener('touchmove', this.handleTouchMove)
             this.currentX = 0;
-        });
-        const observer = new MutationObserver(mutationList => {
-            mutationList.forEach(mutation => {
-                if (mutation.type === 'childList') {
-                    if (mutation.addedNodes.length && !mutation.addedNodes[0].classList.contains('pinned')) {
-                        setTimeout(() => {
-                            this.removeNotification(mutation.addedNodes[0]);
-                        }, 5000);
-                    }
-                }
-            });
-        });
-        observer.observe(this.notificationPanel, {
-            childList: true,
         });
     }
     disconnectedCallback() {

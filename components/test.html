@@ -21,6 +21,7 @@
     <script src="dist/tags-input.js"></script>
     <script src="dist/strip-select.js"></script>
     <script src="dist/collapsed-text.js"></script>
+    <script src="dist/notifications.js"></script>
     <link rel="stylesheet" href="css/main.min.css">
     <style>
         div {
@@ -35,35 +36,23 @@
 </head>
 
 <body>
-    <button>Show popup</button>
-    <collapsed-text>
-        Loreetur adipisicing elit. Architecto minima maiores autem iusto porro, odit
-        iure
-        ea emus dolor itaque unde sequi, reprehenderit ex aperiam
-
-        dinfgw egweb gnw
-
-        slideInRightgsdgs
-    </collapsed-text>
-    <sm-popup>
-        <input type="text" placeholder="fds">
-        <button>dsfsd</button>
-    </sm-popup>
-    <text-field value="eetur adipisicing elit. Architecto minima maiores autem iusto porro, odit
-    iure"></text-field>
+    <sm-notifications id="notification_drawer"></sm-notifications>
+    <button onclick="pushNotification()">
+        Send Notification
+    </button>
 </body>
 <script>
-    const popup = document.querySelector('sm-popup');
-    const pPromise = popup.show({ payload: { opened: new Date() } })
-    pPromise.opened.then((data) => {
-        console.log('popup opened', data);
-    });
-    pPromise.closed.then((data) => {
-        console.log('popup closed', data);
-    });
-    document.querySelector('button').addEventListener('click', () => {
-        popup.show();
-    });
+    function pushNotification() {
+        document.getElementById('notification_drawer').push(`<h4>This is a notification.</h4><p>d snfkjsdn sdf sdfsd</p>`, {
+            timeout: 10000,
+            action: {
+                label: 'click me',
+                callback: () => {
+                    console.log('clicked')
+                }
+            }
+        })
+    }
 </script>
 
 </html>
