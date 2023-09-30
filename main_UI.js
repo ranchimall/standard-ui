@@ -809,23 +809,58 @@ function buttonLoader(id, show) {
     }
 }
 
+let currentSubscriber = null;
 /**
- * Creates a signal and returns getter, setter and domNode
- * @param {string|number} initialState 
- * @param {function} callback 
- * @returns {[function, function, function]} [getter, setter, domNode]
+ * @param {any} initialValue - initial value for the signal
+ * @returns {array} - array containing getter and setter for the signal
+ * @example
+ * const [getCount, setCount] = $signal(0);
  */
-function $signal(initialState, callback) {
-    let state = initialState;
-    function changeState(newState) {
-        if (newState === state) return;
-        state = newState;
-        callback && callback(newState);
-    }
-    return [
-        () => state,
-        (state) => {
-            changeState(state);
+function $signal(initialValue) {
+    let value = initialValue;
+    const subscribers = new Set();
+
+    function getter() {
+        if (currentSubscriber) {
+            const weakRef = new WeakRef({ func: currentSubscriber });
+            subscribers.add(weakRef);
         }
-    ]
+        return value;
+    }
+
+    function setter(newValue) {
+        if (newValue !== value) {
+            value = newValue;
+            for (const subscriber of subscribers) {
+                const ref = subscriber.deref();
+                if (ref) {
+                    ref.func();
+                }
+            }
+        }
+    }
+
+    return [getter, setter];
+}
+/**
+ * 
+ * @param {function} fn - function that will run if any of its dependent signals change
+ * @example
+ * $effect(() => {
+ * console.log(count());
+ * } 
+ * @returns {void}
+ */
+async function $effect(fn) {
+    currentSubscriber = fn;
+    const result = fn();
+    try {
+        if (result instanceof Promise) {
+            await result;
+        }
+    } catch (e) {
+        console.error(e)
+    } finally {
+        currentSubscriber = null;
+    }
 }
