@@ -36,22 +36,69 @@
 </head>
 
 <body>
-    <sm-notifications id="notification_drawer"></sm-notifications>
-    <button onclick="pushNotification()">
-        Send Notification
-    </button>
+    <sm-form>
+        <sm-input placeholder="fafh" value="" animate required>
+            <sm-button slot="right" type="submit">Submit</sm-button>
+        </sm-input>
+        <button type="submit">Submit</button>
+    </sm-form>
 </body>
 <script>
-    function pushNotification() {
-        document.getElementById('notification_drawer').push(`<h4>This is a notification.</h4><p>d snfkjsdn sdf sdfsd</p>`, {
-            timeout: 10000,
-            action: {
-                label: 'click me',
-                callback: () => {
-                    console.log('clicked')
+    document.querySelector('sm-input').isValid
+    let currentSubscriber = null;
+    /**
+     * @param {any} initialValue - initial value for the signal
+     * @returns {array} - array containing getter and setter for the signal
+     * @example
+     * const [getCount, setCount] = $signal(0);
+     */
+    function $signal(initialValue) {
+        let value = initialValue;
+        const subscribers = new Set();
+
+        function getter() {
+            if (currentSubscriber) {
+                const weakRef = new WeakRef({ func: currentSubscriber });
+                subscribers.add(weakRef);
+            }
+            return value;
+        }
+
+        function setter(newValue) {
+            if (newValue !== value) {
+                value = newValue;
+                for (const subscriber of subscribers) {
+                    const ref = subscriber.deref();
+                    if (ref) {
+                        ref.func();
+                    }
                 }
             }
-        })
+        }
+
+        return [getter, setter];
+    }
+    /**
+     * 
+     * @param {function} fn - function that will run if any of its dependent signals change
+     * @example
+     * $effect(() => {
+     * console.log(count());
+     * } 
+     * @returns {void}
+     */
+    async function $effect(fn) {
+        currentSubscriber = fn;
+        const result = fn();
+        try {
+            if (result instanceof Promise) {
+                await result;
+            }
+        } catch (e) {
+            console.error(e)
+        } finally {
+            currentSubscriber = null;
+        }
     }
 </script>
 

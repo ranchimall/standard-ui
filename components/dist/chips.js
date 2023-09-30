@@ -181,7 +181,7 @@ customElements.define('sm-chips', class extends HTMLElement {
         this._value = value;
         this.assignedElements.forEach(elem => {
             if (elem.value == value) {
-                elem.setAttribute('selected', 'true');
+                elem.setAttribute('selected', '');
                 elem.scrollIntoView({ behavior: "smooth", block: "nearest", inline: "center" });
             }
             else
@@ -213,7 +213,7 @@ customElements.define('sm-chips', class extends HTMLElement {
             this.slotChangeTimeout = setTimeout(() => {
                 this.assignedElements = slot.assignedElements();
                 this.assignedElements.forEach(elem => {
-                    if (elem.hasAttribute('selected') && elem.getAttribute('selected') === 'true') {
+                    if (elem.hasAttribute('selected')) {
                         this._value = elem.value;
                     }
                 });
@@ -304,7 +304,7 @@ smChip.innerHTML = `
     :host(:focus-within) .sm-chip{
         box-shadow: 0 0 0 0.1rem var(--accent-color,teal) inset;
     }
-    :host(:hover:not([selected="true"])) .sm-chip{
+    :host(:hover:not([selected])) .sm-chip{
         background-color: rgba(var(--text-color,(17,17,17)), 0.06);
     }
     .sm-chip{
@@ -318,7 +318,7 @@ smChip.innerHTML = `
         -webkit-tap-highlight-color: transparent;
         background: var(--background,inherit);
     }
-    :host([selected="true"]) .sm-chip{
+    :host([selected]) .sm-chip{
         background-color: var(--accent-color, teal);
         color: rgba(var(--background-color, (255,255,255)), 1);
     }

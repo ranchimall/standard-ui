@@ -35,11 +35,6 @@ customElements.define('sm-form', class extends HTMLElement {
 		this.supportedElements = 'input, sm-input, sm-textarea, sm-checkbox, tags-input, file-input, sm-switch, sm-radio';
 		this.formElements = [];
 		this._requiredElements = []
-		this.debounce = this.debounce.bind(this);
-		this._checkValidity = this._checkValidity.bind(this);
-		this.handleKeydown = this.handleKeydown.bind(this);
-		this.reset = this.reset.bind(this);
-		this.elementsChanged = this.elementsChanged.bind(this);
 	}
 	static get observedAttributes() {
 		return ['skip-submit'];
@@ -47,7 +42,7 @@ customElements.define('sm-form', class extends HTMLElement {
 	get validity() {
 		return this.isFormValid;
 	}
-	debounce(callback, wait) {
+	debounce = (callback, wait) => {
 		let timeoutId = null;
 		return (...args) => {
 			window.clearTimeout(timeoutId);
@@ -56,7 +51,7 @@ customElements.define('sm-form', class extends HTMLElement {
 			}, wait);
 		};
 	}
-	_checkValidity() {
+	_checkValidity = () => {
 		if (!this.submitButton || this._requiredElements.length === 0) return;
 		this.invalidFieldsCount = 0
 		this._requiredElements.forEach(([elem, isWC]) => {
@@ -72,7 +67,7 @@ customElements.define('sm-form', class extends HTMLElement {
 		if (!this.skipSubmit)
 			this.submitButton.disabled = !this.isFormValid;
 	}
-	handleKeydown(e) {
+	handleKeydown = (e) => {
 		if (e.key === 'Enter' && e.target.tagName.includes('INPUT')) {
 			if (this.invalidFieldsCount === 0) {
 				if (this.submitButton) {
@@ -96,15 +91,19 @@ customElements.define('sm-form', class extends HTMLElement {
 							duration: 300,
 							easing: 'ease'
 						});
-						if (isWC) elem.focusIn();
-						else elem.focus();
+						if (isWC) {
+							elem.focusIn();
+							if (elem.tagName === 'SM-INPUT' && elem.value.trim() === '') {
+								elem.showError()
+							}
+						} else elem.focus();
 						break;
 					}
 				}
 			}
 		}
 	}
-	reset() {
+	reset = () => {
 		this.formElements.forEach(([elem, isWC]) => {
 			if (isWC) elem.reset();
 			else {
@@ -121,7 +120,7 @@ customElements.define('sm-form', class extends HTMLElement {
 		});
 		this._checkValidity();
 	}
-	elementsChanged() {
+	elementsChanged = () => {
 		this.formElements = [...this.querySelectorAll(this.supportedElements)].map(elem => {
 			return [elem, elem.tagName.includes('-')];
 		});
