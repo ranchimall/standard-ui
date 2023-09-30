@@ -1,4 +1,3 @@
-//Input
 const smInput = document.createElement('template')
 smInput.innerHTML = `
     <style>
@@ -28,8 +27,7 @@ smInput.innerHTML = `
     }
     input:invalid{
         outline: none;
-        -webkit-box-shadow: none;
-                box-shadow: none;
+        box-shadow: none;
     }
     ::-moz-focus-inner{
         border: none;
@@ -68,12 +66,16 @@ smInput.innerHTML = `
     :host(.round) .input{
         border-radius: 10rem;
     }
+    .outer-container{
+        position: relative;
+        width: var(--width);
+    }
     .input {
         display: flex;
         cursor: text;
         min-width: 0;
         text-align: left;
-                align-items: center;
+        align-items: center;
         position: relative;
         gap: var(--icon-gap);
         padding: var(--padding, 0.6rem 0.8rem);
@@ -104,10 +106,8 @@ smInput.innerHTML = `
         font-size: inherit;
         opacity: .7;
         font-weight: 400;
-        transition: -webkit-transform 0.3s;
         transition: transform 0.3s;
-        transition: transform 0.3s, -webkit-transform 0.3s, color .03;
-            transform-origin: left;
+        transform-origin: left;
         pointer-events: none;
         white-space: nowrap;
         overflow: hidden;
@@ -115,10 +115,6 @@ smInput.innerHTML = `
         width: 100%;
         user-select: none;
         will-change: transform;
-    }
-    .outer-container{
-        position: relative;
-        width: var(--width);
     }
     .container{
         width: 100%;
@@ -135,22 +131,17 @@ smInput.innerHTML = `
         outline: none;
         color: inherit;
         font-family: inherit;
+        height: 100%;
         width: 100%;
         caret-color: var(--accent-color, teal);
         font-weight: inherit;
     }
-    :host([animate]) .input:focus-within .container input,
     .animate-placeholder .container input {
-        -webkit-transform: translateY(0.6rem);
-                -ms-transform: translateY(0.6rem);
-            transform: translateY(0.6rem);
-        }
+        transform: translateY(0.6rem);
+    }
       
-    :host([animate]) .input:focus-within .label,
     .animate-placeholder .label {
-        -webkit-transform: translateY(-0.7em) scale(0.8);
-                -ms-transform: translateY(-0.7em) scale(0.8);
-            transform: translateY(-0.7em) scale(0.8);
+        transform: translateY(-0.7em) scale(0.8);
         opacity: 1;
         color: var(--accent-color,teal)
     }
@@ -162,13 +153,28 @@ smInput.innerHTML = `
         color: var(--accent-color,teal)
     }
     .feedback-text:not(:empty){
+        position: absolute;
         display: flex;
-        width: 100%;
+        width: fit-content;
         text-align: left;
         font-size: 0.9rem;
         align-items: center;
-        padding: 0.8rem 0;
+        padding: 0.8rem;
+        border-radius: var(--border-radius,0.5rem);
         color: rgba(var(--text-color, (17,17,17)), 0.8);
+        background: rgba(var(--foreground-color, (255,255,255)), 1);
+        margin-top: 0.5rem;
+        box-shadow: 0 0.5rem 1rem rgba(0,0,0,0.1);
+    }
+    .feedback-text:not(:empty)::before{
+        content: '';
+        height: 0;
+        width: 0;
+        position: absolute;
+        border: 0.5rem solid transparent;
+        border-bottom-color: rgba(var(--foreground-color, (255,255,255)), 1);
+        top: -1rem;
+        left: 1rem;
     }
     .success{
         color: var(--success-color);
@@ -223,24 +229,27 @@ smInput.innerHTML = `
     }
     </style>
     <div class="outer-container">
-        <label part="input-wrapper" class="input">
+        <div part="input-wrapper" class="input">
             <slot name="icon"></slot>
             <div class="container">
+                <label part="placeholder" class="label"></label>
                 <input part="input" type="text"/>
-                <div part="placeholder" class="label"></div>
-                <button class="clear hidden" title="Clear" tabindex="-1">
-                    <svg class="icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="24" height="24"><path fill="none" d="M0 0h24v24H0z"/><path d="M12 22C6.477 22 2 17.523 2 12S6.477 2 12 2s10 4.477 10 10-4.477 10-10 10zm0-11.414L9.172 7.757 7.757 9.172 10.586 12l-2.829 2.828 1.415 1.415L12 13.414l2.828 2.829 1.415-1.415L13.414 12l2.829-2.828-1.415-1.415L12 10.586z"/></svg>
-                </button>
             </div>
+            <button class="clear hidden" title="Clear" tabindex="-1">
+                <svg class="icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="24" height="24"><path fill="none" d="M0 0h24v24H0z"/><path d="M12 22C6.477 22 2 17.523 2 12S6.477 2 12 2s10 4.477 10 10-4.477 10-10 10zm0-11.414L9.172 7.757 7.757 9.172 10.586 12l-2.829 2.828 1.415 1.415L12 13.414l2.828 2.829 1.415-1.415L13.414 12l2.829-2.828-1.415-1.415L12 10.586z"/></svg>
+            </button>
             <slot name="right"></slot>
-        </label>
+        </div>
         <ul class="datalist hidden"></ul>
         <p class="feedback-text"></p>
     </div>
     `;
 customElements.define('sm-input',
     class extends HTMLElement {
-
+        #validationState = {
+            validatedFor: undefined,
+            isValid: false
+        }
         constructor() {
             super();
             this.attachShadow({
@@ -255,25 +264,11 @@ customElements.define('sm-input',
             this.outerContainer = this.shadowRoot.querySelector('.outer-container');
             this.optionList = this.shadowRoot.querySelector('.datalist');
             this._helperText = '';
-            this._errorText = 'Invalid';
+            this._errorText = 'Please fill out this field.';
             this.isRequired = false;
             this.datalist = [];
             this.validationFunction = undefined;
             this.reflectedAttributes = ['value', 'required', 'disabled', 'type', 'inputmode', 'readonly', 'min', 'max', 'pattern', 'minlength', 'maxlength', 'step', 'list', 'autocomplete'];
-
-            this.reset = this.reset.bind(this);
-            this.clear = this.clear.bind(this);
-            this.focusIn = this.focusIn.bind(this);
-            this.focusOut = this.focusOut.bind(this);
-            this.fireEvent = this.fireEvent.bind(this);
-            this.checkInput = this.checkInput.bind(this);
-            this.showError = this.showError.bind(this);
-            this.allowOnlyNum = this.allowOnlyNum.bind(this);
-            this.handleOptionClick = this.handleOptionClick.bind(this);
-            this.handleInputNavigation = this.handleInputNavigation.bind(this);
-            this.handleDatalistNavigation = this.handleDatalistNavigation.bind(this);
-            this.handleFocus = this.handleFocus.bind(this);
-            this.handleBlur = this.handleBlur.bind(this);
         }
 
         static get observedAttributes() {
@@ -287,6 +282,7 @@ customElements.define('sm-input',
         set value(val) {
             if (val === this.input.value) return;
             this.input.value = val;
+            this._value = val;
             this.checkInput();
         }
 
@@ -332,12 +328,13 @@ customElements.define('sm-input',
             }
         }
         set customValidation(val) {
-            this.validationFunction = val;
+            if (val)
+                this.validationFunction = val;
         }
         set errorText(val) {
             this._errorText = val;
         }
-        showError(errorText) {
+        showError = (errorText = this._errorText) => {
             this.feedbackText.className = 'feedback-text error';
             this.feedbackText.innerHTML = `
                 <svg class="status-icon status-icon--error" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="24" height="24"><path fill="none" d="M0 0h24v24H0z"/><path d="M12 22C6.477 22 2 17.523 2 12S6.477 2 12 2s10 4.477 10 10-4.477 10-10 10zm-1-7v2h2v-2h-2zm0-8v6h2V7h-2z"/></svg>
@@ -348,44 +345,44 @@ customElements.define('sm-input',
             this._helperText = val;
         }
         get isValid() {
-            if (this.input.value !== '') {
-                const _isValid = this.input.checkValidity();
-                let _validity = {
-                    isValid: _isValid,
-                    errorText: ''
-                }
-                if (this.validationFunction) {
-                    _validity = this.validationFunction(this.input.value);
-                }
-                if (_isValid && _validity.isValid) {
-                    this.feedbackText.className = 'feedback-text success';
-                    this.feedbackText.textContent = '';
-                } else {
-                    if (_validity.errorText || this._errorText) {
-                        this.showError(_validity.errorText || this._errorText);
-                    }
-                }
-                return (_isValid && _validity.isValid);
+            if (this.input.value === '') return;
+            if (this.#validationState.validatedFor === this.input.value)
+                return this.#validationState.isValid; // if the input is empty or the value is not changed, return the previous validity
+            const _isValid = this.input.checkValidity();
+            let _validity = { isValid: true, errorText: '' }
+            if (this.validationFunction) {
+                _validity = this.validationFunction(this.input.value);
             }
+            if (_isValid && _validity.isValid) {
+                this.feedbackText.className = 'feedback-text success';
+                this.feedbackText.textContent = '';
+            } else {
+                if (_validity.errorText || this._errorText) {
+                    this.showError(_validity.errorText || this._errorText);
+                }
+            }
+            this.#validationState.validatedFor = this.input.value;
+            this.#validationState.isValid = _isValid && _validity.isValid;
+            return this.#validationState.isValid;
         }
-        reset() {
+        reset = () => {
             this.value = '';
         }
-        clear() {
+        clear = () => {
             this.value = '';
             this.input.focus();
             this.fireEvent();
         }
 
-        focusIn() {
+        focusIn = () => {
             this.input.focus();
         }
 
-        focusOut() {
+        focusOut = () => {
             this.input.blur();
         }
 
-        fireEvent() {
+        fireEvent = () => {
             let event = new Event('input', {
                 bubbles: true,
                 cancelable: true,
@@ -394,7 +391,7 @@ customElements.define('sm-input',
             this.dispatchEvent(event);
         }
 
-        searchDatalist(searchKey) {
+        searchDatalist = (searchKey) => {
             const filteredData = this.datalist.filter(item => item.toLowerCase().includes(searchKey.toLowerCase()));
             // sort the filtered data based on the input value
             filteredData.sort((a, b) => {
@@ -427,7 +424,7 @@ customElements.define('sm-input',
             }
         }
 
-        checkInput(e) {
+        checkInput = (e) => {
             if (!this.hasAttribute('readonly')) {
                 if (this.input.value !== '') {
                     this.clearBtn.classList.remove('hidden');
@@ -437,10 +434,9 @@ customElements.define('sm-input',
             }
             if (!this.hasAttribute('placeholder') || this.getAttribute('placeholder').trim() === '') return;
             if (this.input.value !== '') {
-                if (this.animate)
+                if (this.shouldAnimateLabel)
                     this.inputParent.classList.add('animate-placeholder');
-                else
-                    this.label.classList.add('hidden');
+                this.label.classList.toggle('hidden', !this.shouldAnimateLabel);
                 if (this.datalist.length) {
                     // debounce the search
                     if (this.searchTimeout) {
@@ -451,10 +447,9 @@ customElements.define('sm-input',
                     }, 100);
                 }
             } else {
-                if (this.animate)
+                if (this.shouldAnimateLabel)
                     this.inputParent.classList.remove('animate-placeholder');
-                else
-                    this.label.classList.remove('hidden');
+                this.label.classList.remove('hidden');
                 this.feedbackText.textContent = '';
                 if (this.datalist.length) {
                     this.optionList.innerHTML = '';
@@ -462,7 +457,7 @@ customElements.define('sm-input',
                 }
             }
         }
-        allowOnlyNum(e) {
+        allowOnlyNum = (e) => {
             if (e.key.length === 1) {
                 if (e.key === '.' && (e.target.value.includes('.') || e.target.value.length === 0)) {
                     e.preventDefault();
@@ -471,13 +466,13 @@ customElements.define('sm-input',
                 }
             }
         }
-        handleOptionClick(e) {
+        handleOptionClick = (e) => {
             this.input.value = e.target.textContent;
             this.optionList.classList.add('hidden');
             this.input.focus();
         }
         // handle arrow key navigation on input
-        handleInputNavigation(e) {
+        handleInputNavigation = (e) => {
             if (e.key === 'ArrowDown') {
                 e.preventDefault();
                 if (this.optionList.children.length) {
@@ -491,7 +486,7 @@ customElements.define('sm-input',
             }
         }
         // handle arrow key navigation on datalist
-        handleDatalistNavigation(e) {
+        handleDatalistNavigation = (e) => {
             if (e.key === 'ArrowUp') {
                 e.preventDefault();
                 this.shadowRoot.activeElement.previousElementSibling ? this.shadowRoot.activeElement.previousElementSibling.focus() : this.input.focus();
@@ -505,19 +500,26 @@ customElements.define('sm-input',
                 this.input.focus();
             }
         }
-        handleFocus(e) {
+        handleFocus = (e) => {
             if (this.datalist.length) {
                 this.searchDatalist(this.input.value.trim());
             }
         }
-        handleBlur(e) {
+        handleBlur = (e) => {
             if (this.datalist.length) {
                 this.optionList.classList.add('hidden');
             }
         }
 
         connectedCallback() {
-            this.animate = this.hasAttribute('animate');
+            const uuid = crypto.randomUUID()
+            this.input.id = uuid;
+            this.label.htmlFor = uuid
+            this.shouldAnimateLabel = this.hasAttribute('animate');
+            if (this.shouldAnimateLabel && this.placeholder !== '' && this.value) {
+                this.inputParent.classList.add('animate-placeholder');
+                this.label.classList.remove('hidden');
+            }
             this.setAttribute('role', 'textbox');
             this.input.addEventListener('input', this.checkInput);
             this.clearBtn.addEventListener('click', this.clear);
