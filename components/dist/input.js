@@ -243,8 +243,8 @@ smInput.innerHTML = `
             </button>
             <slot name="right"></slot>
         </div>
-        <ul class="datalist hidden"></ul>
-        <p class="feedback-text"></p>
+        <ul class="datalist hidden" part="datalist"></ul>
+        <p class="feedback-text" part="feedback"></p>
     </div>
     `;
 customElements.define('sm-input',
