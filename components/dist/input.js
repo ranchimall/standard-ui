@@ -85,6 +85,7 @@ smInput.innerHTML = `
         width: 100%;
         outline: none;
         min-height: var(--min-height);
+        overflow: hidden;
     }
     .input.readonly .clear{
         opacity: 0 !important;
@@ -131,7 +132,7 @@ smInput.innerHTML = `
         outline: none;
         color: inherit;
         font-family: inherit;
-        height: 100%;
+        height: 300%;
         width: 100%;
         caret-color: var(--accent-color, teal);
         font-weight: inherit;
@@ -164,7 +165,9 @@ smInput.innerHTML = `
         color: rgba(var(--text-color, (17,17,17)), 0.8);
         background: rgba(var(--foreground-color, (255,255,255)), 1);
         margin-top: 0.5rem;
-        box-shadow: 0 0.5rem 1rem rgba(0,0,0,0.1);
+        box-shadow: 0 0.5rem 1rem rgba(var(--text-color, (17,17,17)), 0.1);
+        z-index: 10;
+        isolation: isolate;
     }
     .feedback-text:not(:empty)::before{
         content: '';
