@@ -251,7 +251,8 @@ customElements.define('sm-input',
     class extends HTMLElement {
         #validationState = {
             validatedFor: undefined,
-            isValid: false
+            isValid: false,
+            errorMessage: 'Please fill out this field.'
         }
         constructor() {
             super();
@@ -267,7 +268,6 @@ customElements.define('sm-input',
             this.outerContainer = this.shadowRoot.querySelector('.outer-container');
             this.optionList = this.shadowRoot.querySelector('.datalist');
             this._helperText = '';
-            this._errorText = 'Please fill out this field.';
             this.isRequired = false;
             this.datalist = [];
             this.validationFunction = undefined;
@@ -335,9 +335,9 @@ customElements.define('sm-input',
                 this.validationFunction = val;
         }
         set errorText(val) {
-            this._errorText = val;
+            this.#validationState.errorText = val;
         }
-        showError = (errorText = this._errorText) => {
+        showError = (errorText = this.#validationState.errorText) => {
             this.feedbackText.className = 'feedback-text error';
             this.feedbackText.innerHTML = `
                 <svg class="status-icon status-icon--error" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="24" height="24"><path fill="none" d="M0 0h24v24H0z"/><path d="M12 22C6.477 22 2 17.523 2 12S6.477 2 12 2s10 4.477 10 10-4.477 10-10 10zm-1-7v2h2v-2h-2zm0-8v6h2V7h-2z"/></svg>
@@ -348,9 +348,8 @@ customElements.define('sm-input',
             this._helperText = val;
         }
         get isValid() {
-            if (this.input.value === '') return;
             if (this.#validationState.validatedFor === this.input.value)
-                return this.#validationState.isValid; // if the input is empty or the value is not changed, return the previous validity
+                return this.#validationState.isValid; // if the input value has not changed, return the previous validity
             const _isValid = this.input.checkValidity();
             let _validity = { isValid: true, errorText: '' }
             if (this.validationFunction) {
@@ -360,12 +359,13 @@ customElements.define('sm-input',
                 this.feedbackText.className = 'feedback-text success';
                 this.feedbackText.textContent = '';
             } else {
-                if (_validity.errorText || this._errorText) {
-                    this.showError(_validity.errorText || this._errorText);
+                if (this.value.trim() !== '' && (_validity.errorText || this.#validationState.errorText)) {
+                    this.showError(_validity.errorText || this.#validationState.errorText);
                 }
             }
             this.#validationState.validatedFor = this.input.value;
             this.#validationState.isValid = _isValid && _validity.isValid;
+            this.#validationState.errorText = _validity.errorText || this.#validationState.errorText;
             return this.#validationState.isValid;
         }
         reset = () => {
@@ -524,6 +524,10 @@ customElements.define('sm-input',
                 this.label.classList.remove('hidden');
             }
             this.setAttribute('role', 'textbox');
+            if (smCompConfig && smCompConfig['sm-input']) {
+                const config = smCompConfig['sm-input'].find(config => this.matches(config.selector))
+                this.customValidation = config?.customValidation;
+            }
             this.input.addEventListener('input', this.checkInput);
             this.clearBtn.addEventListener('click', this.clear);
             if (this.datalist.length) {
@@ -564,7 +568,7 @@ customElements.define('sm-input',
                         this._helperText = newValue;
                         break;
                     case 'error-text':
-                        this._errorText = newValue;
+                        this.#validationState.errorText = newValue;
                         break;
                     case 'required':
                         this.isRequired = this.hasAttribute('required');
