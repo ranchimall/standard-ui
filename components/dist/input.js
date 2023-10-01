@@ -186,7 +186,7 @@ smInput.innerHTML = `
         color: var(--danger-color);
     }
     .status-icon{
-        margin-right: 0.2rem;
+        margin-right: 0.5rem;
         flex-shrink: 0;
     }
     .status-icon--error{
