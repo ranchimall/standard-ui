@@ -57,16 +57,12 @@ smNotifications.innerHTML = `
                 height: 0.2rem;
                 width: 100%;
                 background-color: var(--accent-color, teal);
-                transform: scaleX(0);
                 animation: loading var(--timeout, 5000ms) linear forwards;
                 transform-origin: left;
             }
             @keyframes loading{
-                0%{
+                to{
                     transform: scaleX(0);
-                }
-                100%{
-                    transform: scaleX(1);
                 }
             }
             .icon-container:not(:empty){
