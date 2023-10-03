@@ -524,7 +524,7 @@ customElements.define('sm-input',
                 this.label.classList.remove('hidden');
             }
             this.setAttribute('role', 'textbox');
-            if (('smCompConfig' in window) && smCompConfig['sm-input']) {
+            if (typeof smCompConfig !== 'undefined' && smCompConfig['sm-input']) {
                 const config = smCompConfig['sm-input'].find(config => this.matches(config.selector))
                 this.customValidation = config?.customValidation;
             }
