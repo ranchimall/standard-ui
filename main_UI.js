@@ -149,9 +149,17 @@ window.addEventListener('online', () => {
 let zIndex = 50
 // function required for popups or modals to appear
 function openPopup(popupId, pinned) {
+    if (popupStack.peek() === undefined) {
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'Escape') {
+                closePopup()
+            }
+        })
+    }
     zIndex++
     getRef(popupId).setAttribute('style', `z-index: ${zIndex}`)
-    return getRef(popupId).show({ pinned })
+    getRef(popupId).show({ pinned })
+    return getRef(popupId);
 }
 
 // hides the popup or modal
@@ -170,14 +178,19 @@ document.addEventListener('popupopened', async e => {
 })
 
 document.addEventListener('popupclosed', e => {
+    zIndex--;
     switch (e.target.id) {
         case '':
             break;
     }
-    if (popupStack.items.length === 0) {
+    if (popupStack.peek() === undefined) {
         // if there are no more popups, do something
+        document.removeEventListener('keydown', (e) => {
+            if (e.key === 'Escape') {
+                closePopup()
+            }
+        })
     }
-    zIndex--;
 })
 window.addEventListener('popstate', e => {
     if (!e.state) return
@@ -540,19 +553,20 @@ async function routeTo(targetPage, options = {}) {
     appState.openedPages.add(pageId)
 
 }
-// class based lazy loading
+/**
+ * @class LazyLoader - class for lazy loading elements
+ * @constructor {object} options - options for the lazy loader
+ * @param {string} container - container element for the lazy loader
+ * @param {array} elementsToRender - array of elements to be rendered
+ * @param {function} renderFn - function to render the elements
+ * @param {object} options - options for the lazy loader
+ * @param {number} options.batchSize - number of elements to be rendered at a time
+ * @param {function} options.freshRender - function to be called when elements are rendered for first time
+ * @param {boolean} options.bottomFirst - if true, elements will be rendered from bottom to top
+ * @param {function} options.onEnd - function to be called when all elements are rendered
+ * @returns {LazyLoader} - instance of LazyLoader
+ */
 class LazyLoader {
-    /**
-     * @constructor {object} options - options for the lazy loader
-     * @param {string} container - container for the lazy loader
-     * @param {array} elementsToRender - elements to be rendered
-     * @param {function} renderFn - function to be called for rendering each element
-     * @param {object} options - options for the lazy loader
-     * @param {number} options.batchSize - number of elements to be rendered at a time
-     * @param {function} options.freshRender - function to be called when elements are rendered for first time
-     * @param {boolean} options.bottomFirst - if true, elements will be rendered from bottom to top
-     * @param {function} options.onEnd - function to be called when all elements are rendered
-     */
     constructor(container, elementsToRender, renderFn, options = {}) {
         const { batchSize = 10, freshRender, bottomFirst = false, onEnd } = options
 
@@ -744,6 +758,7 @@ const slideOutUp = [
     },
 ]
 /**
+ * shows a child element of a parent element with animation
  * @param {HTMLElement} id - parent element
  * @param {number} index - index of child element to be shown
  * @param {object} options - options for the animation
