@@ -461,6 +461,7 @@ customElements.define('sm-input',
             }
         }
         allowOnlyNum = (e) => {
+            if (e.ctrlKey) return;
             if (e.key.length === 1) {
                 if (e.key === '.' && (e.target.value.includes('.') || e.target.value.length === 0)) {
                     e.preventDefault();
