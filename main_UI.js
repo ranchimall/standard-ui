@@ -9,33 +9,15 @@
 !function (e, t) { var o = o || {}; "function" == typeof o && o.amd ? o([], t) : "object" == typeof exports && "object" == typeof module ? module.exports = t() : "object" == typeof exports ? exports.RelativeTime = t() : e.RelativeTime = t() }(this, (function () { const e = { year: 31536e6, month: 2628e6, day: 864e5, hour: 36e5, minute: 6e4, second: 1e3 }, t = "en", o = { numeric: "auto" }; function n(e) { e = { locale: (e = e || {}).locale || t, options: { ...o, ...e.options } }, this.rtf = new Intl.RelativeTimeFormat(e.locale, e.options) } return n.prototype = { from(t, o) { const n = t - (o || new Date); for (let t in e) if (Math.abs(n) > e[t] || "second" == t) return this.rtf.format(Math.round(n / e[t]), t) } }, n }));
 
 const relativeTime = new RelativeTime({ style: 'narrow' });
-
-const domRefs = {};
 const uiGlobals = {
     // Use to store global variables
 }
 let timerId;
+// Use instead of document.getElementById
+function getRef(id) {
+    return document.getElementById(id)
+}
 const uiUtils = {
-    // Use instead of document.getElementById
-    memoRef(elementId) {
-        if (!domRefs.hasOwnProperty(elementId)) {
-            domRefs[elementId] = {
-                count: 1,
-                ref: null,
-            };
-            return document.getElementById(elementId);
-        } else {
-            if (domRefs[elementId].count < 3) {
-                domRefs[elementId].count = domRefs[elementId].count + 1;
-                return document.getElementById(elementId);
-            } else {
-                if (!domRefs[elementId].ref)
-                    domRefs[elementId].ref = document.getElementById(elementId);
-                return domRefs[elementId].ref;
-            }
-        }
-    },
-
     // returns dom with specified element
     createElement(tagName, options) {
         const { className, textContent, innerHTML, attributes = {} } = options
@@ -655,6 +637,7 @@ class LazyLoader {
             }
             this.lazyContainer.innerHTML = ``;
         }
+        this.updateStartIndex = Math.max(this.updateStartIndex, 0)
         this.lastScrollHeight = this.lazyContainer.scrollHeight
         this.lastScrollTop = this.lazyContainer.scrollTop
         this.arrayOfElements.slice(this.updateStartIndex, this.updateEndIndex).forEach((element, index) => {
