@@ -79,15 +79,10 @@ customElements.define('text-field', class extends HTMLElement {
         this.editButton = this.textField.querySelector('.edit-button')
         this.isTextEditable = false
         this.isDisabled = false
-
-        this.setEditable = this.setEditable.bind(this)
-        this.setNonEditable = this.setNonEditable.bind(this)
-        this.toggleEditable = this.toggleEditable.bind(this)
-        this.revert = this.revert.bind(this)
     }
 
     static get observedAttributes() {
-        return ['disable']
+        return ['disabled']
     }
 
     get value() {
@@ -101,11 +96,11 @@ customElements.define('text-field', class extends HTMLElement {
     set disabled(val) {
         this.isDisabled = val
         if (this.isDisabled)
-            this.setAttribute('disable', '')
+            this.setAttribute('disabled', '')
         else
-            this.removeAttribute('disable')
+            this.removeAttribute('disabled')
     }
-    setEditable() {
+    setEditable = () => {
         if (this.isTextEditable) return
         this.textContainer.contentEditable = true
         this.setAttribute('editable', '')
@@ -114,7 +109,7 @@ customElements.define('text-field', class extends HTMLElement {
         this.editButton.textContent = 'Done'
         this.isTextEditable = true
     }
-    setNonEditable() {
+    setNonEditable = () => {
         if (!this.isTextEditable) return
         this.textContainer.contentEditable = false
         this.removeAttribute('editable')
@@ -131,13 +126,13 @@ customElements.define('text-field', class extends HTMLElement {
         this.editButton.textContent = 'Edit'
         this.isTextEditable = false
     }
-    toggleEditable() {
+    toggleEditable = () => {
         if (this.isTextEditable)
             this.setNonEditable()
         else
             this.setEditable()
     }
-    revert() {
+    revert = () => {
         if (this.textContainer.isContentEditable) {
             this.value = this.text
             this.setNonEditable()
@@ -150,7 +145,7 @@ customElements.define('text-field', class extends HTMLElement {
             this.text = this.getAttribute('value')
             this.textContainer.textContent = this.text
         }
-        if (this.hasAttribute('disable'))
+        if (this.hasAttribute('disabled'))
             this.isDisabled = true
         else
             this.isDisabled = false
@@ -160,8 +155,8 @@ customElements.define('text-field', class extends HTMLElement {
         }
     }
     attributeChangedCallback(name) {
-        if (name === 'disable') {
-            if (this.hasAttribute('disable')) {
+        if (name === 'disabled') {
+            if (this.hasAttribute('disabled')) {
                 this.editButton.classList.add('hide')
                 this.textContainer.removeEventListener('dblclick', this.setEditable)
                 this.editButton.removeEventListener('click', this.toggleEditable)
