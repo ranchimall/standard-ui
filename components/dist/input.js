@@ -168,6 +168,7 @@ smInput.innerHTML = `
         position: absolute;
         display: flex;
         width: fit-content;
+        top: 100%;
         text-align: left;
         font-size: 0.9rem;
         align-items: center;
