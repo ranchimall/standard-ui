@@ -67,6 +67,8 @@ smInput.innerHTML = `
         border-radius: 10rem;
     }
     .outer-container{
+        display: flex;
+        flex-direction: column;
         position: relative;
         width: var(--width);
     }
@@ -78,14 +80,15 @@ smInput.innerHTML = `
         align-items: center;
         position: relative;
         gap: var(--icon-gap);
-        padding: var(--padding, 0.6rem 0.8rem);
         border-radius: var(--border-radius,0.3rem);
         transition: opacity 0.3s, box-shadow 0.2s;
         background: var(--background);
         width: 100%;
         outline: none;
-        min-height: var(--min-height);
         overflow: hidden;
+        min-height: var(--min-height);
+        padding: var(--padding, 0 0.8rem);
+        container: input-wrapper / size;
     }
     .input.readonly .clear{
         opacity: 0 !important;
@@ -102,7 +105,7 @@ smInput.innerHTML = `
         pointer-events: none;
         opacity: 0.6;
     }
-    .label {
+    .placeholder {
         grid-area: 1/1/2/2;
         font-size: inherit;
         opacity: .7;
@@ -118,11 +121,13 @@ smInput.innerHTML = `
         will-change: transform;
     }
     .container{
-        width: 100%;
         display: grid;
+        height:100%;
+        width: 100%;
         grid-template-columns: 1fr auto;
         position: relative;
         align-items: center;
+        max-height: 100cqh;
     }    
     input{
         grid-area: 1/1/2/2;
@@ -132,25 +137,31 @@ smInput.innerHTML = `
         outline: none;
         color: inherit;
         font-family: inherit;
-        height: 300%;
+        height: 100%;
         width: 100%;
         caret-color: var(--accent-color, teal);
         font-weight: inherit;
+        padding: var(--input-inner-padding, 0.6rem 0);
+    }
+    .animate-placeholder .container{
+        padding: var(--input-inner-padding, 0.4rem 0);
     }
     .animate-placeholder .container input {
-        transform: translateY(0.6rem);
+        grid-row: 2/3;
+        padding: 0;
     }
       
-    .animate-placeholder .label {
-        transform: translateY(-0.7em) scale(0.8);
+    .animate-placeholder .placeholder {
+        transform: scale(0.8);
         opacity: 1;
         color: var(--accent-color,teal)
+        grid-row: 1/2;
     }
     :host([variant="outlined"]) .input {
         box-shadow: 0 0 0 1px var(--border-color, rgba(var(--text-color, (17,17,17)), 0.3)) inset;
         background: rgba(var(--background-color, (255,255,255)), 1);
     }
-    .animate-placeholder:focus-within:not(.readonly) .label{
+    .animate-placeholder:focus-within:not(.readonly) .placeholder{
         color: var(--accent-color,teal)
     }
     .feedback-text:not(:empty){
@@ -234,10 +245,10 @@ smInput.innerHTML = `
     <div class="outer-container">
         <div part="input-wrapper" class="input">
             <slot name="icon"></slot>
-            <div class="container">
-                <label part="placeholder" class="label"></label>
+            <label class="container">
+                <span part="placeholder" class="placeholder"></span>
                 <input part="input" type="text"/>
-            </div>
+            </label>
             <button class="clear hidden" title="Clear" tabindex="-1">
                 <svg class="icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="24" height="24"><path fill="none" d="M0 0h24v24H0z"/><path d="M12 22C6.477 22 2 17.523 2 12S6.477 2 12 2s10 4.477 10 10-4.477 10-10 10zm0-11.414L9.172 7.757 7.757 9.172 10.586 12l-2.829 2.828 1.415 1.415L12 13.414l2.828 2.829 1.415-1.415L13.414 12l2.829-2.828-1.415-1.415L12 10.586z"/></svg>
             </button>
@@ -263,7 +274,7 @@ customElements.define('sm-input',
             this.inputParent = this.shadowRoot.querySelector('.input');
             this.input = this.shadowRoot.querySelector('input');
             this.clearBtn = this.shadowRoot.querySelector('.clear');
-            this.label = this.shadowRoot.querySelector('.label');
+            this.placeholderElement = this.shadowRoot.querySelector('.placeholder');
             this.feedbackText = this.shadowRoot.querySelector('.feedback-text');
             this.outerContainer = this.shadowRoot.querySelector('.outer-container');
             this.optionList = this.shadowRoot.querySelector('.datalist');
@@ -437,9 +448,9 @@ customElements.define('sm-input',
             }
             if (!this.hasAttribute('placeholder') || this.getAttribute('placeholder').trim() === '') return;
             if (this.input.value !== '') {
-                if (this.shouldAnimateLabel)
+                if (this.shouldAnimatePlaceholder)
                     this.inputParent.classList.add('animate-placeholder');
-                this.label.classList.toggle('hidden', !this.shouldAnimateLabel);
+                this.placeholderElement.classList.toggle('hidden', !this.shouldAnimatePlaceholder);
                 if (this.datalist.length) {
                     // debounce the search
                     if (this.searchTimeout) {
@@ -450,9 +461,9 @@ customElements.define('sm-input',
                     }, 100);
                 }
             } else {
-                if (this.shouldAnimateLabel)
+                if (this.shouldAnimatePlaceholder)
                     this.inputParent.classList.remove('animate-placeholder');
-                this.label.classList.remove('hidden');
+                this.placeholderElement.classList.remove('hidden');
                 this.feedbackText.textContent = '';
                 if (this.datalist.length) {
                     this.optionList.innerHTML = '';
@@ -514,20 +525,23 @@ customElements.define('sm-input',
                 this.optionList.classList.add('hidden');
             }
         }
-
+        applyGlobalCustomValidation = () => {
+            if (typeof window.smCompConfig !== 'undefined' && window.smCompConfig['sm-input']) {
+                const config = window.smCompConfig['sm-input'].find(config => this.matches(config.selector))
+                this.customValidation = config?.customValidation;
+            }
+        }
         connectedCallback() {
-            const uuid = crypto.randomUUID()
-            this.input.id = uuid;
-            this.label.htmlFor = uuid
-            this.shouldAnimateLabel = this.hasAttribute('animate');
-            if (this.shouldAnimateLabel && this.placeholder !== '' && this.value) {
+            this.shouldAnimatePlaceholder = this.hasAttribute('animate');
+            if (this.shouldAnimatePlaceholder && this.placeholderElement !== '' && this.value) {
                 this.inputParent.classList.add('animate-placeholder');
-                this.label.classList.remove('hidden');
+                this.placeholderElement.classList.remove('hidden');
             }
             this.setAttribute('role', 'textbox');
-            if (typeof smCompConfig !== 'undefined' && smCompConfig['sm-input']) {
-                const config = smCompConfig['sm-input'].find(config => this.matches(config.selector))
-                this.customValidation = config?.customValidation;
+            if (document.readyState === 'loading') {
+                window.onload = this.applyGlobalCustomValidation
+            } else {
+                this.applyGlobalCustomValidation()
             }
             this.input.addEventListener('input', this.checkInput);
             this.clearBtn.addEventListener('click', this.clear);
@@ -551,7 +565,7 @@ customElements.define('sm-input',
                 }
                 switch (name) {
                     case 'placeholder':
-                        this.label.textContent = newValue;
+                        this.placeholderElement.textContent = newValue;
                         this.setAttribute('aria-label', newValue);
                         break;
                     case 'value':
