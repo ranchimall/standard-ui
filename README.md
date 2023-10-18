@@ -74,17 +74,17 @@ This is a collection of utility and commonly used functions that will help ease 
 
 | Function | overview |
 | --- | --- |
-|[getRef](#getRef()) |shortens ```document.getElementById('sample')``` to ```getRef('sample')```|
-|[createElement](#createElement()) | shortens ```const x = document.createElement('div'); x.innerHTML = "My Text";``` to ```createElement('div',{innerHTML:"My Text"});``` |
-|[debounce](#debounce()) | Introduces a defined delay when the same function is executed again ```debounce(functionToBeExecuted, 2000)``` will not interfere with the first execution of funtionToBeExecuted. But it will slow down the second execution onwards of funtionToBeExecuted |
-| [openPopup](#openPopup()) | This will expose and open a popup if the ID is provided ```openPopup("ID_of_popUp");``` | 
-| [getConfirmation](#getConfirmation()) | This will remove the need for user confirmation for things like signout, and they can be programmatically confirmed. It replaces the functionality of `confirm` function in Javascript to allow style customization of system confirm messages, and change ok/cancel texts | 
-| [getPromptInput](#getPromptInput()) | This allows customization of inbuilt Javascript `prompt` and enables styling on it. It also adds the ability to change action button text and allows to creation of custom return values other than true and false. | 
-| [notify](#notify()) | It is a replacement for `alert` function in Javascript because when an alert is active, everything else becomes inaccessible. With notify, everything is accessible even if notify is active. Furthermore, with notify, we can modify the looks, and we can specify icons for different kinds of notifications. By default, every notification goes away in 5 seconds. But it can be made persistent or duration can be changed. | 
+|[getRef](#getRef) |shortens ```document.getElementById('sample')``` to ```getRef('sample')```|
+|[createElement](#createElement) | shortens ```const x = document.createElement('div'); x.innerHTML = "My Text";``` to ```createElement('div',{innerHTML:"My Text"});``` |
+|[debounce](#debounce) | Introduces a defined delay when the same function is executed again ```debounce(functionToBeExecuted, 2000)``` will not interfere with the first execution of funtionToBeExecuted. But it will slow down the second execution onwards of funtionToBeExecuted |
+| [openPopup](#openPopup) | This will expose and open a popup if the ID is provided ```openPopup("ID_of_popUp");``` | 
+| [getConfirmation](#getConfirmation) | This will remove the need for user confirmation for things like signout, and they can be programmatically confirmed. It replaces the functionality of `confirm` function in Javascript to allow style customization of system confirm messages, and change ok/cancel texts | 
+| [getPromptInput](#getPromptInput) | This allows customization of inbuilt Javascript `prompt` and enables styling on it. It also adds the ability to change action button text and allows to creation of custom return values other than true and false. | 
+| [notify](#notify) | It is a replacement for `alert` function in Javascript because when an alert is active, everything else becomes inaccessible. With notify, everything is accessible even if notify is active. Furthermore, with notify, we can modify the looks, and we can specify icons for different kinds of notifications. By default, every notification goes away in 5 seconds. But it can be made persistent or duration can be changed. | 
   
 #### Functions 
 
-### getRef()
+### getRef
 Use this function instead of `document.getElementById()`.
 
 #### Parameters
@@ -95,7 +95,7 @@ This function has only one parameter.
 | elementId `string`| Pass in the ID of the element you want to get reference of exactly like `document.getElementById()`|
 
 
-### createElement()
+### createElement
 This function let's you create elements with less boilerplate.
 #### parameters
 `createElement(tagName, options = {})`
@@ -114,7 +114,7 @@ This function has only one parameter.
 | attributes `object`| This is similar to setting `element.setAttribute()`. The advantage being you can pass in multiple attributes at one as key-value pairs. eg. `{attributes: {'data-theme': 'dark', 'id': 'unique_id'}`|
 
 
-### debounce()
+### debounce
 This function forces a function to wait a certain amount of time before running again.
 #### parameters
 `debounce(callback, wait)`
@@ -124,7 +124,7 @@ This function forces a function to wait a certain amount of time before running 
 | wait `milliseconds`| The time period for which the function should wait before re-running |
 
 
-### throttle()
+### throttle
 This function limits the rate of function execution.
 #### parameters
 `throttle(func, delay)`
@@ -134,7 +134,7 @@ This function limits the rate of function execution.
 | delay `milliseconds`| The time period for which the function will run once |
 
 
-### openPopup()
+### openPopup
 This will display popup of which the ID was passed in. In addition to that, this also keeps track of which popups are open and allows stacking them on top of each other.
 #### parameters
 `openPopup(popupId, pinned = false)`
@@ -145,13 +145,13 @@ This function has only one parameter.
 | pinned `Boolean`| Boolean if set `true`, displayed popup won't close unless `hide()` is called programmatically on the popup. |
 
 
-### hidePopup()
+### hidePopup
 The opposite of `openPopup()`. When called, this will close any popup that's currently open and is on the top of popup stack. 
 #### parameters
 This function doesn't accept any parameters
 
 
-### getConfirmation() `Promise`
+### getConfirmation
 This is a replacement method for the native `confirm()` method. This returns a promise.
 
 #### parameters
@@ -164,7 +164,7 @@ This is a replacement method for the native `confirm()` method. This returns a p
 | confirmText `string`| Customizes the text of accepting confirmation button. |
 
 
-### getPromptInput() `Promise`
+### getPromptInput
 This is a replacement method for the native `prompt()` method. This returns a promise.
 
 #### parameters
@@ -178,7 +178,7 @@ This is a replacement method for the native `prompt()` method. This returns a pr
 | confirmText `string`| Customizes the text of the accepting prompt button. |
 
 
-### notify()
+### notify
 This function adds functionality to `sm-notifications` component by adding icons and notification sound to improve the UX. 
 ** Remember to use notifications only when absolutely needed. Don't overwhelm users with lots of notifications **
 #### parameters
