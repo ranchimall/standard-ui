@@ -72,25 +72,20 @@ Components are fully functional with accompanied HTML, Javascript, and CSS. Usua
 ## main_UI.js
 This is a collection of utility and commonly used functions that will help ease the development process. 
 
-* getRef - shortens document.getElementById('sample') to getRef('sample')
-
-* createElement - shortens `var x = document.createElement('div'); x.innerHTML = "My Text";` to `createElement('div',{innerHTML:"My Text"});`
-
-* debounce - introduces a defined delay when the same function is executed again `debounce(functionToBeExecuted, 2000)` will not interfere with the first execution of funtionToBeExecuted. But it will slow down the second execution onwards of funtionToBeExecuted
-
-* openPopup - This will expose and open a popup if the ID is provided `openPopup("ID_of_popUp");`
-
-* getConfirmation - This will remove the need for user confirmation for things like signout, and they can be programmatically confirmed. It replaces the functionality of `confirm` function in Javascript to allow style customization of system confirm message, and change ok/cancel texts
-
-* getPromptInput - This allows customization of inbuilt Javascript `prompt` and enables styling on it. It also adds the ability to change action button text and allows to creation of custom return values other than true and false.
-
-* notify - It is replacement of `alert` function in Javascript because when alert is active, everything else becomes inaccessible. With notify, everything is accessible even if notify is active. Furthermore, with notify, we can modify the looks, and we can specify icons for different kinds of notifications. By default, every notification goes away in 5 seconds. But it can be made persistent or duration can be changed.
+| Function | overview |
+| --- | --- |
+|[getRef](#getRef()) |shortens ```document.getElementById('sample')``` to ```getRef('sample')```|
+|[createElement](#createElement()) | shortens ```const x = document.createElement('div'); x.innerHTML = "My Text";``` to ```createElement('div',{innerHTML:"My Text"});``` |
+|[debounce](#debounce()) | Introduces a defined delay when the same function is executed again ```debounce(functionToBeExecuted, 2000)``` will not interfere with the first execution of funtionToBeExecuted. But it will slow down the second execution onwards of funtionToBeExecuted |
+| [openPopup](#openPopup()) | This will expose and open a popup if the ID is provided ```openPopup("ID_of_popUp");``` | 
+| [getConfirmation](#getConfirmation()) | This will remove the need for user confirmation for things like signout, and they can be programmatically confirmed. It replaces the functionality of `confirm` function in Javascript to allow style customization of system confirm messages, and change ok/cancel texts | 
+| [getPromptInput](#getPromptInput()) | This allows customization of inbuilt Javascript `prompt` and enables styling on it. It also adds the ability to change action button text and allows to creation of custom return values other than true and false. | 
+| [notify](#notify()) | It is a replacement for `alert` function in Javascript because when an alert is active, everything else becomes inaccessible. With notify, everything is accessible even if notify is active. Furthermore, with notify, we can modify the looks, and we can specify icons for different kinds of notifications. By default, every notification goes away in 5 seconds. But it can be made persistent or duration can be changed. | 
   
-
 #### Functions 
 
 ### getRef()
-Use this function instead of `document.getElementById()`. It provides reference memoization for repeatedly used DOM references. This negates the need to store DOM references at top of script or inside global variables.
+Use this function instead of `document.getElementById()`.
 
 #### Parameters
 `getRef(elementId)`
