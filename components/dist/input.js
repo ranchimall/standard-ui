@@ -368,9 +368,13 @@ customElements.define('sm-input',
                 _validity = this.validationFunction(this.input.value);
             }
             if (_isValid && _validity.isValid) {
+                this.setAttribute('valid', '');
+                this.removeAttribute('invalid');
                 this.feedbackText.className = 'feedback-text success';
                 this.feedbackText.textContent = '';
             } else {
+                this.removeAttribute('valid');
+                this.setAttribute('invalid', '');
                 if (this.value.trim() !== '' && (_validity.errorText || this.#validationState.errorText)) {
                     this.showError(_validity.errorText || this.#validationState.errorText);
                 }
@@ -540,7 +544,7 @@ customElements.define('sm-input',
             }
             this.setAttribute('role', 'textbox');
             if (document.readyState === 'loading') {
-                window.onload = this.applyGlobalCustomValidation
+                window.addEventListener('load', this.applyGlobalCustomValidation, { once: true })
             } else {
                 this.applyGlobalCustomValidation()
             }
