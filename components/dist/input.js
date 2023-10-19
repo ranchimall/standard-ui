@@ -164,33 +164,6 @@ smInput.innerHTML = `
     .animate-placeholder:focus-within:not(.readonly) .placeholder{
         color: var(--accent-color,teal)
     }
-    .feedback-text:not(:empty){
-        position: absolute;
-        display: flex;
-        width: fit-content;
-        top: 100%;
-        text-align: left;
-        font-size: 0.9rem;
-        align-items: center;
-        padding: 0.8rem;
-        border-radius: var(--border-radius,0.5rem);
-        color: rgba(var(--text-color, (17,17,17)), 0.8);
-        background: rgba(var(--foreground-color, (255,255,255)), 1);
-        margin-top: 0.5rem;
-        box-shadow: 0 0.5rem 1rem rgba(var(--text-color, (17,17,17)), 0.1);
-        z-index: 10;
-        isolation: isolate;
-    }
-    .feedback-text:not(:empty)::before{
-        content: '';
-        height: 0;
-        width: 0;
-        position: absolute;
-        border: 0.5rem solid transparent;
-        border-bottom-color: rgba(var(--foreground-color, (255,255,255)), 1);
-        top: -1rem;
-        left: 1rem;
-    }
     .success{
         color: var(--success-color);
     }
@@ -256,7 +229,6 @@ smInput.innerHTML = `
             <slot name="right"></slot>
         </div>
         <ul class="datalist hidden" part="datalist"></ul>
-        <p class="feedback-text" part="feedback"></p>
     </div>
     `;
 customElements.define('sm-input',
@@ -276,7 +248,6 @@ customElements.define('sm-input',
             this.input = this.shadowRoot.querySelector('input');
             this.clearBtn = this.shadowRoot.querySelector('.clear');
             this.placeholderElement = this.shadowRoot.querySelector('.placeholder');
-            this.feedbackText = this.shadowRoot.querySelector('.feedback-text');
             this.outerContainer = this.shadowRoot.querySelector('.outer-container');
             this.optionList = this.shadowRoot.querySelector('.datalist');
             this._helperText = '';
@@ -350,10 +321,23 @@ customElements.define('sm-input',
             this.#validationState.errorText = val;
         }
         showError = (errorText = this.#validationState.errorText) => {
-            this.feedbackText.className = 'feedback-text error';
             this.feedbackText.innerHTML = `
-                <svg class="status-icon status-icon--error" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="24" height="24"><path fill="none" d="M0 0h24v24H0z"/><path d="M12 22C6.477 22 2 17.523 2 12S6.477 2 12 2s10 4.477 10 10-4.477 10-10 10zm-1-7v2h2v-2h-2zm0-8v6h2V7h-2z"/></svg>
-                ${errorText}`;
+            <svg class="status-icon status-icon--error" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="24" height="24"><path fill="none" d="M0 0h24v24H0z"/><path d="M12 22C6.477 22 2 17.523 2 12S6.477 2 12 2s10 4.477 10 10-4.477 10-10 10zm-1-7v2h2v-2h-2zm0-8v6h2V7h-2z"/></svg>
+            ${errorText}`;
+            if (!this.feedbackText.classList.contains('hidden'))
+                return;
+            this.feedbackText.className = 'feedback-text error';
+            this.updatePosition()
+            window.addEventListener('resize', this.updatePosition, { passive: true })
+            document.addEventListener('scroll', this.updatePosition, { passive: true, capture: true })
+            this.feedbackText.animate([
+                { transform: 'scale(0.95)', opacity: 0 },
+                { transform: 'scale(1)', opacity: 1 }
+            ], {
+                duration: 200,
+                easing: 'ease',
+                fill: 'forwards'
+            })
         }
 
         set helperText(val) {
@@ -370,8 +354,7 @@ customElements.define('sm-input',
             if (_isValid && _validity.isValid) {
                 this.setAttribute('valid', '');
                 this.removeAttribute('invalid');
-                this.feedbackText.className = 'feedback-text success';
-                this.feedbackText.textContent = '';
+                this.hideFeedback();
             } else {
                 this.removeAttribute('valid');
                 this.setAttribute('invalid', '');
@@ -469,7 +452,7 @@ customElements.define('sm-input',
                 if (this.shouldAnimatePlaceholder)
                     this.inputParent.classList.remove('animate-placeholder');
                 this.placeholderElement.classList.remove('hidden');
-                this.feedbackText.textContent = '';
+                this.hideFeedback();
                 if (this.datalist.length) {
                     this.optionList.innerHTML = '';
                     this.optionList.classList.add('hidden');
@@ -536,6 +519,114 @@ customElements.define('sm-input',
                 this.customValidation = config?.customValidation;
             }
         }
+        updatePosition = (e = { type: '' }) => {
+            requestAnimationFrame(() => {
+                if (!this.dimensions || e.type === 'resize') {
+                    this.scrollingParentDimensions = this.scrollingParent.getBoundingClientRect()
+                }
+                this.dimensions = this.getBoundingClientRect()
+                if (this.dimensions.width === 0 || this.dimensions.height === 0) return;
+                let topOffset = this.dimensions.top - this.scrollingParentDimensions.top + this.scrollingParent.scrollTop + this.dimensions.height;
+                if (topOffset + this.feedbackText.offsetHeight > this.scrollingParentDimensions.height) {
+                    topOffset = this.dimensions.top - this.feedbackText.offsetHeight;
+                }
+                let leftOffset = this.dimensions.left - this.scrollingParentDimensions.left + this.scrollingParent.scrollLeft;
+                const maxWidth = this.scrollingParentDimensions.width - this.dimensions.left
+                this.feedbackText.style = `top: ${topOffset}px; left: ${leftOffset}px; max-width: ${maxWidth}px;`
+            })
+        }
+        appendFeedbackElement = () => {
+            this.feedbackText = document.createElement('div');
+            this.feedbackText.className = 'feedback-text hidden';
+            this.feedbackText.setAttribute('aria-live', 'polite');
+            if (document.getElementById('#sm_input_styles') === null) {
+                document.head.insertAdjacentHTML('beforeend', `<style id="sm-input-styles">
+                    .success{
+                        color: var(--success-color);
+                    }
+                    .error{
+                        color: var(--danger-color);
+                    }
+                    .status-icon{
+                        margin-right: 0.5rem;
+                        flex-shrink: 0;
+                    }
+                    .status-icon--error{
+                        fill: var(--danger-color);
+                    }
+                    .status-icon--success{
+                        fill: var(--success-color);
+                    }
+                    .feedback-text:not(:empty){
+                        position: absolute;
+                        display: flex;
+                        width: fit-content;
+                        top: 100%;
+                        text-align: left;
+                        font-size: 0.9rem;
+                        align-items: center;
+                        padding: 0.8rem;
+                        border-radius: var(--border-radius,0.5rem);
+                        color: rgba(var(--text-color, (17,17,17)), 0.8);
+                        background: rgba(var(--foreground-color, (255,255,255)), 1);
+                        margin-top: 0.5rem;
+                        box-shadow: 0 0.5rem 1rem rgba(var(--text-color, (17,17,17)), 0.1);
+                    }
+                    .feedback-text:not(:empty)::before{
+                        content: '';
+                        height: 0;
+                        width: 0;
+                        position: absolute;
+                        border: 0.5rem solid transparent;
+                        border-bottom-color: rgba(var(--foreground-color, (255,255,255)), 1);
+                        top: -1rem;
+                        left: 1rem;
+                    }
+                </style>`);
+            }
+            this.scrollingParent = this.getNearestScrollingParent(this);
+            const appendTo = this.containment || this.scrollingParent;
+            appendTo.appendChild(this.feedbackText)
+            if (this.scrollingParent.style.position === '')
+                this.scrollingParent.style.position = 'relative'
+        }
+        getNearestScrollingParent = (element) => {
+            const scrollingParent = element.closest('[data-scrollable]')
+            if (scrollingParent) return scrollingParent;
+            let parent = element.parentNode;
+
+            while (parent) {
+                // Check if the parent has scrollbars
+                if (parent.scrollHeight > parent.clientHeight || parent.scrollWidth > parent.clientWidth) {
+                    return parent;
+                }
+                parent = parent.parentNode;
+            }
+
+            // If no scrolling parent is found, return the document body as a fallback
+            return document.body;
+        }
+        hideFeedback = () => {
+            if (this.feedbackText.classList.contains('hidden')) return;
+            this.feedbackText.animate([
+                {
+                    transform: `none`,
+                    opacity: 1,
+                },
+                {
+                    transform: `scale(0.95)`,
+                    opacity: 0
+                }
+            ], {
+                duration: 100,
+                easing: 'ease-in-out',
+                fill: 'forwards'
+            }).onfinish = () => {
+                this.feedbackText.classList.add('hidden');
+                window.removeEventListener('resize', this.updatePosition, { passive: true })
+                document.removeEventListener('scroll', this.updatePosition, { passive: true, capture: true })
+            }
+        }
         connectedCallback() {
             this.shouldAnimatePlaceholder = this.hasAttribute('animate');
             if (this.shouldAnimatePlaceholder && this.placeholderElement !== '' && this.value) {
@@ -548,6 +639,8 @@ customElements.define('sm-input',
             } else {
                 this.applyGlobalCustomValidation()
             }
+            this.containment = this.closest('[data-sm-containment]')
+            this.appendFeedbackElement()
             this.input.addEventListener('input', this.checkInput);
             this.clearBtn.addEventListener('click', this.clear);
             if (this.datalist.length) {
@@ -557,6 +650,20 @@ customElements.define('sm-input',
             }
             this.input.addEventListener('focusin', this.handleFocus);
             this.addEventListener('focusout', this.handleBlur);
+            let observerHidFeedback = false;
+            if (!this.containment) {
+                new IntersectionObserver((entries) => {
+                    if (entries[0].isIntersecting) {
+                        if (!observerHidFeedback) return;
+                        this.feedbackText.classList.remove('hidden');
+                        observerHidFeedback = false;
+                    } else {
+                        if (this.feedbackText.classList.contains('hidden')) return;
+                        observerHidFeedback = true;
+                        this.feedbackText.classList.add('hidden');
+                    }
+                }).observe(this);
+            }
         }
 
         attributeChangedCallback(name, oldValue, newValue) {
@@ -630,5 +737,8 @@ customElements.define('sm-input',
             this.optionList.removeEventListener('keydown', this.handleDatalistNavigation);
             this.input.removeEventListener('focusin', this.handleFocus);
             this.removeEventListener('focusout', this.handleBlur);
+            window.removeEventListener('resize', this.updatePosition, { passive: true })
+            document.removeEventListener('scroll', this.updatePosition, { passive: true, capture: true })
+            this.feedbackText.remove();
         }
     })
