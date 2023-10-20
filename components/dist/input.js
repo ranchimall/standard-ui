@@ -521,9 +521,10 @@ customElements.define('sm-input',
         updatePosition = () => {
             requestAnimationFrame(() => {
                 this.dimensions = this.getBoundingClientRect()
+                this.scrollingParentDimensions = this.scrollingParent.getBoundingClientRect()
                 if (this.dimensions.width === 0 || this.dimensions.height === 0) return;
-                let topOffset = this.dimensions.top + this.dimensions.height;
-                let leftOffset = this.dimensions.left;
+                let topOffset = this.dimensions.top - this.scrollingParentDimensions.top + this.dimensions.height;
+                let leftOffset = this.dimensions.left - this.scrollingParentDimensions.left;
                 const maxWidth = this.dimensions.width
                 this.feedbackPopover.style = `top: ${topOffset}px; left: ${leftOffset}px; max-width: ${maxWidth}px;`
             })
