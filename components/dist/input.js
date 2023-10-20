@@ -232,7 +232,8 @@ smInput.innerHTML = /*html*/`
     </div>
     `;
 customElements.define('sm-input',
-    class extends HTMLElement {
+    class SmInput extends HTMLElement {
+        static hasAppendedStyles = false
         #validationState = {
             validatedFor: undefined,
             isValid: false,
@@ -321,16 +322,14 @@ customElements.define('sm-input',
             this.#validationState.errorText = val;
         }
         showError = (errorText = this.#validationState.errorText) => {
-            this.feedbackText.innerHTML = `
-            <svg class="status-icon status-icon--error" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="24" height="24"><path fill="none" d="M0 0h24v24H0z"/><path d="M12 22C6.477 22 2 17.523 2 12S6.477 2 12 2s10 4.477 10 10-4.477 10-10 10zm-1-7v2h2v-2h-2zm0-8v6h2V7h-2z"/></svg>
-            ${errorText}`;
-            if (!this.feedbackText.classList.contains('hidden'))
-                return;
-            this.feedbackText.className = 'feedback-text error';
-            this.updatePosition()
-            window.addEventListener('resize', this.updatePosition, { passive: true })
-            document.addEventListener('scroll', this.updatePosition, { passive: true, capture: true })
-            this.feedbackText.animate([
+            const appendedNew = this.appendFeedbackElement()
+            this.feedbackPopover.innerHTML = `
+                <svg class="status-icon status-icon--error" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="24" height="24"><path fill="none" d="M0 0h24v24H0z"/><path d="M12 22C6.477 22 2 17.523 2 12S6.477 2 12 2s10 4.477 10 10-4.477 10-10 10zm-1-7v2h2v-2h-2zm0-8v6h2V7h-2z"/></svg>
+                ${errorText}
+            `;
+            this.feedbackPopover.dataset.state = 'error';
+            if (!appendedNew) return;
+            this.feedbackPopover.animate([
                 { transform: 'scale(0.95)', opacity: 0 },
                 { transform: 'scale(1)', opacity: 1 }
             ], {
@@ -527,68 +526,43 @@ customElements.define('sm-input',
                 this.dimensions = this.getBoundingClientRect()
                 if (this.dimensions.width === 0 || this.dimensions.height === 0) return;
                 let topOffset = this.dimensions.top - this.scrollingParentDimensions.top + this.scrollingParent.scrollTop + this.dimensions.height;
-                if (topOffset + this.feedbackText.offsetHeight > this.scrollingParentDimensions.height) {
-                    topOffset = this.dimensions.top - this.feedbackText.offsetHeight;
+                if (topOffset + this.feedbackPopover.offsetHeight > this.scrollingParentDimensions.height) {
+                    topOffset = this.dimensions.top - this.feedbackPopover.offsetHeight;
                 }
                 let leftOffset = this.dimensions.left - this.scrollingParentDimensions.left + this.scrollingParent.scrollLeft;
                 const maxWidth = this.scrollingParentDimensions.width - this.dimensions.left
-                this.feedbackText.style = `top: ${topOffset}px; left: ${leftOffset}px; max-width: ${maxWidth}px;`
+                this.feedbackPopover.style = `top: ${topOffset}px; left: ${leftOffset}px; max-width: ${maxWidth}px;`
             })
         }
         appendFeedbackElement = () => {
-            this.feedbackText = document.createElement('div');
-            this.feedbackText.className = 'feedback-text hidden';
-            this.feedbackText.setAttribute('aria-live', 'polite');
-            if (document.getElementById('#sm_input_styles') === null) {
-                document.head.insertAdjacentHTML('beforeend', `<style id="sm-input-styles">
-                    .success{
-                        color: var(--success-color);
-                    }
-                    .error{
-                        color: var(--danger-color);
-                    }
-                    .status-icon{
-                        margin-right: 0.5rem;
-                        flex-shrink: 0;
-                    }
-                    .status-icon--error{
-                        fill: var(--danger-color);
-                    }
-                    .status-icon--success{
-                        fill: var(--success-color);
-                    }
-                    .feedback-text:not(:empty){
-                        position: absolute;
-                        display: flex;
-                        width: fit-content;
-                        top: 100%;
-                        text-align: left;
-                        font-size: 0.9rem;
-                        align-items: center;
-                        padding: 0.8rem;
-                        border-radius: var(--border-radius,0.5rem);
-                        color: rgba(var(--text-color, (17,17,17)), 0.8);
-                        background: rgba(var(--foreground-color, (255,255,255)), 1);
-                        margin-top: 0.5rem;
-                        box-shadow: 0 0.5rem 1rem rgba(var(--text-color, (17,17,17)), 0.1);
-                    }
-                    .feedback-text:not(:empty)::before{
-                        content: '';
-                        height: 0;
-                        width: 0;
-                        position: absolute;
-                        border: 0.5rem solid transparent;
-                        border-bottom-color: rgba(var(--foreground-color, (255,255,255)), 1);
-                        top: -1rem;
-                        left: 1rem;
-                    }
-                </style>`);
-            }
+            if (this.feedbackPopover) return false;
+            this.feedbackPopover = document.createElement('div');
+            this.feedbackPopover.className = 'feedback-popover';
+            this.feedbackPopover.setAttribute('aria-live', 'polite');
+            this.containment = this.closest('[data-sm-containment]')
             this.scrollingParent = this.getNearestScrollingParent(this);
             const appendTo = this.containment || this.scrollingParent;
-            appendTo.appendChild(this.feedbackText)
+            appendTo.appendChild(this.feedbackPopover)
             if (this.scrollingParent.style.position === '')
                 this.scrollingParent.style.position = 'relative'
+            if (!this.containment) {
+                this.observerHidFeedback = false;
+                new IntersectionObserver((entries) => {
+                    if (entries[0].isIntersecting) {
+                        if (!this.observerHidFeedback) return;
+                        this.feedbackPopover.classList.remove('hidden');
+                        this.observerHidFeedback = false;
+                    } else {
+                        if (this.feedbackPopover.classList.contains('hidden')) return;
+                        this.observerHidFeedback = true;
+                        this.feedbackPopover.classList.add('hidden');
+                    }
+                }).observe(this);
+            }
+            this.updatePosition()
+            window.addEventListener('resize', this.updatePosition, { passive: true })
+            document.addEventListener('scroll', this.updatePosition, { passive: true, capture: true })
+            return true;
         }
         getNearestScrollingParent = (element) => {
             const scrollingParent = element.closest('[data-scrollable]')
@@ -607,8 +581,8 @@ customElements.define('sm-input',
             return document.body;
         }
         hideFeedback = () => {
-            if (this.feedbackText.classList.contains('hidden')) return;
-            this.feedbackText.animate([
+            if (!this.feedbackPopover) return;
+            this.feedbackPopover.animate([
                 {
                     transform: `none`,
                     opacity: 1,
@@ -622,12 +596,61 @@ customElements.define('sm-input',
                 easing: 'ease-in-out',
                 fill: 'forwards'
             }).onfinish = () => {
-                this.feedbackText.classList.add('hidden');
+                this.feedbackPopover.remove();
+                this.feedbackPopover = null;
                 window.removeEventListener('resize', this.updatePosition, { passive: true })
                 document.removeEventListener('scroll', this.updatePosition, { passive: true, capture: true })
             }
         }
         connectedCallback() {
+            if (!SmInput.hasAppendedStyles) {
+                // inject styles once will be utilised by all instances
+                document.head.insertAdjacentHTML('beforeend', `<style>
+                    // styles injected by sm-input component
+                    .success{
+                        color: var(--success-color);
+                    }
+                    .error{
+                        color: var(--danger-color);
+                    }
+                    .status-icon{
+                        margin-right: 0.5rem;
+                        flex-shrink: 0;
+                    }
+                    .status-icon--error{
+                        fill: var(--danger-color);
+                    }
+                    .status-icon--success{
+                        fill: var(--success-color);
+                    }
+                    .feedback-popover:not(:empty){
+                        position: absolute;
+                        display: flex;
+                        width: fit-content;
+                        top: 100%;
+                        text-align: left;
+                        font-size: 0.9rem;
+                        align-items: center;
+                        padding: 0.8rem;
+                        border-radius: var(--border-radius,0.5rem);
+                        color: rgba(var(--text-color, (17,17,17)), 0.8);
+                        background: rgba(var(--foreground-color, (255,255,255)), 1);
+                        margin-top: 0.5rem;
+                        box-shadow: 0 0.5rem 1rem rgba(var(--text-color, (17,17,17)), 0.1);
+                    }
+                    .feedback-popover:not(:empty)::before{
+                        content: '';
+                        height: 0;
+                        width: 0;
+                        position: absolute;
+                        border: 0.5rem solid transparent;
+                        border-bottom-color: rgba(var(--foreground-color, (255,255,255)), 1);
+                        top: -1rem;
+                        left: 1rem;
+                    }
+                </style>`);
+                SmInput.hasAppendedStyles = true
+            }
             this.shouldAnimatePlaceholder = this.hasAttribute('animate');
             if (this.shouldAnimatePlaceholder && this.placeholderElement !== '' && this.value) {
                 this.inputParent.classList.add('animate-placeholder');
@@ -639,8 +662,6 @@ customElements.define('sm-input',
             } else {
                 this.applyGlobalCustomValidation()
             }
-            this.containment = this.closest('[data-sm-containment]')
-            this.appendFeedbackElement()
             this.input.addEventListener('input', this.checkInput);
             this.clearBtn.addEventListener('click', this.clear);
             if (this.datalist.length) {
@@ -650,20 +671,6 @@ customElements.define('sm-input',
             }
             this.input.addEventListener('focusin', this.handleFocus);
             this.addEventListener('focusout', this.handleBlur);
-            let observerHidFeedback = false;
-            if (!this.containment) {
-                new IntersectionObserver((entries) => {
-                    if (entries[0].isIntersecting) {
-                        if (!observerHidFeedback) return;
-                        this.feedbackText.classList.remove('hidden');
-                        observerHidFeedback = false;
-                    } else {
-                        if (this.feedbackText.classList.contains('hidden')) return;
-                        observerHidFeedback = true;
-                        this.feedbackText.classList.add('hidden');
-                    }
-                }).observe(this);
-            }
         }
 
         attributeChangedCallback(name, oldValue, newValue) {
@@ -739,6 +746,7 @@ customElements.define('sm-input',
             this.removeEventListener('focusout', this.handleBlur);
             window.removeEventListener('resize', this.updatePosition, { passive: true })
             document.removeEventListener('scroll', this.updatePosition, { passive: true, capture: true })
-            this.feedbackText.remove();
+            if (this.feedbackPopover)
+                this.feedbackPopover.remove();
         }
     })
