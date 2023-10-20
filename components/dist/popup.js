@@ -18,7 +18,7 @@ class Stack {
 const popupStack = new Stack();
 
 const smPopup = document.createElement('template');
-smPopup.innerHTML = `
+smPopup.innerHTML = /*html*/`
 <style>
 *{
     padding: 0;
@@ -200,17 +200,6 @@ customElements.define('sm-popup', class extends HTMLElement {
         this.dialogBox = this.shadowRoot.querySelector('.popup');
         this.popupBodySlot = this.shadowRoot.querySelector('.popup-body slot');
         this.popupHeader = this.shadowRoot.querySelector('.popup-top');
-
-        this.resumeScrolling = this.resumeScrolling.bind(this);
-        this.setStateOpen = this.setStateOpen.bind(this);
-        this.show = this.show.bind(this);
-        this.hide = this.hide.bind(this);
-        this.handleTouchStart = this.handleTouchStart.bind(this);
-        this.handleTouchMove = this.handleTouchMove.bind(this);
-        this.handleTouchEnd = this.handleTouchEnd.bind(this);
-        this.detectFocus = this.detectFocus.bind(this);
-        this.handleSoftDismiss = this.handleSoftDismiss.bind(this);
-        this.debounce = this.debounce.bind(this);
     }
 
     static get observedAttributes() {
@@ -221,7 +210,7 @@ customElements.define('sm-popup', class extends HTMLElement {
         return this.isOpen;
     }
 
-    animateTo(element, keyframes, options) {
+    animateTo = (element, keyframes, options) => {
         const anime = element.animate(keyframes, { ...options, fill: 'both' })
         anime.finished.then(() => {
             anime.commitStyles()
@@ -230,14 +219,14 @@ customElements.define('sm-popup', class extends HTMLElement {
         return anime
     }
 
-    resumeScrolling() {
+    resumeScrolling = () => {
         const scrollY = document.body.style.top;
         window.scrollTo(0, parseInt(scrollY || '0') * -1);
         document.body.style.overflow = '';
         document.body.style.top = 'initial';
     }
 
-    setStateOpen() {
+    setStateOpen = () => {
         if (!this.isOpen || this.offset) {
             const animOptions = {
                 duration: 300,
@@ -254,11 +243,10 @@ customElements.define('sm-popup', class extends HTMLElement {
                     transform: 'none'
                 },
             ], animOptions)
-
         }
     }
 
-    show(options = {}) {
+    show = (options = {}) => {
         const { pinned = false, payload } = options;
         if (this.isOpen) return;
         const animOptions = {
@@ -321,7 +309,7 @@ customElements.define('sm-popup', class extends HTMLElement {
             })
         }
     }
-    hide(options = {}) {
+    hide = (options = {}) => {
         const { payload } = options;
         const animOptions = {
             duration: 150,
@@ -377,7 +365,7 @@ customElements.define('sm-popup', class extends HTMLElement {
         this.backdrop.removeEventListener('mousedown', this.handleSoftDismiss);
     }
 
-    handleTouchStart(e) {
+    handleTouchStart = (e) => {
         this.offset = 0
         this.popupHeader.addEventListener('touchmove', this.handleTouchMove, { passive: true });
         this.popupHeader.addEventListener('touchend', this.handleTouchEnd, { passive: true });
@@ -385,7 +373,7 @@ customElements.define('sm-popup', class extends HTMLElement {
         this.touchStartTime = e.timeStamp;
     }
 
-    handleTouchMove(e) {
+    handleTouchMove = (e) => {
         if (this.touchStartY < e.changedTouches[0].clientY) {
             this.offset = e.changedTouches[0].clientY - this.touchStartY;
             this.touchEndAnimation = window.requestAnimationFrame(() => {
@@ -394,7 +382,7 @@ customElements.define('sm-popup', class extends HTMLElement {
         }
     }
 
-    handleTouchEnd(e) {
+    handleTouchEnd = (e) => {
         this.touchEndTime = e.timeStamp;
         cancelAnimationFrame(this.touchEndAnimation);
         this.touchEndY = e.changedTouches[0].clientY;
@@ -423,7 +411,7 @@ customElements.define('sm-popup', class extends HTMLElement {
     }
 
 
-    detectFocus(e) {
+    detectFocus = (e) => {
         if (e.key === 'Tab') {
             // go through the focusable list and find the first and last element that is not disabled
             if (!this.focusable.length) return;
@@ -451,14 +439,14 @@ customElements.define('sm-popup', class extends HTMLElement {
         }
     }
 
-    updateFocusableList() {
+    updateFocusableList = () => {
         this.focusable = this.querySelectorAll('sm-button:not([disabled]), button:not([disabled]), [href], sm-input, input:not([readonly]), sm-select, select, sm-checkbox, sm-textarea, textarea, [tabindex]:not([tabindex="-1"])')
         this.autoFocus = this.querySelector('[autofocus]')
         this.firstFocusable = null
         this.lastFocusable = null
     }
 
-    handleSoftDismiss() {
+    handleSoftDismiss = () => {
         if (this.pinned) {
             this.dialogBox.animate([
                 { transform: 'translateX(-1rem)' },
@@ -474,7 +462,7 @@ customElements.define('sm-popup', class extends HTMLElement {
             this.hide();
         }
     }
-    debounce(callback, wait) {
+    debounce = (callback, wait) => {
         let timeoutId = null;
         return (...args) => {
             window.clearTimeout(timeoutId);

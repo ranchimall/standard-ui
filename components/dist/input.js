@@ -518,19 +518,13 @@ customElements.define('sm-input',
                 this.customValidation = config?.customValidation;
             }
         }
-        updatePosition = (e = { type: '' }) => {
+        updatePosition = () => {
             requestAnimationFrame(() => {
-                if (!this.dimensions || e.type === 'resize') {
-                    this.scrollingParentDimensions = this.scrollingParent.getBoundingClientRect()
-                }
                 this.dimensions = this.getBoundingClientRect()
                 if (this.dimensions.width === 0 || this.dimensions.height === 0) return;
-                let topOffset = this.dimensions.top - this.scrollingParentDimensions.top + this.scrollingParent.scrollTop + this.dimensions.height;
-                if (topOffset + this.feedbackPopover.offsetHeight > this.scrollingParentDimensions.height) {
-                    topOffset = this.dimensions.top - this.feedbackPopover.offsetHeight;
-                }
-                let leftOffset = this.dimensions.left - this.scrollingParentDimensions.left + this.scrollingParent.scrollLeft;
-                const maxWidth = this.scrollingParentDimensions.width - this.dimensions.left
+                let topOffset = this.dimensions.top + this.dimensions.height;
+                let leftOffset = this.dimensions.left;
+                const maxWidth = this.dimensions.width
                 this.feedbackPopover.style = `top: ${topOffset}px; left: ${leftOffset}px; max-width: ${maxWidth}px;`
             })
         }
@@ -547,21 +541,19 @@ customElements.define('sm-input',
                 this.scrollingParent.style.position = 'relative'
             if (!this.containment) {
                 this.observerHidFeedback = false;
-                new IntersectionObserver((entries) => {
+                this.intersectionObserver = new IntersectionObserver((entries) => {
                     if (entries[0].isIntersecting) {
                         if (!this.observerHidFeedback) return;
                         this.feedbackPopover.classList.remove('hidden');
                         this.observerHidFeedback = false;
                     } else {
-                        if (this.feedbackPopover.classList.contains('hidden')) return;
-                        this.observerHidFeedback = true;
                         this.feedbackPopover.classList.add('hidden');
+                        this.observerHidFeedback = true;
                     }
                 }).observe(this);
             }
             this.updatePosition()
             window.addEventListener('resize', this.updatePosition, { passive: true })
-            document.addEventListener('scroll', this.updatePosition, { passive: true, capture: true })
             return true;
         }
         getNearestScrollingParent = (element) => {
@@ -599,7 +591,6 @@ customElements.define('sm-input',
                 this.feedbackPopover.remove();
                 this.feedbackPopover = null;
                 window.removeEventListener('resize', this.updatePosition, { passive: true })
-                document.removeEventListener('scroll', this.updatePosition, { passive: true, capture: true })
             }
         }
         connectedCallback() {
@@ -745,8 +736,9 @@ customElements.define('sm-input',
             this.input.removeEventListener('focusin', this.handleFocus);
             this.removeEventListener('focusout', this.handleBlur);
             window.removeEventListener('resize', this.updatePosition, { passive: true })
-            document.removeEventListener('scroll', this.updatePosition, { passive: true, capture: true })
             if (this.feedbackPopover)
                 this.feedbackPopover.remove();
+            if (this.intersectionObserver)
+                this.intersectionObserver.disconnect();
         }
-    })
+    })  
