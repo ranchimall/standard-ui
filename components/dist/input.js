@@ -1,5 +1,5 @@
 const smInput = document.createElement('template')
-smInput.innerHTML = `
+smInput.innerHTML = /*html*/`
     <style>
     *{
         padding: 0;
@@ -154,7 +154,7 @@ smInput.innerHTML = `
     .animate-placeholder .placeholder {
         transform: scale(0.8);
         opacity: 1;
-        color: var(--accent-color,teal)
+        color: var(--accent-color,teal);
         grid-row: 1/2;
     }
     :host([variant="outlined"]) .input {
