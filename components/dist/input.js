@@ -558,13 +558,17 @@ customElements.define('sm-input',
             return true;
         }
         getNearestScrollingParent = (element) => {
-            const scrollingParent = element.closest('[data-scrollable]')
-            if (scrollingParent) return scrollingParent;
             let parent = element.parentNode;
-
             while (parent) {
                 // Check if the parent has scrollbars
-                if (parent.scrollHeight > parent.clientHeight || parent.scrollWidth > parent.clientWidth) {
+                // or if it's a custom element
+                // or if it has the data-scrollable attribute
+                if (
+                    parent.scrollHeight > parent.clientHeight ||
+                    parent.scrollWidth > parent.clientWidth ||
+                    parent.tagName.includes('SM-') ||
+                    parent.hasAttribute('data-scrollable')
+                ) {
                     return parent;
                 }
                 parent = parent.parentNode;
