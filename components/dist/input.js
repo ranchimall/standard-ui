@@ -593,9 +593,9 @@ customElements.define('sm-input',
                 easing: 'ease-in-out',
                 fill: 'forwards'
             }).onfinish = () => {
+                this.intersectionObserver?.disconnect();
                 this.feedbackPopover.remove();
                 this.feedbackPopover = null;
-                this.intersectionObserver?.disconnect();
                 window.removeEventListener('resize', this.updatePosition, { passive: true })
             }
         }
