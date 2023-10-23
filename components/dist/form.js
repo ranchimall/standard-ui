@@ -133,7 +133,7 @@ customElements.define('sm-form', class extends HTMLElement {
 		this._checkValidity();
 	}
 	checkIfSupported = (elem) => {
-		return elem.nodeType === 1 && (elem.tagName.includes('-') || elem.tagName === 'input') || elem.querySelector(this.supportedElements)
+		return elem.nodeType === 1 && (elem.tagName.includes('-') || elem.tagName === 'input' || elem.querySelector(this.supportedElements))
 	}
 	connectedCallback() {
 		const updateFormDecedents = this.debounce(this.elementsChanged, 100);
