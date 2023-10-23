@@ -132,6 +132,9 @@ customElements.define('sm-form', class extends HTMLElement {
 		}
 		this._checkValidity();
 	}
+	checkIfSupported = (elem) => {
+		return elem.nodeType === 1 && (elem.tagName.includes('-') || elem.tagName === 'input') || elem.querySelector(this.supportedElements)
+	}
 	connectedCallback() {
 		const updateFormDecedents = this.debounce(this.elementsChanged, 100);
 		this.addEventListener('input', this.debounce(this._checkValidity, 100));
@@ -141,8 +144,8 @@ customElements.define('sm-form', class extends HTMLElement {
 			mutations.forEach(mutation => {
 				if (
 					mutation.type === 'childList' &&
-					[...mutation.addedNodes].some(node => node.nodeType === 1 && node.querySelector(this.supportedElements)) ||
-					[...mutation.removedNodes].some(node => node.nodeType === 1 && node.querySelector(this.supportedElements))
+					[...mutation.addedNodes].some(node => this.checkIfSupported(node)) ||
+					[...mutation.removedNodes].some(node => this.checkIfSupported(node))
 				) {
 					updateFormDecedents();
 				}
@@ -152,7 +155,7 @@ customElements.define('sm-form', class extends HTMLElement {
 	}
 	attributeChangedCallback(name, oldValue, newValue) {
 		if (name === 'skip-submit') {
-			this.skipSubmit = newValue !== null;
+			this.skipSubmit = this.hasAttribute('skip-submit');
 		}
 	}
 

@@ -810,34 +810,33 @@ function buttonLoader(id, show) {
 let currentSubscriber = null;
 /**
  * @param {any} initialValue - initial value for the signal
+ * @param {function} [Optional] callback - function to be called when the signal changes
  * @returns {array} - array containing getter and setter for the signal
  * @example
  * const [getCount, setCount] = $signal(0);
  */
-function $signal(initialValue) {
+function $signal(initialValue, callback) {
     let value = initialValue;
     const subscribers = new Set();
-
-    function getter() {
+    let hasCustomSubscriber = false;
+    function getter(subscriber) {
         if (currentSubscriber) {
-            const weakRef = new WeakRef({ func: currentSubscriber });
-            subscribers.add(weakRef);
+            subscribers.add(currentSubscriber);
+        }
+        if (!hasCustomSubscriber && subscriber) {
+            subscribers.add(subscriber)
+            hasCustomSubscriber = true
         }
         return value;
     }
 
     function setter(newValue) {
-        if (newValue !== value) {
-            value = newValue;
-            for (const subscriber of subscribers) {
-                const ref = subscriber.deref();
-                if (ref) {
-                    ref.func();
-                }
-            }
+        if (newValue === value) return;
+        value = newValue;
+        for (const subscriber of subscribers) {
+            subscriber();
         }
     }
-
     return [getter, setter];
 }
 /**
