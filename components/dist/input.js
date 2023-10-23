@@ -543,6 +543,7 @@ customElements.define('sm-input',
             if (!this.containment) {
                 this.observerHidFeedback = false;
                 this.intersectionObserver = new IntersectionObserver((entries) => {
+                    if (!this.feedbackPopover) return;
                     if (entries[0].isIntersecting) {
                         if (!this.observerHidFeedback) return;
                         this.feedbackPopover.classList.remove('hidden');
