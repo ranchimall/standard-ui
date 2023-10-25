@@ -394,49 +394,48 @@ class Router {
     /**
      * @param {string} route
      */
-    async routeTo(path) {
+    handleRouting = async (page) => {
+        if (this.routingStart) {
+            this.routingStart(this.state)
+        }
+        if (this.routes[page]) {
+            await this.routes[page](this.state)
+            this.lastPage = page
+        } else {
+            if (this.routes['404']) {
+                this.routes['404'](this.state);
+            } else {
+                console.error(`No route found for '${page}' and no '404' route is defined.`);
+            }
+        }
+        if (this.routingEnd) {
+            this.routingEnd(this.state)
+        }
+    }
+    async routeTo(destination) {
         try {
             let page
             let wildcards = []
-            let queryString
-            let params
-            [path, queryString] = path.split('?');
+            let params = {}
+            let [path, queryString] = destination.split('?');
             if (path.includes('#'))
                 path = path.split('#')[1];
             if (path.includes('/'))
                 [, page, ...wildcards] = path.split('/')
             else
                 page = path
-            this.state = { page, wildcards, lastPage: this.lastPage }
+            this.state = { page, wildcards, lastPage: this.lastPage, params }
             if (queryString) {
                 params = new URLSearchParams(queryString)
                 this.state.params = Object.fromEntries(params)
             }
-            if (this.routingStart) {
-                this.routingStart(this.state)
-            }
-            if (this.routes[page]) {
-                // Fallback for browsers that don't support View transition API:
-                if (!document.startViewTransition) {
-                    await this.routes[page](this.state)
-                    this.lastPage = page
-                    return;
-                }
-
-                // With a transition:
+            if (document.startViewTransition) {
                 document.startViewTransition(async () => {
-                    await this.routes[page](this.state)
-                    this.lastPage = page
-                });
+                    await this.handleRouting(page)
+                })
             } else {
-                if (this.routes['404']) {
-                    this.routes['404'](this.state);
-                } else {
-                    console.error(`No route found for '${page}' and no '404' route is defined.`);
-                }
-            }
-            if (this.routingEnd) {
-                this.routingEnd(this.state)
+                // Fallback for browsers that don't support View transition API:
+                await this.handleRouting(page)
             }
         } catch (e) {
             console.error(e)
