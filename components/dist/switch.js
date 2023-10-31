@@ -1,5 +1,3 @@
-//switch
-
 const smSwitch = document.createElement('template')
 smSwitch.innerHTML = `	
 <style>
@@ -16,8 +14,6 @@ smSwitch.innerHTML = `
         box-shadow: 0 0.1rem 0.4rem #00000060, 0 0 0 0.2rem white inset;
     }
     label{
-        display: -webkit-box;
-        display: -ms-flexbox;
         display: flex;
         align-items: center;
         width: 100%;
@@ -57,8 +53,7 @@ smSwitch.innerHTML = `
         border-radius: 1rem;
     }
     
-    label:active .thumb::after,
-    label:focus-within .thumb::after{
+    label:focus-visible .thumb::after{
         opacity: 1;
     }
     
@@ -82,8 +77,8 @@ smSwitch.innerHTML = `
         justify-content: center;
         align-items: center;
         border-radius: 1rem;
-        box-shadow: 0 0.1rem 0.4rem #00000060, 0 0 0 0.3rem white inset;
-        transition: 0.3s cubic-bezier(0.68, -0.6, 0.32, 1.6);
+        box-shadow: 0 0.1rem 0.4rem #00000060, 0 0 0 0.2rem white inset;
+        transition: 0.3s ease;
         background-color: inherit;
     }
     
@@ -115,8 +110,6 @@ customElements.define('sm-switch', class extends HTMLElement {
         this.input = this.shadowRoot.querySelector('input')
         this.isChecked = false
         this.isDisabled = false
-
-        this.dispatch = this.dispatch.bind(this)
     }
 
     static get observedAttributes() {
@@ -154,7 +147,7 @@ customElements.define('sm-switch', class extends HTMLElement {
 
     }
 
-    dispatch() {
+    dispatch = () => {
         this.dispatchEvent(new CustomEvent('change', {
             bubbles: true,
             composed: true,
@@ -193,8 +186,7 @@ customElements.define('sm-switch', class extends HTMLElement {
                 if (this.hasAttribute('checked')) {
                     this.isChecked = true
                     this.input.checked = true
-                }
-                else {
+                } else {
                     this.isChecked = false
                     this.input.checked = false
                 }
