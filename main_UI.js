@@ -140,8 +140,7 @@ function openPopup(popupId, pinned) {
     }
     zIndex++
     getRef(popupId).setAttribute('style', `z-index: ${zIndex}`)
-    getRef(popupId).show({ pinned })
-    return getRef(popupId);
+    return getRef(popupId).show({ pinned })
 }
 
 // hides the popup or modal
@@ -783,14 +782,17 @@ function showChildElement(id, index, options = {}) {
 }
 function buttonLoader(id, show) {
     const button = typeof id === 'string' ? document.getElementById(id) : id;
-    button.disabled = show;
+    if (!button) return
+    if (!button.dataset.hasOwnProperty('wasDisabled'))
+        button.dataset.wasDisabled = button.disabled
     const animOptions = {
         duration: 200,
         fill: 'forwards',
         easing: 'ease'
     }
     if (show) {
-        button.parentNode.append(createElement('sm-spinner'))
+        button.disabled = true
+        button.parentNode.append(document.createElement('sm-spinner'))
         button.animate([
             {
                 clipPath: 'circle(100%)',
@@ -800,7 +802,17 @@ function buttonLoader(id, show) {
             },
         ], animOptions)
     } else {
-        button.getAnimations().forEach(anim => anim.cancel())
+        button.disabled = button.dataset.wasDisabled === 'true';
+        button.animate([
+            {
+                clipPath: 'circle(0)',
+            },
+            {
+                clipPath: 'circle(100%)',
+            },
+        ], animOptions).onfinish = (e) => {
+            button.removeAttribute('data-original-state')
+        }
         const potentialTarget = button.parentNode.querySelector('sm-spinner')
         if (potentialTarget) potentialTarget.remove();
     }

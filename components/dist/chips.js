@@ -202,7 +202,6 @@ customElements.define('sm-chips', class extends HTMLElement {
     }
     connectedCallback() {
         this.setAttribute('role', 'listbox');
-
         const slot = this.shadowRoot.querySelector('slot');
         slot.addEventListener('slotchange', e => {
             firstOptionObserver.disconnect();
@@ -212,11 +211,6 @@ customElements.define('sm-chips', class extends HTMLElement {
             clearTimeout(this.slotChangeTimeout);
             this.slotChangeTimeout = setTimeout(() => {
                 this.assignedElements = slot.assignedElements();
-                this.assignedElements.forEach(elem => {
-                    if (elem.hasAttribute('selected')) {
-                        this._value = elem.value;
-                    }
-                });
                 this.observeSelf.observe(this);
             }, 0);
         });
@@ -339,6 +333,9 @@ customElements.define('sm-chip', class extends HTMLElement {
         this.fireEvent = this.fireEvent.bind(this);
         this.handleKeyDown = this.handleKeyDown.bind(this);
     }
+    static get observedAttributes() {
+        return ['selected'];
+    }
     get value() {
         return this._value;
     }
@@ -364,6 +361,16 @@ customElements.define('sm-chip', class extends HTMLElement {
         this._value = this.getAttribute('value');
         this.addEventListener('click', this.fireEvent);
         this.addEventListener('keydown', this.handleKeyDown);
+    }
+    attributeChangedCallback(name, oldValue, newValue) {
+        if (name === 'selected') {
+            if (newValue !== null) {
+                this.fireEvent();
+                this.setAttribute('aria-selected', 'true');
+            } else {
+                this.removeAttribute('aria-selected');
+            }
+        }
     }
     disconnectedCallback() {
         this.removeEventListener('click', this.fireEvent);
