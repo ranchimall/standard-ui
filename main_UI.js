@@ -266,7 +266,7 @@ function getPromptInput(title, message = '', options = {}) {
  * @param {object} options - Options for the notification
  * @param {boolean} options.pinned - If true, notification will not be dismissed automatically
  */
-function notify(message, mode, options = { timeout, pinned }) {
+function notify(message, mode, options = {}) {
     let icon
     switch (mode) {
         case 'success':
