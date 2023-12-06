@@ -177,9 +177,10 @@ customElements.define('sm-switch', class extends HTMLElement {
             if (name === 'disabled') {
                 if (this.hasAttribute('disabled')) {
                     this.disabled = true
-                }
-                else {
+                    this.inert = true
+                } else {
                     this.disabled = false
+                    this.inert = false
                 }
             }
             else if (name === 'checked') {
