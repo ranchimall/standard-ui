@@ -348,7 +348,7 @@ customElements.define('sm-input',
             const _isValid = this.input.checkValidity();
             let _validity = { isValid: true, errorText: '' }
             if (this.validationFunction) {
-                _validity = this.validationFunction(this.input.value);
+                _validity = this.validationFunction(this.input.value, this);
             }
             if (_isValid && _validity.isValid) {
                 this.setAttribute('valid', '');
