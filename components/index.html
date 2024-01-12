@@ -16,10 +16,6 @@
 
 <body class="hide-completely">
     <sm-notifications id="notification_drawer"></sm-notifications>
-    <audio id="notification_sound">
-        <source src="https://rmservices.duckdns.org/files/notification-sound.mp3" type="audio/mpeg">
-        <source src="https://rmservices.duckdns.org/files/notification-sound.ogg" type="audio/ogg">
-    </audio>
     <main>
         <header id="main_header" class="flex align-center space-between">
             <button id="side_nav_button" class="interact" onclick="getRef('side_nav').open()"
@@ -108,11 +104,9 @@
                     </li>
                     <li>
                         Link the downloaded js before <span class="highlight">&lt;/body&gt;</span>
-                        <pre>
-<code>
-&lt;script src=".../components.js"&gt;&lt;/script&gt;
-</code>
-</pre>
+                        <syntax-highlighter>
+                            <script src=".../components.js"></script>
+                        </syntax-highlighter>
                     </li>
                 </ol>
                 <div class="grid grid-3 gap-0-5 align-center">
@@ -198,23 +192,19 @@
                     </div>
                 </section>
                 <h4>How to define variant</h4>
-                <pre>
-<code>
-&lt;sm-button variant="primary"&gt;primary&lt;/sm-button&gt;
-&lt;sm-button variant="outlined"&gt;outlined&lt;/sm-button&gt;
-&lt;sm-button variant="no-outline"&gt;no-outline&lt;/sm-button&gt;
-</code>
-</pre>
+                <syntax-highlighter>
+                    <sm-button variant="primary">Primary</sm-button>
+                    <sm-button variant="outlined">Outlined</sm-button>
+                    <sm-button variant="no-outline">No outline</sm-button>
+                </syntax-highlighter>
 
                 <h2>States</h2>
                 <h4>Disabled</h4>
                 <p>To disable the button add <span class="highlight">disabled</span> attribute.</p>
                 <sm-button disabled>Disabled</sm-button>
-                <pre>
-<code>
-&lt;sm-button disabled&gt;Disabled&lt;/sm-button&gt;
-</code>
-</pre>
+                <syntax-highlighter>
+                    <sm-button disabled>Disabled</sm-button>
+                </syntax-highlighter>
                 <h2>Attributes</h2>
                 <p>All the native HTML checkbox attributes are valid</p>
                 <section class="table">
@@ -292,13 +282,11 @@
                         <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit. Provident, optio.</p>
                     </div>
                 </sm-carousel>
-                <pre>
-<code>
-&lt;sm-carousel align-items="start" indicator&gt;
-    &lt;!-- carousel items --&gt;
-&lt;/sm-carousel&gt;
-</code>
-</pre>
+                <syntax-highlighter>
+                    <sm-carousel align-items="start" indicator>
+                        <!-- carousel items -->
+                    </sm-carousel>
+                </syntax-highlighter>
                 <h2>Custom attributes</h2>
                 <p>These attributes cane used to customize carousel behaviour and features</p>
                 <section class="table">
@@ -379,13 +367,13 @@
                         Checked checkbox
                     </div>
                 </sm-checkbox>
-                <pre>
-<code>
-&lt;sm-checkbox  checked&gt;
-    &lt;div style="margin-left: 0.5rem;"&gt;Checked checkbox&lt;/div&gt;
-&lt;/sm-checkbox&gt;           
-</code>
-</pre>
+                <syntax-highlighter>
+                    <sm-checkbox checked>
+                        <div style="margin-left: 0.5rem;">
+                            Checked checkbox
+                        </div>
+                    </sm-checkbox>
+                </syntax-highlighter>
 
                 <h4>Disabled</h4>
                 <p>To disable the checkbox add <span class="highlight">disabled</span> attribute.</p>
@@ -394,13 +382,13 @@
                         Disabled checkbox
                     </div>
                 </sm-checkbox>
-                <pre>
-<code>
-&lt;sm-checkbox  disabled&gt;
-    &lt;div style="margin-left: 0.5rem;"&gt;Disabled checkbox&lt;/div&gt;
-&lt;/sm-checkbox&gt;           
-</code>
-</pre>
+                <syntax-highlighter>
+                    <sm-checkbox disabled>
+                        <div style="margin-left: 0.5rem;">
+                            Disabled checkbox
+                        </div>
+                    </sm-checkbox>
+                </syntax-highlighter>
 
                 <h2>Attributes</h2>
                 <p>All the native HTML checkbox attributes are valid</p>
@@ -466,24 +454,25 @@
             <section id="copy_page" class="page hide-completely">
                 <h1 class="page__title">Copy</h1>
                 <h2>Interactive demo</h2>
-                <sm-copy value="copy this message">
-                    <div>ssafd</div>
+                <sm-copy value="this wiil be copied">
+                    <div>this will be copied</div>
                 </sm-copy>
-                <pre>
-<code>
-&lt;sm-copy value="copy this message"&gt;&lt;/sm-copy&gt;        
-</code>
-</pre>
+                <syntax-highlighter>
+                    <sm-copy value="this wiil be copied">
+                        <div>this will be copied</div>
+                    </sm-copy>
+                </syntax-highlighter>
                 <h2>Usage</h2>
-                <pre>
-<code>
-&lt;sm-copy id="text_to_copy" value="sample text"&gt;&lt;/sm-copy&gt;
-&lt;script&gt;
-    const textToCopy = document.getElementById('text_to_copy')
-    textToCopy.value = 'Different value'; /* Setting value to be copied */
-&lt;/script&gt;          
-</code>
-</pre>
+                <syntax-highlighter>
+                    <template>
+                        <sm-copy id="text_to_copy" value="sample text"></sm-copy>
+                        <script>
+                            const textToCopy = document.getElementById('text_to_copy')
+                            textToCopy.value = 'Different value'; /* Setting value to be copied */
+                        </script>
+                    </template>
+                </syntax-highlighter>
+
                 <h2>Attributes</h2>
                 <section class="table">
                     <div class="tr">
@@ -542,11 +531,9 @@
                 </p>
                 <h2>Interactive demo</h2>
                 <file-input multiple>Select multiple files</file-input>
-                <pre>
-<code>
-&lt;file-input multiple&gt;Select multiple files&lt;/file-input&gt;
-</code>
-</pre>
+                <syntax-highlighter>
+                    <file-input multiple>Select multiple files</file-input>
+                </syntax-highlighter>
                 <h2>Attributes</h2>
                 <section class="table">
                     <div class="tr">
@@ -651,40 +638,36 @@
                     </div>
                 </section>
                 <h2>Usage</h2>
-                <pre>
-<code>
-&lt;hamburger-menu id="navigation_drawer"&gt;
-    <!-- Navigation links -->
-&lt;/hamburger-menu&gt;
-&lt;script&gt;
-    const navigationDrawer = document.getElementById('navigation_drawer')
-    const navigationDrawerButton = document.getElementById('navigation_drawer_button')
-    navigationDrawerButton.addEventListner('click', e => {
-        navigationDrawer.open(); // Will open hamburger menu on mobile devices when hidden  
-    })
-&lt;/script&gt;
-</code>
-</pre>
+                <syntax-highlighter>
+                    <template>
+                        <hamburger-menu id="navigation_drawer">
+                            <!-- Navigation links -->
+                        </hamburger-menu>
+                        <script>
+                            const navigationDrawer = document.getElementById('navigation_drawer')
+                            const navigationDrawerButton = document.getElementById('navigation_drawer_button')
+                            navigationDrawerButton.addEventListner('click', e => {
+                                navigationDrawer.open(); // Will open hamburger menu on mobile devices when hidden  
+                            })
+                        </script>
+                    </template>
+                </syntax-highlighter>
             </section>
             <section id="input_page" class="page hide-completely">
                 <h1 class="page__title">Input</h1>
                 <h2>Interactive demo</h2>
                 <sm-input id="my_input" placeholder="Email" type="email" value="john@doe" animate>
                 </sm-input>
-                <pre>
-<code>
-&lt;sm-input id="my_input" placeholder="Email" type="email" value="john@doe" animate&gt;&lt;/sm-input&gt;
-</code>
-</pre>
+                <syntax-highlighter>
+                    <sm-input id="my_input" placeholder="Email" type="email" value="john@doe" animate></sm-input>
+                </syntax-highlighter>
                 <h2>Variants</h2>
                 <p><span class="highlight">outlined</span> is only one styled variation. Default is filled which doesn't
                     require variant specified.</p>
                 <sm-input placeholder="Name" variant="outlined" animate></sm-input>
-                <pre>
-<code>
-&lt;sm-input placeholder="Name" variant="outlined" animate&gt;&lt;/sm-input&gt;
-</code>
-</pre>
+                <syntax-highlighter>
+                    <sm-input placeholder="Name" variant="outlined" animate></sm-input>
+                </syntax-highlighter>
                 <h2>Custom Attributes</h2>
                 <p>All the native HTML input attributes are valid. These are additional attributes which can be used to
                     add more functionality</p>
@@ -799,19 +782,19 @@
                         </p>
                     </div>
                 </section>
-                <pre>
-<code>
-&lt;script&gt;
-    /* Setting custom validation function */
-    document.getElelementById('my_input').customValidation = myValidation
+                <syntax-highlighter>
+                    <template>
+                        <script>
+                            /* Setting custom validation function */
+                            document.getElelementById('my_input').customValidation = myValidation
 
-    function myValidation(inputValue) {
-        /* Custom validation logic */
-        return Boolean; /* Must return Boolean ( true/ false ) */
-    }
-&lt;/script&gt;
-</code>
-</pre>
+                            function myValidation(inputValue) {
+                                /* Custom validation logic */
+                                return Boolean; /* Must return Boolean ( true/ false ) */
+                            }
+                        </script>
+                    </template>
+                </syntax-highlighter>
             </section>
 
             <section id="menu_page" class="page hide-completely">
@@ -822,15 +805,13 @@
                     <menu-option>second option</menu-option>
                     <menu-option>third option</menu-option>
                 </sm-menu>
-                <pre>
-<code>
-&lt;sm-menu&gt;
-    &lt;menu-option&gt;first option&lt;/menu-option&gt;
-    &lt;menu-option&gt;second option&lt;/menu-option&gt;
-    &lt;menu-option&gt;third option&lt;/menu-option&gt;
-&lt;/sm-menu&gt;
-</code>
-</pre>
+                <syntax-highlighter>
+                    <sm-menu>
+                        <menu-option>first option</menu-option>
+                        <menu-option>second option</menu-option>
+                        <menu-option>third option</menu-option>
+                    </sm-menu>
+                </syntax-highlighter>
                 <h2>Custom Attributes</h2>
                 <section class="table">
                     <div class="tr">
@@ -913,15 +894,15 @@
                 <h2>Interactive demo</h2>
                 <sm-button onclick="getRef('notification_drawer').push('This is a notification', {pinned: true})">
                     push pinned notification</sm-button>
-                <pre>
-<code>
-&lt;sm-notifications id="notification_drawer"&gt;&lt;/sm-notifications&gt;
-&lt;script&gt;
-    const notificationDrawer = document.getElementById('notification_drawer')
-    notificationDrawer.push('This is a notification', { pinned: true })
-&lt;/script&gt;
-</code>
-</pre>
+                <syntax-highlighter>
+                    <template>
+                        <sm-notifications id="notification_drawer"></sm-notifications>
+                        <script>
+                            const notificationDrawer = document.getElementById('notification_drawer')
+                            notificationDrawer.push('This is a notification', { pinned: true })
+                        </script>
+                    </template>
+                </syntax-highlighter>
             </section>
 
             <section id="popup_page" class="page hide-completely">
@@ -937,28 +918,30 @@
                         veritatis debitis repellat laudantium corporis velit adipisci!</p>
                 </sm-popup>
                 <sm-button onclick="getRef('my_popup').show()">show popup</sm-button>
-                <pre>
-<code>
-&lt;sm-popup id="my_popup"&gt;
-&lt;!--Popup content --&gt;
-&lt;/sm-popup&gt;      
-</code>
-</pre>
+                <syntax-highlighter>
+                    <sm-popup id="my_popup">
+                        <h2>Title</h2>
+                        <p>Lorem ipsum, dolor sit amet consectetur adipisicing elit. Dolore tenetur natus, pariatur
+                            beatae
+                            veritatis debitis repellat laudantium corporis velit adipisci!</p>
+                    </sm-popup>
+                    <sm-button onclick="getRef('my_popup').show()">show popup</sm-button>
+                </syntax-highlighter>
                 <h2>Usage</h2>
-                <pre>
-<code>
-&lt;sm-popup id="my_popup"&gt;
-    &lt;!--Popup content --&gt;
-&lt;/sm-popup&gt;
-&lt;sm-button id="show_popup_button"&gt;Show popup&lt;/sm-button&gt;
-&lt;script&gt;
-    const myPopup = document.getElementById('my_popup')
-    document.getElementById('show_popup_button').addEventListener('click', e =&gt; {
-        myPopup.show({options});
-    })
-&lt;/script&gt;
-</code>
-</pre>
+                <syntax-highlighter>
+                    <template>
+                        <sm-popup id="my_popup">
+                            <!--Popup content -->
+                        </sm-popup>
+                        <sm-button id="show_popup_button">Show popup</sm-button>
+                        <script>
+                            const myPopup = document.getElementById('my_popup')
+                            document.getElementById('show_popup_button').addEventListener('click', e => {
+                                myPopup.show({ options });
+                            })
+                        </script>
+                    </template>
+                </syntax-highlighter>
                 <h2>Custom Attributes</h2>
                 <section class="table">
                     <div class="tr">
@@ -1104,19 +1087,17 @@
                         <div>&nbsp;&nbsp;🤷</div>
                     </sm-radio>
                 </div>
-                <pre>
-<code>
-&lt;sm-radio name="abc" value="on" checked&gt;
-    &lt;div&gt;&nbsp;&nbsp;On&lt;/div&gt;
-&lt;/sm-radio&gt;
-&lt;sm-radio name="abc" value="off"&gt;
-    &lt;div&gt;&nbsp;&nbsp;Off&lt;/div&gt;
-&lt;/sm-radio&gt;
-&lt;sm-radio name="abc" value="🤷"&gt;
-    &lt;div&gt;&nbsp;&nbsp;🤷&lt;/div&gt;
-&lt;/sm-radio&gt;          
-</code>
-</pre>
+                <syntax-highlighter>
+                    <sm-radio name="abc" value="on" checked>
+                        <div>&nbsp;&nbsp;On</div>
+                    </sm-radio>
+                    <sm-radio name="abc" value="off">
+                        <div>&nbsp;&nbsp;Off</div>
+                    </sm-radio>
+                    <sm-radio name="abc" value="🤷">
+                        <div>&nbsp;&nbsp;🤷</div>
+                    </sm-radio>
+                </syntax-highlighter>
                 <h2>States</h2>
                 <h4>Checked</h4>
                 <p>To make switch turned on by default add <span class="highlight">checked</span> attribute.</p>
@@ -1125,13 +1106,13 @@
                         Checked radio button
                     </div>
                 </sm-radio>
-                <pre>
-<code>
-&lt;sm-radio checked&gt;
-    &lt;div&gt;On switch&lt;/div&gt;
-&lt;/sm-radio&gt;           
-</code>
-</pre>
+                <syntax-highlighter>
+                    <sm-radio checked>
+                        <div style="margin-left: 0.5rem;">
+                            Checked radio button
+                        </div>
+                    </sm-radio>
+                </syntax-highlighter>
 
                 <h4>Disabled</h4>
                 <p>To disable the radio button add <span class="highlight">disabled</span> attribute.</p>
@@ -1140,14 +1121,13 @@
                         Disabled radio button
                     </div>
                 </sm-radio>
-                <pre>
-<code>
-&lt;sm-radio disabled&gt;
-    &lt;div&gt;Disabled switch&lt;/div&gt;
-&lt;/sm-radio&gt;           
-</code>
-</pre>
-
+                <syntax-highlighter>
+                    <sm-radio disabled>
+                        <div style="margin-left: 0.5rem;">
+                            Disabled radio button
+                        </div>
+                    </sm-radio>
+                </syntax-highlighter>
                 <h2>Attributes</h2>
                 <p>All the native HTML radio attributes are valid</p>
                 <section class="table">
@@ -1196,31 +1176,24 @@
                     <sm-option value="2">option2</sm-option>
                     <sm-option value="3">option3</sm-option>
                 </sm-select>
-                <pre>
-<code>
-&lt;sm-select&gt;
-    &lt;sm-option value="1"&gt;option1&lt;/sm-option&gt;
-    &lt;sm-option value="2"&gt;option2&lt;/sm-option&gt;
-    &lt;sm-option value="3"&gt;option3&lt;/sm-option&gt;
-&lt;/sm-select&gt;  
-</code>
-</pre>
+                <syntax-highlighter>
+                    <sm-select id="my_select">
+                        <sm-option value="1">option1</sm-option>
+                        <sm-option value="2">option2</sm-option>
+                        <sm-option value="3">option3</sm-option>
+                    </sm-select>
+                </syntax-highlighter>
                 <h2>Usage</h2>
-                <pre>
-<code>
-&lt;sm-select id="my_select"&gt;
-    &lt;sm-option value="1"&gt;option1&lt;/sm-option&gt;
-    &lt;sm-option value="2"&gt;option2&lt;/sm-option&gt;
-    &lt;sm-option value="3"&gt;option3&lt;/sm-option&gt;
-&lt;/sm-select&gt;   
-&lt;script&gt;
-    const mySelect = document.getElementById('my_select')
-    mySelect.addEventListener('change', event =&gt; {
-        console.log(event.target.value) // logs out value of selected option
-    })
-&lt;/script&gt;
-</code>
-</pre>
+                <syntax-highlighter>
+                    <template>
+                        <script>
+                            const mySelect = document.getElementById('my_select')
+                            mySelect.addEventListener('change', event => {
+                                console.log(event.target.value) // logs out value of selected option
+                            })
+                        </script>
+                    </template>
+                </syntax-highlighter>
                 <h2>States</h2>
                 <h4>Disabled</h4>
                 <p>To disable the select add <span class="highlight">disabled</span> attribute.</p>
@@ -1229,13 +1202,11 @@
                     <sm-option value="2">option2</sm-option>
                     <sm-option value="3">option3</sm-option>
                 </sm-select>
-                <pre>
-<code>
-&lt;sm-select disabled&gt;
-    &lt;!-- Options --&gt;
-&lt;/sm-select&gt;   
-</code>
-</pre>
+                <syntax-highlighter>
+                    <sm-select disabled>
+                        <!-- Options -->
+                    </sm-select>
+                </syntax-highlighter>
                 <h2>Supported events</h2>
                 <p>These are the events that will be fired when component state changes</p>
                 <section class="table">
@@ -1260,11 +1231,9 @@
                     Just drop the <span class="highlight">sm-spinner</span> in markup where you want to show the spinner
                 </p>
                 <sm-spinner></sm-spinner>
-                <pre>
-<code>
-&lt;sm-spinner&gt;&lt;/sm-spinner&gt;
-</code>
-</pre>
+                <syntax-highlighter>
+                    <sm-spinner></sm-spinner>
+                </syntax-highlighter>
             </section>
 
             <section id="switch_page" class="page hide-completely">
@@ -1289,15 +1258,13 @@
                         On switch
                     </div>
                 </sm-switch>
-                <pre>
-<code>
-&lt;sm-switch checked&gt;
-    &lt;div slot="left"&gt;
-        On switch
-    &lt;/div&gt;
-&lt;/sm-switch&gt;    
-</code>
-</pre>
+                <syntax-highlighter>
+                    <sm-switch checked>
+                        <div slot="left">
+                            On switch
+                        </div>
+                    </sm-switch>
+                </syntax-highlighter>
                 <h4>Disabled</h4>
                 <p>To disable the switch add <span class="highlight">disabled</span> attribute.</p>
                 <sm-switch disabled>
@@ -1305,15 +1272,13 @@
                         Disabled checkbox
                     </div>
                 </sm-switch>
-                <pre>
-<code>
-&lt;sm-switch disabled&gt;
-    &lt;div slot="left"&gt;
-        Disabled switch
-    &lt;/div&gt;
-&lt;/sm-switch&gt;    
-</code>
-</pre>
+                <syntax-highlighter>
+                    <sm-switch disabled>
+                        <div slot="left">
+                            Disabled checkbox
+                        </div>
+                    </sm-switch>
+                </syntax-highlighter>
 
                 <h2>Attributes</h2>
                 <p>All the native HTML checkbox attributes are valid</p>
@@ -1357,16 +1322,14 @@
                     <sm-chip value="price">Price</sm-chip>
                     <sm-chip value="rating">Rating</sm-chip>
                 </sm-chips>
-                <pre>
-<code>
-&lt;sm-chips id="sort_by"&gt;
-    &lt;sm-chip value="relevance" selected&gt;Relevance&lt;/sm-chip&gt;
-    &lt;sm-chip value="popularity"&gt;Popularity&lt;/sm-chip&gt;
-    &lt;sm-chip value="price"&gt;Price&lt;/sm-chip&gt;
-    &lt;sm-chip value="rating"&gt;Rating&lt;/sm-chip&gt;
-&lt;/sm-chips&gt; 
-</code>
-</pre>
+                <syntax-highlighter>
+                    <sm-chips id="sort_by">
+                        <sm-chip value="relevance" selected>Relevance</sm-chip>
+                        <sm-chip value="popularity">Popularity</sm-chip>
+                        <sm-chip value="price">Price</sm-chip>
+                        <sm-chip value="rating">Rating</sm-chip>
+                    </sm-chips>
+                </syntax-highlighter>
                 <h2>Custom attributes</h2>
                 <section class="table">
                     <div class="tr">
@@ -1412,22 +1375,22 @@
                     </div>
                 </section>
                 <h2>Usage</h2>
-                <pre>
-<code>
-&lt;sm-chips id="sort_by"&gt;
-    &lt;sm-chip value="relevance" selected&gt;Relevance&lt;/sm-chip&gt;
-    &lt;sm-chip value="popularity"&gt;Popularity&lt;/sm-chip&gt;
-    &lt;sm-chip value="price"&gt;Price&lt;/sm-chip&gt;
-    &lt;sm-chip value="rating"&gt;Rating&lt;/sm-chip&gt;
-&lt;/sm-chips&gt; 
-&lt;script&gt;
-    const sortBy = document.getElementById('sort_by')
-    sortBy.addEventListener('change', event =&gt; {
-        console.log(event.target.value) // logs out value of selected option
-    })
-&lt;/script&gt;
-</code>
-</pre>
+                <syntax-highlighter>
+                    <template>
+                        <sm-chips id="sort_by">
+                            <sm-chip value="relevance" selected>Relevance</sm-chip>
+                            <sm-chip value="popularity">Popularity</sm-chip>
+                            <sm-chip value="price">Price</sm-chip>
+                            <sm-chip value="rating">Rating</sm-chip>
+                        </sm-chips>
+                        <script>
+                            const sortBy = document.getElementById('sort_by')
+                            sortBy.addEventListener('change', event => {
+                                console.log(event.target.value) // logs out value of selected option
+                            })
+                        </script>
+                    </template>
+                </syntax-highlighter>
             </section>
 
             <section id="tabs_page" class="page hide-completely">
@@ -1453,26 +1416,26 @@
                     </section>
                 </sm-tab-panels>
                 <h2>Usage</h2>
-                <pre>
-<code>
-&lt;sm-tab-header target="tab1"&gt;
-    &lt;sm-tab&gt;
-        tab name
-    &lt;/sm-tab&gt;
-    &lt;sm-tab&gt;
-        tab name
-    &lt;/sm-tab&gt;
-&lt;/sm-tab-header&gt;
-&lt;sm-tab-panels id="tab1"&gt;
-    &lt;section&gt;
-        &lt;!-- Panel content --&gt;
-    &lt;/section&gt;
-    &lt;section&gt;
-        &lt;!-- Panel content --&gt;
-    &lt;/section&gt;
-&lt;/sm-tab-panels&gt;
-</code>
-</pre>
+                <syntax-highlighter>
+                    <sm-tab-header target="tab1">
+                        <sm-tab>Audio</sm-tab>
+                        <sm-tab>Video</sm-tab>
+                    </sm-tab-header>
+                    <sm-tab-panels id="tab1">
+                        <section>
+                            <h3>Audio</h3>
+                            <p>Lorem ipsum, dolor sit amet consectetur adipisicing elit. Exercitationem esse quod quae
+                                repellat qui.
+                                Expedita fugiat voluptates beatae itaque corporis!</p>
+                        </section>
+                        <section>
+                            <h3>Video</h3>
+                            <p>Lorem ipsum, dolor sit amet consectetur adipisicing elit. Exercitationem esse quod quae
+                                repellat qui.
+                                Expedita fugiat voluptates beatae itaque corporis!</p>
+                        </section>
+                    </sm-tab-panels>
+                </syntax-highlighter>
                 <p>
                     There are three components that together make the tabs components.
                 <ol>
@@ -1484,14 +1447,12 @@
 
                 <h3>sm-tab-header</h3>
                 <p>This is the first half of tabs that include the tabs header and actual tab buttons.</p>
-                <pre>
-<code>
-&lt;sm-tab-header variant="tab" target="tab2"&gt;
-    &lt;sm-tab&gt;Audio&lt;/sm-tab&gt;
-    &lt;sm-tab&gt;Video&lt;/sm-tab&gt;
-&lt;/sm-tab-header&gt;
-</code>
-</pre>
+                <syntax-highlighter>
+                    <sm-tab-header target="tab1">
+                        <sm-tab>Audio</sm-tab>
+                        <sm-tab>Video</sm-tab>
+                    </sm-tab-header>
+                </syntax-highlighter>
                 <h2>Supported attributes</h2>
                 <section class="table">
                     <div class="tr">
@@ -1530,16 +1491,13 @@
                             repellat qui. Expedita fugiat voluptates beatae itaque corporis!</p>
                     </section>
                 </sm-tab-panels>
-                <pre>
-<code>
-&lt;sm-tab-header variant="tab" target="tab2"&gt;
-    &lt;sm-tab&gt;Audio&lt;/sm-tab&gt;
-    &lt;sm-tab&gt;Video&lt;/sm-tab&gt;
-&lt;/sm-tab-header&gt;
-</code>
-</pre>
+                <syntax-highlighter>
+                    <sm-tab-header variant="tab" target="tab2">
+                        <sm-tab>Audio</sm-tab>
+                        <sm-tab>Video</sm-tab>
+                    </sm-tab-header>
+                </syntax-highlighter>
             </section>
-
             <section id="tags_input_page" class="page hide-completely">
                 <h1 class="page__title">Tags input</h1>
                 <p>
@@ -1548,11 +1506,10 @@
                 </p>
                 <h2>Interactive demo</h2>
                 <tags-input placeholder="Add tags..."></tags-input>
-                <pre>
-<code>
-&lt;tags-input placeholder="Add tags..."&gt;&lt;/tags-input&gt;      
-</code>
-</pre>
+                <syntax-highlighter>
+                    <tags-input placeholder="Add tags..."></tags-input>
+                </syntax-highlighter>
+
                 <h2>Attributes</h2>
                 <section class="table">
                     <div class="tr">
@@ -1582,7 +1539,8 @@
                     <div class="tr">
                         <div><span class="highlight">--background</span></div>
                         <p>
-                            Defines background of tags-input. Any valid CSS background property values are supported.
+                            Defines background of tags-input. Any valid CSS background property values are
+                            supported.
                         </p>
                     </div>
                     <div class="tr">
@@ -1613,39 +1571,35 @@
                     </div>
                 </section>
                 <h2>Usage</h2>
-                <pre>
-<code>
-&lt;tags-input id="get_tags" placeholder="Add tags..."&gt;&lt;/tags-input&gt;
-&lt;script&gt;
-    const getTags = document.getElementById('get_tags')
-    console.log(getTags.value); /* returns an array of string that are user input */ 
-&lt;/script&gt;      
-</code>
-</pre>
-
+                <syntax-highlighter>
+                    <template>
+                        <tags-input id="get_tags" placeholder="Add tags..."></tags-input>
+                        <script>
+                            const getTags = document.getElementById('get_tags')
+                            console.log(getTags.value); /* returns an array of string that are user input */
+                        </script>
+                    </template>
+                </syntax-highlighter>
             </section>
-
             <section id="textarea_page" class="page hide-completely">
                 <h1 class="page__title">Textarea</h1>
                 <p>Textarea is suitable component where multiline input is required. you can either specify
-                    the number of lines textarea should expand or let the textarea expand according to user input until
+                    the number of lines textarea should expand or let the textarea expand according to user input
+                    until
                     a max-height is reached.</p>
                 <h2>Interactive demo</h2>
                 <sm-textarea id="my_textarea" placeholder="Add some text here..." rows="4"></sm-textarea>
-                <pre>
-<code>
-&lt;sm-textarea id="my_textarea" placeholder="Add some text here..." rows="4"&gt;&lt;/sm-textarea&gt;
-</code>
-</pre>
+                <syntax-highlighter>
+                    <sm-textarea id="my_textarea" placeholder="Add some text here..." rows="4"></sm-textarea>
+                </syntax-highlighter>
                 <h2>Variants</h2>
-                <p><span class="highlight">outlined</span> is only one styled variation. Default is filled which doesn't
+                <p><span class="highlight">outlined</span> is only one styled variation. Default is filled which
+                    doesn't
                     require variant specified.</p>
                 <sm-textarea placeholder="This is a textarea" variant="outlined"></sm-textarea>
-                <pre>
-<code>
-&lt;sm-textarea placeholder="This is a textarea" variant="outlined"&gt;&lt;/sm-textarea&gt;
-</code>
-</pre>
+                <syntax-highlighter>
+                    <sm-textarea placeholder="This is a textarea" variant="outlined"></sm-textarea>
+                </syntax-highlighter>
                 <h2>Supported Attributes</h2>
                 <p>All the native HTML textarea attributes are valid.</p>
                 <section class="table">
@@ -1741,42 +1695,44 @@
                     </div>
                 </section>
                 <h2>Usage</h2>
-                <pre>
-<code>
-&lt;sm-textarea placeholder="This is a textarea" id="my_textarea"&gt;&lt;/sm-textarea&gt;
-&lt;script&gt;
-    const myTextarea = document.getElelementById('my_textarea')
-    myTextarea.value = 'some string'; /* setting value of textarea */
-    
-    myTextarea.addEventListener('input', event => {
-        const value = event.target.value; /* accessing value of textarea */
-    })
-&lt;/script&gt;
-</code>
-</pre>
+                <syntax-highlighter>
+                    <template>
+                        <sm-textarea placeholder="This is a textarea" id="my_textarea"></sm-textarea>
+                        <script>
+                            const myTextarea = document.getElelementById('my_textarea')
+                            myTextarea.value = 'some string'; /* setting value of textarea */
+
+                            myTextarea.addEventListener('input', event => {
+                                const value = event.target.value; /* accessing value of textarea */
+                            })
+                        </script>
+                    </template>
+                </syntax-highlighter>
             </section>
             <section id="text_field_page" class="page hide-completely">
                 <h1 class="page__title">Text field</h1>
                 <p>
-                    This component can be used in scenarios where you need to display a name or something that user
+                    This component can be used in scenarios where you need to display a name or something that
+                    user
                     should be able to edit directly
                     in-place instead of going to other UI element.
                 </p>
                 <h2>Interactive demo</h2>
                 <text-field value="John doe"></text-field>
                 <h2>Usage</h2>
-                <pre>
-<code>
-&lt;text-field id="name_field" value="John doe"&gt;&lt;/text-field&gt;
-&lt;script&gt;
-    const nameField = document.getElementById('name_field')
-    nameField.addEventListener('change', event =&gt; {
-        console.log(event.target.value) // logs out new value set by user
-        console.log(nameField.value) // Accessing value directly with getter
-    })
-&lt;/script&gt;
-</code>
-</pre>
+                <syntax-highlighter>
+                    <template>
+                        <text-field id="name_field" value="John doe"></text-field>
+                        <script>
+                            const nameField = document.getElementById('name_field')
+                            nameField.addEventListener('change', event => {
+                                console.log(event.target.value) // logs out new value set by user
+                                console.log(nameField.value) // Accessing value directly with getter
+                            })
+                        </script>
+                    </template>
+                </syntax-highlighter>
+
                 <h2>Custom attributes</h2>
                 <section class="table">
                     <div class="tr">
@@ -1821,47 +1777,46 @@
                     to either <span class="highlight">light</span> or <span class="highlight">dark</span>
                 </p>
                 <p>
-                    By default theme is set to OS level preferred-color-scheme ( supported by Android, iOS, Windows and
+                    By default theme is set to OS level preferred-color-scheme ( supported by Android, iOS,
+                    Windows
+                    and
                     MacOS ).
                 </p>
                 <h2>Interactive demo</h2>
                 <theme-toggle></theme-toggle>
                 <h2>HTML</h2>
-                <pre>
-<code>
-&lt;theme-toggle&gt;&lt;/theme-toggle&gt;  
-</code>
-</pre>
+                <syntax-highlighter>
+                    <theme-toggle></theme-toggle>
+                </syntax-highlighter>
 
                 <h2>CSS</h2>
-                <pre>
-<code>
-&lt;style&gt;
-    body ,
-    body *{
-        /* Set CSS variables according to light theme or default theme*/
-        --accent-color: #0D7377;
-        --text-color: 17, 17, 17;
-        --background-color: 255, 255, 255;
-        --danger-color: red;
-    }
-    body[data-theme='dark'],
-    body[data-theme='dark'] *{
-        /* Set CSS variables according to dark theme */
-        --accent-color: #32E0C4;
-        --text-color: 240, 240, 240;
-        --text-color-light: 170, 170, 170;
-        --background-color: 10, 10, 10;
-        --danger-color: rgb(255, 106, 106);
-    }
-    body{
-        color: rgba(var(--text-color), 1);
-        background: rgba(var(--background-color), 1);
-    }
-&lt;/style&gt;
-</code>
-</pre>
+                <syntax-highlighter>
+                    <style>
+                        body,
+                        body * {
+                            /* Set CSS variables according to light theme or default theme*/
+                            --accent-color: #0D7377;
+                            --text-color: 17, 17, 17;
+                            --background-color: 255, 255, 255;
+                            --danger-color: red;
+                        }
 
+                        body[data-theme='dark'],
+                        body[data-theme='dark'] * {
+                            /* Set CSS variables according to dark theme */
+                            --accent-color: #32E0C4;
+                            --text-color: 240, 240, 240;
+                            --text-color-light: 170, 170, 170;
+                            --background-color: 10, 10, 10;
+                            --danger-color: rgb(255, 106, 106);
+                        }
+
+                        body {
+                            color: rgba(var(--text-color), 1);
+                            background: rgba(var(--background-color), 1);
+                        }
+                    </style>
+                </syntax-highlighter>
 
                 <h2>Styling</h2>
                 <p>CSS variables used to style this component</p>
@@ -1893,24 +1848,27 @@
                     <div class="tr">
                         <div><span class="highlight">themechange</span></div>
                         <p>
-                            Whenever theme is toggled by user the <span class="highlight">themechange</span> event is
+                            Whenever theme is toggled by user the <span class="highlight">themechange</span>
+                            event
+                            is
                             fired. <br>
-                            You can listen to this event and access the current value of toggle with event object <span
-                                class="highlight">event.detail.theme</span>
+                            You can listen to this event and access the current value of toggle with event
+                            object
+                            <span class="highlight">event.detail.theme</span>
                         </p>
                     </div>
                 </section>
-                <pre>
-<code>
-&lt;theme-toggle id="my_theme_toggle"&gt;&lt;/theme-toggle&gt;
-&lt;script&gt;
-    const myThemeToggle = document.getElementById('my_theme_toggle')
-    myThemeToggle.addEventListener('themechange', event =&gt; {
-        console.log(event.detail.theme) // logs out current theme ( light / dark )
-    })
-&lt;/script&gt;
-</code>
-</pre>
+                <syntax-highlighter>
+                    <template>
+                        <theme-toggle id="my_theme_toggle"></theme-toggle>
+                        <script>
+                            const myThemeToggle = document.getElementById('my_theme_toggle')
+                            myThemeToggle.addEventListener('themechange', event => {
+                                console.log(event.detail.theme) // logs out current theme ( light / dark )
+                            })
+                        </script>
+                    </template>
+                </syntax-highlighter>
             </section>
         </article>
     </main>
@@ -1924,7 +1882,6 @@
             <span class="comp-checkbox__title"></span>
         </sm-checkbox>
     </template>
-    <script src="assets/prism.js" defer></script>
     <script src="dist/button.min.js" defer></script>
     <script src="dist/carousel.min.js" defer></script>
     <script src="dist/checkbox.min.js" defer></script>
@@ -1946,6 +1903,7 @@
     <script src="dist/text-field.min.js" defer></script>
     <script src="dist/textarea.min.js" defer></script>
     <script src="dist/theme-toggle.min.js" defer></script>
+    <script src="dist/syntax-highlighter.js"></script>
 
     <script id="default_ui_library">
         const domRefs = {};
@@ -2014,14 +1972,13 @@
         if (!navigator.onLine)
             notify(
                 "There seems to be a problem connecting to the internet, Please check you internet connection.",
-                "error",
-                { sound: true }
+                "error"
             );
         window.addEventListener("offline", () => {
             notify(
                 "There seems to be a problem connecting to the internet, Please check you internet connection.",
                 "error",
-                { pinned: true, sound: true }
+                { pinned: true }
             );
         });
         window.addEventListener("online", () => {
@@ -2093,7 +2050,7 @@
 
         //Function for displaying toast notifications. pass in error for mode param if you want to show an error.
         function notify(message, mode, options = {}) {
-            const { pinned = false, sound } = options
+            const { pinned = false } = options
             if (mode === "error") console.error(message);
             let icon
             switch (mode) {
@@ -2105,10 +2062,6 @@
                     break;
             }
             getRef("notification_drawer").push(message, { pinned, icon });
-            if (navigator.onLine && sound) {
-                getRef("notification_sound").currentTime = 0;
-                getRef("notification_sound").play();
-            }
         }
 
         const currentYear = new Date().getFullYear();

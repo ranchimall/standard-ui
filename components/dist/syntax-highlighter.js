@@ -115,24 +115,38 @@ template.innerHTML = /*html*/`
 
 class SyntaxHighlighter extends HTMLElement {
     static loaded = false;
-    render = (language = 'javascript') => {
+    escapeHtml = (str) => {
+        return str.replace(/&/g, '&amp;')
+            .replace(/</g, '&lt;')
+            .replace(/\u00a0/g, ' ');
+    }
+    render = (language = 'html') => {
         if (!Prism.languages.hasOwnProperty(language))
             return console.error(`Language ${language} not supported`);
         const code = this.innerHTML;
-        const highlightedCode = Prism.highlight(code, Prism.languages[language], language);
+        // remove equal indentation from lines
+        const lines = code.split('\n');
+        const indent = lines.reduce((acc, line) => {
+            if (/^\s*$/.test(line)) return acc; // ignore empty lines
+            const lineIndent = line.match(/^\s*/)[0].length;
+            return Math.min(acc, lineIndent);
+        }, Infinity);
+        const regex = new RegExp(`^\\s{${indent}}`);
+        const formattedCode = lines.map(line => line.replace(regex, '')).join('\n');
         this.innerHTML = `
-                <pre><code class="language-${language}">${highlightedCode}</code></pre>
-            `;
+            <pre><code class="language-${language}">${formattedCode}</code></pre>
+        `;
     }
     connectedCallback() {
-        console.log('connected', SyntaxHighlighter.loaded);
         if (!SyntaxHighlighter.loaded) {
             document.head.appendChild(template.content.cloneNode(true));
             SyntaxHighlighter.loaded = true;
         }
-        setTimeout(() => {
-            this.render(this.getAttribute('language') || 'javascript');
-        }, 0);
+        if (this.querySelector('template')) {
+            this.innerHTML = this.querySelector('template').innerHTML;
+        }
+        this.innerHTML = this.escapeHtml(this.innerHTML);
+        this.render(this.getAttribute('language') || 'html');
     }
 
     disconnectedCallback() {
