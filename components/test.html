@@ -23,6 +23,7 @@
     <script src="dist/strip-select.js"></script>
     <script src="dist/collapsed-text.js"></script>
     <script src="dist/notifications.js"></script>
+    <script src="dist/syntax-highlighter.js"></script>
     <link rel="stylesheet" href="css/main.min.css">
     <style>
         div {
@@ -38,6 +39,13 @@
 
 <body>
     <sm-copy value="hi dhf jsbdjf sjdb"></sm-copy>
+    <syntax-highlighter language="html">
+        <sm-copy value="hi dhf jsbdjf sjdb">
+            <sm-button>
+                hi
+            </sm-button>
+        </sm-copy>
+    </syntax-highlighter>
 </body>
 <script>
     let currentSubscriber = null;
