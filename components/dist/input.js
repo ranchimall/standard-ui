@@ -233,7 +233,7 @@ smInput.innerHTML = /*html*/`
     `;
 customElements.define('sm-input',
     class SmInput extends HTMLElement {
-        static hasAppendedStyles = false
+        static hasAppendedStyles = false;
         #validationState = {
             validatedFor: undefined,
             isValid: false,
@@ -373,6 +373,7 @@ customElements.define('sm-input',
             this.value = '';
             this.input.focus();
             this.fireEvent();
+            this.hideFeedback();
         }
 
         focusIn = () => {
@@ -508,6 +509,9 @@ customElements.define('sm-input',
             }
         }
         handleBlur = (e) => {
+            if (this.input.value.trim() === '') {
+                this.hideFeedback();
+            }
             if (this.datalist.length) {
                 this.optionList.classList.add('hidden');
             }
@@ -595,15 +599,17 @@ customElements.define('sm-input',
                 fill: 'forwards'
             }).onfinish = () => {
                 this.intersectionObserver?.disconnect();
-                this.feedbackPopover.remove();
-                this.feedbackPopover = null;
+                if (this.feedbackPopover) {
+                    this.feedbackPopover.remove();
+                    this.feedbackPopover = null;
+                }
                 window.removeEventListener('resize', this.updatePosition, { passive: true })
             }
         }
         connectedCallback() {
             if (!SmInput.hasAppendedStyles) {
-                // inject styles once will be utilised by all instances
-                document.head.insertAdjacentHTML('beforeend', `<style>
+                // inject styles once will be utilized by all instances
+                document.head.insertAdjacentHTML('beforeend', /*html*/`<style>
                     // styles injected by sm-input component
                     .success{
                         color: var(--success-color);
