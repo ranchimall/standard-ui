@@ -1,5 +1,5 @@
 const smChips = document.createElement('template');
-smChips.innerHTML = `
+smChips.innerHTML = /*html*/`
 <style>
     *{
         padding: 0;
@@ -239,8 +239,8 @@ customElements.define('sm-chips', class extends HTMLElement {
             threshold: 1,
         });
         this.chipsWrapper.addEventListener('option-clicked', e => {
-            if (this._value !== e.target.value) {
-                this.setSelectedOption(e.target.value);
+            if (this._value !== e.detail.value) {
+                this.setSelectedOption(e.detail.value);
                 this.fireEvent();
             }
         });
@@ -284,7 +284,7 @@ customElements.define('sm-chips', class extends HTMLElement {
 });
 
 const smChip = document.createElement('template');
-smChip.innerHTML = `
+smChip.innerHTML = /*html*/`
 <style>
     *{
         padding: 0;
@@ -327,7 +327,7 @@ customElements.define('sm-chip', class extends HTMLElement {
         this.attachShadow({
             mode: 'open'
         }).append(smChip.content.cloneNode(true));
-        this._value = undefined;
+        this._value = this.getAttribute('value');
         this.radioButton = this.shadowRoot.querySelector('input');
 
         this.fireEvent = this.fireEvent.bind(this);
@@ -358,7 +358,6 @@ customElements.define('sm-chip', class extends HTMLElement {
     connectedCallback() {
         this.setAttribute('role', 'option');
         this.setAttribute('tabindex', '0');
-        this._value = this.getAttribute('value');
         this.addEventListener('click', this.fireEvent);
         this.addEventListener('keydown', this.handleKeyDown);
     }
@@ -370,6 +369,8 @@ customElements.define('sm-chip', class extends HTMLElement {
             } else {
                 this.removeAttribute('aria-selected');
             }
+        } else if (name === 'value') {
+            this._value = newValue;
         }
     }
     disconnectedCallback() {
