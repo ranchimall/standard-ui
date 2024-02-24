@@ -52,7 +52,11 @@ customElements.define('sm-form', class extends HTMLElement {
 		};
 	}
 	_checkValidity = () => {
-		if (!this.submitButton || this._requiredElements.length === 0) return;
+		if (!this.submitButton || this._requiredElements.length === 0) {
+			if (this.submitButton)
+				this.submitButton.disabled = false;
+			return;
+		}
 		this.invalidFieldsCount = 0
 		this._requiredElements.forEach(([elem, isWC]) => {
 			if (!elem.disabled && isWC && !elem.isValid || !isWC && !elem.checkValidity())
@@ -121,7 +125,8 @@ customElements.define('sm-form', class extends HTMLElement {
 		this._checkValidity();
 	}
 	elementsChanged = () => {
-		this.formElements = [...this.querySelectorAll(this.supportedElements)].map(elem => {
+		this.isFormValid = undefined;
+		this.formElements = [...this.querySelectorAll(this.supportedElements)].map((elem) => {
 			return [elem, elem.tagName.includes('-')];
 		});
 		this._requiredElements = this.formElements.filter(([elem]) => elem.hasAttribute('required'));

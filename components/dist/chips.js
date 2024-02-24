@@ -163,6 +163,9 @@ customElements.define('sm-chips', class extends HTMLElement {
     set value(val) {
         this.setSelectedOption(val);
     }
+    get isValid() {
+        return this._value !== undefined;
+    }
     scrollLeft() {
         this.chipsWrapper.scrollBy({
             left: -this.scrollDistance,

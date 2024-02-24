@@ -213,7 +213,7 @@ customElements.define('sm-notifications', class extends HTMLElement {
         notification.id = this.randString(8)
         notification.className = `notification ${pinned ? 'pinned' : ''}`
         notification.style.setProperty('--timeout', `${timeout}ms`);
-        notification.innerHTML = `
+        notification.innerHTML = /*html*/`
             ${icon ? `<div class="icon-container">${icon}</div>` : ''}
             <output>${message}</output>
             ${action ? `<button class="action">${action.label}</button>` : ''}
