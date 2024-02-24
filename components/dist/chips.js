@@ -242,6 +242,7 @@ customElements.define('sm-chips', class extends HTMLElement {
             threshold: 1,
         });
         this.chipsWrapper.addEventListener('option-clicked', e => {
+            e.stopPropagation();
             if (this._value !== e.detail.value) {
                 this.setSelectedOption(e.detail.value);
                 this.fireEvent();
@@ -361,12 +362,17 @@ customElements.define('sm-chip', class extends HTMLElement {
     connectedCallback() {
         this.setAttribute('role', 'option');
         this.setAttribute('tabindex', '0');
+        if (!this.hasAttribute('value')) {
+            console.error('sm-chip must have a value attribute');
+        }
+        if (this.hasAttribute('selected'))
+            this.fireEvent();
         this.addEventListener('click', this.fireEvent);
         this.addEventListener('keydown', this.handleKeyDown);
     }
     attributeChangedCallback(name, oldValue, newValue) {
         if (name === 'selected') {
-            if (newValue !== null) {
+            if (this.hasAttribute('selected')) {
                 this.fireEvent();
                 this.setAttribute('aria-selected', 'true');
             } else {
